@@ -139,7 +139,9 @@ webapp/
 │   ├── 0005_full_smartwatch_course_content.sql
 │   ├── 0006_complete_coursera_level_content.sql
 │   ├── 0007_comments_and_reviews.sql
-│   └── 0008_ballbeam_course.sql
+│   ├── 0008_ballbeam_course.sql
+│   ├── 0009_verbatim_smartwatch_content.sql  # Exact PDF text
+│   └── 0010_verbatim_ballbeam_content.sql    # Exact PDF text
 │
 ├── wrangler.jsonc             # Cloudflare configuration
 ├── vite.config.ts             # Vite build config
@@ -569,6 +571,176 @@ pm2 logs --nostream
 **Admin Access**
 - Configured in `ADMIN_EMAILS` variable
 - Current admins: kayla@kaylasierra.com, support@shortcct.com
+
+---
+
+---
+
+## For New Engineers - Complete Deployment Guide
+
+### Quick Start Checklist
+
+1. [ ] Clone repository from GitHub
+2. [ ] Create `.dev.vars` file with credentials (see below)
+3. [ ] Install dependencies: `npm install`
+4. [ ] Apply all database migrations in order
+5. [ ] Build: `npm run build`
+6. [ ] Test locally: `npx wrangler pages dev dist --d1=shortcircuits-db --local --ip 0.0.0.0 --port 3000`
+7. [ ] Deploy: `npx wrangler pages deploy dist --project-name shortcircuit`
+
+### Credentials Setup
+
+**IMPORTANT**: Credentials are NOT stored in the repository for security. You must obtain these separately.
+
+Create `.dev.vars` file in the project root:
+
+```bash
+# Stripe Live API Keys
+STRIPE_PUBLISHABLE_KEY=pk_live_51Ss4gE...
+STRIPE_SECRET_KEY=sk_live_51Ss4gE...
+STRIPE_WEBHOOK_SECRET=whsec_a7Rel44Tc9Nn6WtuB0W09SNMTK6oOwAj
+
+# Resend Email API Key  
+RESEND_API_KEY=re_j3EKmstN_4aDU8xSSrb6QC4yWtT8PoDXP
+```
+
+For production deployment, also update `wrangler.jsonc` with the same credentials in the `vars` section.
+
+### Database Migrations - Order Matters
+
+Apply migrations in this exact order:
+
+```bash
+# 1. Initial schema - users, orders, sessions, inventory
+npx wrangler d1 execute shortcircuits-db --local --file=./migrations/0001_initial_schema.sql
+
+# 2. Seed data - initial products
+npx wrangler d1 execute shortcircuits-db --local --file=./migrations/0002_seed_data.sql
+
+# 3. Security tables - progress tracking, certificates
+npx wrangler d1 execute shortcircuits-db --local --file=./migrations/0002_security_progress_certificates.sql
+
+# 4. Course structure
+npx wrangler d1 execute shortcircuits-db --local --file=./migrations/0003_courses.sql
+
+# 5. Smartwatch course initial seed
+npx wrangler d1 execute shortcircuits-db --local --file=./migrations/0004_smartwatch_course_seed.sql
+
+# 6. Full smartwatch content
+npx wrangler d1 execute shortcircuits-db --local --file=./migrations/0005_full_smartwatch_course_content.sql
+
+# 7. Complete coursera-level content 
+npx wrangler d1 execute shortcircuits-db --local --file=./migrations/0006_complete_coursera_level_content.sql
+
+# 8. Comments and reviews
+npx wrangler d1 execute shortcircuits-db --local --file=./migrations/0007_comments_and_reviews.sql
+
+# 9. Ball and Beam course
+npx wrangler d1 execute shortcircuits-db --local --file=./migrations/0008_ballbeam_course.sql
+
+# 10. VERBATIM SMARTWATCH CONTENT (exact text from PDF documentation)
+npx wrangler d1 execute shortcircuits-db --local --file=./migrations/0009_verbatim_smartwatch_content.sql
+
+# 11. VERBATIM BALL AND BEAM CONTENT (exact text from PDF documentation)
+npx wrangler d1 execute shortcircuits-db --local --file=./migrations/0010_verbatim_ballbeam_content.sql
+```
+
+For **production**, replace `--local` with `--remote`:
+
+```bash
+npx wrangler d1 execute shortcircuits-db --remote --file=./migrations/0001_initial_schema.sql
+# ... etc for all migrations
+```
+
+### About Verbatim Content Migrations
+
+Migrations 0009 and 0010 are critical - they replace all course content with the **exact verbatim text** from the official PDF documentation:
+
+- **0009_verbatim_smartwatch_content.sql**: Updates all Smartwatch course lessons with word-for-word content from "Smartwatch Project Full Documentation.pdf"
+- **0010_verbatim_ballbeam_content.sql**: Updates all Ball and Beam course lessons with word-for-word content from "Ball and Beam Documentation for Kayla.pdf"
+
+These migrations ensure that:
+1. All course text matches the official documentation exactly
+2. No content is summarized or rewritten
+3. Students see the same text as in the PDF materials
+
+### Testing the Deployment
+
+After deployment, verify these URLs work:
+
+```bash
+# Homepage
+curl https://shortcircuit-2t9.pages.dev
+
+# API health check
+curl https://shortcircuit-2t9.pages.dev/api/config
+
+# Public certificate verification
+curl https://shortcircuit-2t9.pages.dev/api/verify/SC-SW-2026-00001
+```
+
+### File Structure Summary for Engineers
+
+```
+Key files to understand:
+
+src/index.tsx           # ALL backend logic (5,300+ lines)
+                        # - Authentication
+                        # - API routes  
+                        # - Email templates
+                        # - Stripe webhooks
+                        # - Course management
+
+public/                 # ALL frontend HTML/CSS/JS
+                        # Pure vanilla JS, no frameworks
+
+migrations/             # Database schema and content
+                        # MUST apply in numerical order
+
+wrangler.jsonc          # Cloudflare configuration
+                        # Contains D1 database binding
+                        # Contains environment variables (for production)
+
+.dev.vars               # Local development credentials
+                        # NEVER commit this file
+```
+
+### Common Engineer Tasks
+
+**Add a new course module:**
+1. Create migration file: `migrations/00XX_new_module.sql`
+2. INSERT into `course_modules` and `lessons` tables
+3. Apply migration
+4. Content displays automatically via existing API
+
+**Update course content:**
+1. Modify relevant migration SQL file
+2. For existing content, use UPDATE statements
+3. Run migration against the database
+
+**Add new email template:**
+1. Edit `src/index.tsx`
+2. Find the email templates section (search for "EMAIL_FROM")
+3. Add new template following existing pattern
+4. Test via admin email test endpoints
+
+**Debug email issues:**
+1. Check Resend dashboard: https://resend.com
+2. Verify domain is verified
+3. Check API key is correct
+4. Review delivery logs in Resend
+
+**Debug payment issues:**
+1. Check Stripe dashboard: https://dashboard.stripe.com
+2. Verify webhook is receiving events
+3. Check webhook signature matches `STRIPE_WEBHOOK_SECRET`
+4. Review webhook logs in Stripe
+
+### Support Contacts
+
+- **Technical Questions**: Review code comments in `src/index.tsx`
+- **Business Questions**: kayla@kaylasierra.com
+- **Platform Support**: support@shortcct.com
 
 ---
 
