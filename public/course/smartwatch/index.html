@@ -6909,6 +6909,9 @@
             
             // Initialize lazy loading for videos
             initLazyVideoLoading();
+            
+            // Apply Prism syntax highlighting for code blocks
+            setTimeout(() => Prism.highlightAll(), 100);
         }
         
         function renderFullModuleOverview(moduleId) {
@@ -6948,6 +6951,9 @@
             
             // Initialize lazy loading for videos
             initLazyVideoLoading();
+            
+            // Apply Prism syntax highlighting for code blocks
+            setTimeout(() => Prism.highlightAll(), 100);
         }
         
         function renderOverviewLesson(lesson) {
@@ -6973,54 +6979,45 @@
                     }
                     
                     // Render sections array (primary format from PDF content)
+                    // Use MarkdownRenderer for proper code block and formatting support
                     if (lessonContent.sections && lessonContent.sections.length) {
                         content += lessonContent.sections.map(section => {
-                            // Convert markdown-style formatting to HTML
-                            let sectionContent = section.content || '';
-                            // Bold text
-                            sectionContent = sectionContent.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-                            // Links
-                            sectionContent = sectionContent.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-                            // Line breaks to paragraphs
-                            sectionContent = sectionContent.split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
-                            // Lists (simple conversion)
-                            sectionContent = sectionContent.replace(/<p>- /g, '<li>').replace(/<\/p>(\s*<li>)/g, '</li>$1');
-                            
-                            return `<h3>${section.title}</h3>${sectionContent}`;
+                            const renderedContent = MarkdownRenderer.render(section.content || '');
+                            return `<div class="lesson-section"><h3>${section.title}</h3>${renderedContent}</div>`;
                         }).join('');
                     }
                     
                     // Render key_points if available
                     if (lessonContent.key_points && lessonContent.key_points.length) {
-                        content += `<h3>Key Takeaways</h3><ul>${lessonContent.key_points.map(p => `<li>${p}</li>`).join('')}</ul>`;
+                        content += `<div class="lesson-section"><h3>Key Takeaways</h3><ul>${lessonContent.key_points.map(p => `<li>${p}</li>`).join('')}</ul></div>`;
                     }
                     
                     // Render resources if available
                     if (lessonContent.resources && lessonContent.resources.length) {
-                        content += `<h3>Resources</h3><ul>${lessonContent.resources.map(r => 
-                            `<li><a href="${r.url}" target="_blank">${r.title}</a></li>`
-                        ).join('')}</ul>`;
+                        content += `<div class="lesson-section resources-box"><h3><i class="fas fa-link"></i> Resources</h3><ul>${lessonContent.resources.map(r => 
+                            `<li><a href="${r.url}" target="_blank"><i class="fas ${r.type === 'video' ? 'fa-video' : r.type === 'github' ? 'fa-github' : 'fa-external-link-alt'}"></i> ${r.title}</a></li>`
+                        ).join('')}</ul></div>`;
                     }
                     
                     // Fallback to old format fields
                     if (!content && lessonContent.description) {
-                        content += `<p>${lessonContent.description}</p>`;
+                        content += `<p>${MarkdownRenderer.render(lessonContent.description)}</p>`;
                     }
                     
                     if (lessonContent.objectives && lessonContent.objectives.length) {
-                        content += `<h3>Learning Objectives</h3><ul>${lessonContent.objectives.map(o => `<li>${o}</li>`).join('')}</ul>`;
+                        content += `<div class="lesson-section"><h3>Learning Objectives</h3><ul>${lessonContent.objectives.map(o => `<li>${o}</li>`).join('')}</ul></div>`;
                     }
                     
                     if (lessonContent.key_concepts && lessonContent.key_concepts.length) {
-                        content += `<h3>Key Concepts</h3><ul>${lessonContent.key_concepts.map(c => `<li><strong>${c.term || c}</strong>${c.definition ? ': ' + c.definition : ''}</li>`).join('')}</ul>`;
+                        content += `<div class="lesson-section"><h3>Key Concepts</h3><ul>${lessonContent.key_concepts.map(c => `<li><strong>${c.term || c}</strong>${c.definition ? ': ' + c.definition : ''}</li>`).join('')}</ul></div>`;
                     }
                     
                     if (lessonContent.instructions) {
-                        content += `<h3>Instructions</h3><p>${lessonContent.instructions}</p>`;
+                        content += `<div class="lesson-section"><h3>Instructions</h3>${MarkdownRenderer.render(lessonContent.instructions)}</div>`;
                     }
                     
                     if (lessonContent.tasks && lessonContent.tasks.length) {
-                        content += `<h3>Tasks</h3><ol>${lessonContent.tasks.map(t => `<li>${typeof t === 'string' ? t : t.description || t.title || JSON.stringify(t)}</li>`).join('')}</ol>`;
+                        content += `<div class="lesson-section"><h3>Tasks</h3><ol>${lessonContent.tasks.map(t => `<li>${typeof t === 'string' ? t : t.description || t.title || JSON.stringify(t)}</li>`).join('')}</ol></div>`;
                     }
                 }
             } catch (e) {
