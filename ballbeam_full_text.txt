@@ -1,0 +1,393 @@
+
+
+=== PAGE 1 ===
+
+Overview
+Introduction
+In this program you will model and create a robust ball and beam controller by creating an
+engineering model, designing control loop architecture, and deploying code on a real control
+system.
+You'll work with a collection of 3D printed parts, electronics, and a wooden platform originally
+developed by Ian Carey. This project will help you develop an understanding of control theory,
+physics, and software written in Python and C++. It includes a combination of model-based
+design and hands-on testing which are techniques used in industry for designing and deploying
+control systems.
+Throughout the program you'll build your project incrementally using provided training materials,
+reference implementations, and various examples. These resources are designed to support
+you without removing the need for engineering decision making.
+If you need help, email support@shortcct.com with your specific questions and a zip file
+including any files relevant to your project. Remember, virtual support is available for 3 months
+after your product delivery date.
+Recommended Background
+This project is designed for students who want hands-on control and embedded systems
+experience. You do not need a lot of experience, but some foundational knowledge is expected.
+Required
+● Introductory programming experience in C++ or Python
+● Basic knowledge of electronics
+Helpful
+● Introductory exposure to embedded systems
+● Basic understanding of physics and signal theory
+If you find that you are missing some of this background, reach out to us at
+support@shortcct.com and we can explore options to get you up to speed!
+
+=== PAGE 2 ===
+
+Industry Alignment
+We analyzed the most in-demand skills across 50+ companies hiring embedded systems
+engineering interns. Below is how the Smartwatch Project aligns with those skills.
+Core skills are fully covered in the base project.
+Extendable skills can be developed through optional project extensions and the design
+challenge.
+Not Covered indicates skills that are outside the scope of the core project.
+**Table Coming Soon**
+Documentation
+Control Stepper Motor with DRV8825 Driver Module & Arduino – Last Minute Engineers
+How HC-SR04 Ultrasonic Sensor Works & Interface It With Arduino – Last Minute Engineers
+Control Tutorials for MATLAB and Simulink - Ball & Beam: System Modeling
+Setup Up Ball and Beam
+**Setup Section Coming Soon**
+
+=== PAGE 3 ===
+
+Training Material
+Complete Project Overview
+**Overview Video Coming Soon**
+Basic Embedded Systems
+The Ball and Beam system operates as a real-time embedded control system in which a
+microcontroller continuously reads the position of the ball, computes a corrective action, and
+commands a motor to adjust the beam angle. Unlike traditional desktop programs that run once
+and terminate, embedded systems execute in a continuous loop. In the Arduino environment,
+every program is organized around two core functions: setup() and loop(). The setup()
+function runs once at startup and is used to initialize hardware components such as input/output
+pins, serial communication, sensors, and motor drivers. The loop() function runs repeatedly
+and forms the core control cycle of the system. Within this loop, the microcontroller repeatedly
+performs three essential steps: measure the ball’s position, calculate the control output, and
+update the actuator.
+To interface with hardware, pins must be properly configured as inputs or outputs using
+pinMode(). Sensors such as potentiometers or distance sensors are typically read using
+analogRead(), which converts a voltage signal into a digital value using the microcontroller’s
+internal analog-to-digital converter. Actuators such as motors are controlled using digital signals
+or Pulse Width Modulation (PWM). PWM allows the microcontroller to simulate an analog output
+by rapidly switching a pin on and off with a controllable duty cycle. In the Ball and Beam system,
+adjusting the PWM duty cycle changes the motor’s effective power, which in turn adjusts the
+beam angle.
+Timing is a critical component of any control system. The control loop must run at consistent
+intervals to ensure stable and predictable behavior. Instead of using blocking delays that pause
+execution, embedded systems should rely on non-blocking timing methods such as millis()
+to maintain a steady loop frequency. This ensures the system remains responsive and capable
+of updating sensor readings and motor commands at a fixed rate. Consistent timing becomes
+especially important when implementing feedback control algorithms such as PID.
+Libraries are commonly used to simplify interaction with hardware components like ultrasonic
+sensors, servo motors, or communication modules. While these libraries abstract lower-level
+details, it is important to understand that they are configuring timers, managing communication
+protocols such as I2C or SPI, and handling signal timing behind the scenes. A strong embedded
+
+=== PAGE 4 ===
+
+systems engineer understands not only how to call library functions, but also what those
+functions are doing internally.
+Serial communication is an essential debugging tool in embedded development. By printing
+sensor values, control signals, and tuning parameters to the Serial Monitor, students can
+observe system behavior in real time and diagnose issues systematically. This mirrors
+professional engineering practice, where logging and measurement are critical for validating
+system performance.
+By mastering these embedded fundamentals—program structure, hardware interfacing, PWM
+control, real-time timing, library usage, and serial debugging—students develop the foundation
+necessary to implement stable feedback control in the Ball and Beam system. These skills
+ensure that the software and hardware work together reliably before advancing to filtering and
+PID-based stabilization.
+Circuit Creation and Breadboarding
+Before the Ball and Beam system can be controlled in software, the hardware must be
+assembled correctly and safely. This section focuses on translating a circuit schematic into a
+physical breadboard implementation while understanding why each connection exists. The goal
+is not simply to “wire it up,” but to understand power flow, signal flow, grounding strategy, and
+component interaction.
+Every embedded circuit begins with power distribution. The microcontroller typically operates at
+5V or 3.3V, and all sensors and logic components must share a common ground reference. On
+a breadboard, this means connecting the microcontroller’s GND to the ground rail and
+distributing VCC to the positive rail. Any sensor or driver module used in the system must
+connect to these same rails. A shared ground is essential; without it, voltage readings become
+meaningless and control signals behave unpredictably.
+The Ball and Beam system typically consists of three core hardware blocks: the microcontroller,
+the position sensor, and the motor driver. The position sensor (such as a potentiometer,
+ultrasonic sensor, or IR distance sensor) provides a voltage or digital signal representing the
+ball’s location. This signal is routed to an analog or digital input pin on the microcontroller. Care
+must be taken to ensure voltage levels are within the allowable range of the microcontroller. If a
+sensor outputs 5V logic, the board must be 5V tolerant; otherwise, level shifting may be
+required.
+The motor cannot be driven directly from a microcontroller pin because microcontroller pins can
+only source a small amount of current. Instead, a motor driver or transistor-based switching
+circuit must be used. For DC motors, this may involve an H-bridge driver module. For servos, a
+PWM signal wire is connected directly to a control pin, while power is supplied separately if
+higher current is required. The motor driver acts as a power interface, allowing the low-power
+logic signal to control a higher-power actuator safely.
+
+=== PAGE 5 ===
+
+When placing components on a breadboard, students should follow structured wiring practices.
+Keep power and ground rails organized. Use consistent wire colors (e.g., red for VCC, black for
+GND). Keep signal wires short to reduce noise. Avoid crossing wires unnecessarily, and route
+high-current motor wires separately from sensitive sensor lines when possible. Poor wiring
+layout can introduce electrical noise, unstable readings, or intermittent failures.
+Decoupling capacitors are also an important practical consideration. Placing small capacitors
+(e.g., 0.1 µF) across power and ground near sensitive components helps filter voltage spikes
+and noise caused by motors switching on and off. Motors are inductive loads and can introduce
+electrical disturbances into the system if not properly managed.
+Students should verify their circuit incrementally. First confirm that power rails supply the correct
+voltage using a multimeter. Next test the sensor independently by printing readings to the Serial
+Monitor. Then test motor actuation with a simple fixed PWM signal before integrating the full
+control algorithm. Building and validating one subsystem at a time prevents compounding errors
+and simplifies debugging.
+Understanding circuit creation at the breadboard level builds intuition about how real embedded
+systems are implemented. It reinforces the relationship between schematics and physical
+hardware, teaches safe power handling practices, and prepares students to move beyond
+prototyping toward PCB-based designs in the future.
+Motors and Motor Controllers
+The Ball and Beam system relies on a motor to adjust the angle of the beam in response to the
+ball’s position. Understanding how motors work—and how to control them safely—is essential
+for building a stable and reliable control system. This section introduces the fundamentals of
+motor operation, the limitations of microcontrollers, and the role of motor driver circuits.
+At a basic level, a motor converts electrical energy into mechanical motion. In this project, the
+motor’s job is to rotate a shaft that tilts the beam. Depending on the design, this may be a DC
+motor, a servo motor, or a stepper motor. Each type has different control characteristics. A
+standard DC motor spins continuously when voltage is applied and requires external circuitry to
+control speed and direction. A servo motor contains internal control electronics and moves to a
+commanded position based on a PWM control signal. A stepper motor moves in discrete
+angular steps and is commonly used when precise positioning is required.
+Microcontrollers cannot power motors directly because motors require significantly more current
+than a microcontroller pin can provide. Attempting to drive a motor directly from a pin can
+permanently damage the board. Instead, a motor controller—also called a motor driver—is used
+as an interface between the low-power logic signals and the higher-power motor supply. The
+microcontroller sends control signals to the driver, and the driver handles the higher current
+switching required to power the motor.
+
+=== PAGE 6 ===
+
+For DC motors, an H-bridge driver is commonly used. An H-bridge allows both speed control
+and direction control by switching current flow through the motor in either direction. Speed is
+typically controlled using PWM. By adjusting the duty cycle of the PWM signal, the average
+voltage across the motor changes, which adjusts the motor’s speed and torque. Direction is
+controlled by toggling logic inputs on the driver.
+For servo motors, control is typically simpler. A servo uses a single PWM control line where the
+pulse width determines the angular position. Internally, the servo contains a feedback
+mechanism that ensures the shaft moves to and holds the commanded position. In many Ball
+and Beam designs, a servo simplifies implementation because it removes the need for a
+separate feedback loop for beam angle.
+For stepper motors, a stepper driver module generates the required coil switching sequences.
+The microcontroller typically sends step and direction signals to the driver. Steppers provide
+precise incremental movement but require careful control to prevent missed steps or excessive
+current draw.
+Power management is critical when working with motors. Motors can draw large currents,
+especially during startup or stall conditions. A separate power supply is often required for the
+motor, and all grounds must be connected together to maintain a common reference.
+Additionally, motors are inductive loads and can generate voltage spikes when switching. Motor
+drivers include protective components such as flyback diodes to prevent damage from these
+spikes.
+When integrating the motor into the Ball and Beam system, it is important to test motor behavior
+independently before implementing feedback control. Start with fixed PWM signals or fixed
+position commands. Observe how the beam responds. Identify mechanical limits, dead zones,
+and nonlinearities. This practical understanding will be critical when tuning the control algorithm.
+By understanding how motors operate, why motor drivers are necessary, and how control
+signals translate into mechanical motion, students gain the ability to design safe and effective
+actuator systems. This knowledge forms the foundation for implementing precise beam angle
+control in the closed-loop Ball and Beam system.
+Distance Sensing
+Accurate position measurement is the foundation of the Ball and Beam control system. The
+motor adjusts the beam angle, but the system can only stabilize the ball if it knows where the
+ball is at all times. Distance sensing provides the feedback signal that makes closed-loop
+control possible.
+In this project, the sensor measures the ball’s position along the length of the beam. Depending
+on the hardware design, this may be accomplished using an ultrasonic sensor, an infrared (IR)
+distance sensor, or a linear potentiometer mechanism. Regardless of the sensor type, the goal
+
+=== PAGE 7 ===
+
+is the same: convert physical position into an electrical signal that the microcontroller can read
+and process.
+An ultrasonic sensor works by emitting a short pulse of sound and measuring the time it takes
+for the echo to return after reflecting off the ball. Because the speed of sound is known, the
+time-of-flight measurement can be converted into distance. These sensors typically use a trigger
+pin and an echo pin. The microcontroller sends a short trigger pulse, then measures how long
+the echo pin remains high. Libraries are often used to simplify this timing process, but it is
+important to understand that the distance calculation is based on precise microsecond timing.
+Infrared distance sensors operate differently. They emit infrared light and measure the intensity
+or angle of the reflected signal. These sensors usually provide an analog voltage output that
+varies with distance. The microcontroller reads this voltage using analogRead() and converts
+the raw value into a physical distance measurement using calibration data.
+Regardless of the sensing method, raw measurements are rarely perfect. Sensor readings may
+contain noise, small fluctuations, or occasional outliers. Electrical noise from the motor,
+mechanical vibrations, and environmental conditions can all affect measurement quality. For this
+reason, filtering techniques—such as moving averages or exponential smoothing—are often
+applied to stabilize the signal before it is used in the control algorithm.
+Calibration is another critical step. The raw sensor output must be mapped to actual physical
+distances along the beam. This often involves placing the ball at known positions, recording
+sensor readings, and generating a conversion equation or lookup table. Without calibration, the
+control system may respond incorrectly because it is acting on inaccurate position estimates.
+Sampling rate is also important. The sensor must be read at consistent intervals within the main
+control loop. If readings are taken too slowly, the system becomes sluggish and unstable. If
+readings are too fast without proper filtering, noise may dominate the signal. A balanced,
+consistent update rate ensures accurate and stable feedback.
+In a closed-loop control system like Ball and Beam, the sensor is just as important as the motor.
+A powerful actuator cannot compensate for poor measurements. By understanding how
+distance sensors operate, how to interpret and calibrate their signals, and how to manage noise,
+students build the measurement foundation required for stable and responsive control.
+Filtering Techniques
+Filtering is a fundamental requirement in real-world control systems because sensors do not
+operate under ideal conditions. They introduce noise, measurement jitter, dropouts, and
+occasional spikes. In the Ball and Beam system, the HC-SR04 ultrasonic sensor is particularly
+susceptible to these issues. Its readings can fluctuate due to surface reflections, beam angle
+variation, vibration, and electrical noise generated by the motor. If unfiltered measurements are
+used directly in a feedback controller, system performance can degrade significantly. The
+
+=== PAGE 8 ===
+
+derivative term of a PID controller is especially sensitive to this problem because it estimates
+how fast the ball is moving based on changes in position. Since the derivative is based on rate
+of change, even small measurement spikes can produce large derivative outputs, effectively
+amplifying noise and causing aggressive, unstable motor corrections. Proper filtering improves
+stability, reduces oscillation, and produces smoother actuator behavior without sacrificing
+responsiveness.
+One of the most practical filtering techniques for embedded systems is the Exponential Moving
+Average (EMA) filter. The EMA is a first-order low-pass, infinite impulse response (IIR) filter. It is
+called “infinite impulse response” because each output depends on both the current
+measurement and the previous filtered output, meaning past inputs influence the result with
+exponentially decreasing weight. The EMA is defined by the equation yk=αxk+(1−α)yk−1y_k =
+\alpha x_k + (1 - \alpha) y_{k-1}yk =αxk +(1−α)yk−1 , where xkx_kxk is the new measurement,
+yky_kyk is the filtered output, yk−1y_{k-1}yk−1 is the previous filtered output, and α\alphaα is a
+constant between 0 and 1. The parameter α\alphaα determines how aggressive the filter is.
+When α\alphaα is small, the filter heavily smooths the signal and reduces noise but responds
+more slowly to real changes. When α\alphaα is large, the filter responds quickly but provides
+less smoothing. Because the EMA only requires storing the previous output value, it is
+computationally efficient and well-suited for microcontrollers with limited memory. In the Ball and
+Beam system, applying an EMA filter to ultrasonic sensor readings significantly reduces jitter
+and prevents large derivative spikes in the PID controller.
+A more advanced filtering approach is the Kalman filter. The Kalman filter is an optimal recursive
+estimation algorithm used to estimate the state of a linear system from noisy and incomplete
+measurements. While mathematically more complex than the EMA, its core idea is
+straightforward: it combines a prediction of system behavior with the measured sensor value to
+produce a more accurate estimate than either would alone. In the Ball and Beam system, the
+Kalman filter can estimate ball position and even velocity by blending a motion model with noisy
+ultrasonic measurements. It works in two steps: prediction, where the system’s next state is
+estimated based on previous behavior, and correction, where that prediction is adjusted using
+the new measurement. The filter automatically balances how much it trusts the model versus
+the measurement based on predefined uncertainty parameters. For this project, it is acceptable
+to treat the Kalman filter as a structured estimation tool implemented through a library, rather
+than focusing on its full mathematical derivation.
+In practice, the EMA filter is recommended as a starting point due to its simplicity and
+effectiveness. The Kalman filter can be introduced later for improved estimation performance,
+particularly when velocity estimation or high noise levels are present. Regardless of the method
+chosen, filtering is not optional in practical control systems. Clean measurements are essential
+for stable feedback control, and applying proper filtering techniques ensures that the Ball and
+Beam system responds smoothly, accurately, and reliably.
+
+=== PAGE 9 ===
+
+PID Control
+This section focuses on building an intuitive understanding of PID control—what each term
+does, how it affects system behavior, and how to tune the gains manually. In the Ball and Beam
+system, PID control is used to stabilize the ball at a desired position by adjusting the beam
+angle through the motor. Rather than treating PID as a formula to memorize, the goal is to
+understand how each component influences motion and stability.
+A PID controller operates within a closed-loop feedback system. The sensor measures the ball’s
+position (the process variable) and sends that measurement to the controller. The controller
+compares this measured value to the desired position (the setpoint) and computes the error,
+which is simply the difference between the two. Based on this error, the PID algorithm calculates
+a control output that drives the actuator (motor or servo), which changes the beam angle and
+influences the ball’s motion. This loop runs continuously, constantly correcting deviations.
+Conceptually, the system can be described as follows: the setpoint is compared with the
+measured position to produce an error signal. That error enters the PID controller. The PID
+controller generates a control signal that drives the actuator. The actuator affects the physical
+system (beam angle and ball motion). The sensor then measures the new position, and the loop
+repeats.
+The PID controller consists of three components: proportional, integral, and derivative control.
+The proportional term reacts to the present error. If the ball is far from the center, the
+proportional term generates a large corrective action. Increasing the proportional gain (Kp)
+makes the system respond more aggressively. However, too much proportional gain can cause
+oscillation or instability. The integral term reacts to accumulated past error. If the ball settles
+slightly off-center and stays there, the integral term slowly builds up and pushes the system
+toward eliminating steady-state error. Increasing the integral gain (Ki) improves long-term
+accuracy but can introduce overshoot and slow oscillations if too large. The derivative term
+reacts to the rate of change of the error. It predicts future behavior by observing how quickly the
+ball is moving. If the ball is moving rapidly toward the setpoint, the derivative term reduces the
+control effort to prevent overshoot. Increasing the derivative gain (Kd) improves damping and
+reduces oscillations, but too much derivative gain can amplify noise and create erratic behavior.
+Several terms are essential when discussing PID control in the Ball and Beam system. The
+process variable is the measured quantity being controlled—in this case, the ball’s position
+along the beam. The setpoint is the desired value of the process variable, typically the center of
+the beam. The error is the difference between the setpoint and the measured position. The
+actuator is the device that influences the system, such as the motor or servo adjusting the beam
+angle. The control signal is the output of the PID controller that drives the actuator.
+Manual tuning is an important skill in embedded control systems. A common approach is to
+begin with Ki and Kd set to zero and increase Kp until the system responds quickly but begins to
+oscillate slightly. Then, introduce derivative gain to reduce oscillation and improve damping.
+Finally, add a small amount of integral gain to eliminate steady-state error. The goal is to
+
+=== PAGE 10 ===
+
+achieve a balance between responsiveness, stability, and accuracy. Tuning is iterative and
+requires observing system behavior carefully.
+PID controllers are widely used in engineering because they are both simple and powerful. They
+capture the present through proportional action, the past through integration, and anticipate the
+future through differentiation. By developing an intuition for how each gain affects motion,
+students gain the ability to stabilize not only the Ball and Beam system, but also a wide range of
+real-world control systems involving speed, position, temperature, pressure, and voltage.
+
+=== PAGE 11 ===
+
+Project Modules
+Module: Controller Implementation
+In this module, you will bring the Ball and Beam system to life by integrating sensing, filtering,
+and actuation into a complete closed-loop PID controller. By the end of this module, the system
+should stabilize the ball at a desired setpoint and recover from small disturbances.
+Task 1: Implement the Real-Time Control Loop
+Configure a fixed-interval control loop that runs deterministically. The loop should execute at a
+consistent sampling rate (for example, every 10 ms). All sensing, PID computation, and actuator
+updates must occur inside this timed loop.
+Implementation Guidance
+Use a non-blocking timing method (such as millis() or a hardware timer) to maintain a
+constant loop interval
+Store the loop interval in seconds for proper integral and derivative calculation
+Ensure that sensor readings are filtered before entering the PID equation
+Print loop timing and position values to Serial during early testing
+Task 2: Implement the PID Algorithm
+Write the PID controller logic using proportional, integral, and derivative terms. The controller
+should compute the control output based on the error between the setpoint and measured ball
+position.
+Implementation Guidance
+Define global variables for Kp, Ki, and Kd
+Compute error as setpoint minus measured position
+Accumulate the integral term using error multiplied by dt
+Compute the derivative term using the change in error divided by dt
+Store the previous error for the next iteration
+Constrain the control output to safe actuator limits
+Implement integral windup protection by clamping the integral term
+Task 3: Integrate the Motor Driver
+Convert the PID output into a valid actuator command that safely drives the motor or servo
+controlling the beam.
+
+=== PAGE 12 ===
+
+Implementation Guidance
+Map the PID output to a PWM value or servo angle
+Respect mechanical angle limits of the beam
+Ensure smooth transitions when switching motor direction
+Test actuator response independently before running full PID control
+Add safety constraints to prevent sustained maximum output
+Task 4: Tune the Controller
+Tune the PID gains manually to achieve stable and responsive behavior.
+Implementation Guidance
+Begin with Ki and Kd set to zero
+Increase Kp gradually until the system begins to oscillate
+Introduce Kd to reduce oscillation and improve damping
+Add a small Ki to eliminate steady-state error
+Change one gain at a time and observe system response
+Record final gain values and performance observations
+Deliverables and File Structure
+All code for this module must be implemented using the following structure:
+controller.h and controller.cpp handle PID calculations and gain management
+actuator.h and actuator.cpp handle motor or servo control
+sensor.h and sensor.cpp handle filtered position measurement
+main.cpp coordinates system initialization and executes the timed control loop
+No PID calculations, filtering logic, or motor control code should be written directly inside
+main.cpp beyond high-level coordination.
+Add the video labeled Controller Implementation Demo here
