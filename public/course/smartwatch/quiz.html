@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Getting Started | Short Circuit</title>
+    <meta name="description" content="Test your knowledge before building your smartwatch.">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #1a2332;
+            --electric-blue: #00bfff;
+            --coral: #ff6b6b;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #6c757d;
+            --tech-green: #00ff88;
+            --success: #28a745;
+            --warning: #ffc107;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: var(--light-gray);
+            min-height: 100vh;
+            color: var(--navy);
+        }
+
+        .quiz-page {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .quiz-header .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--dark-gray);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-header .back-link:hover {
+            color: var(--electric-blue);
+        }
+
+        .quiz-header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .quiz-header p {
+            color: var(--dark-gray);
+        }
+
+        .quiz-info {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 20px;
+            padding: 16px;
+            background: var(--white);
+            border-radius: 8px;
+        }
+
+        .quiz-info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .quiz-info-item i {
+            color: var(--electric-blue);
+        }
+
+        /* Quiz Container */
+        .quiz-container {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .quiz-progress-bar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 32px;
+        }
+
+        .progress-dot {
+            flex: 1;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            transition: background 0.3s;
+        }
+
+        .progress-dot.completed {
+            background: var(--success);
+        }
+
+        .progress-dot.current {
+            background: var(--electric-blue);
+        }
+
+        .progress-dot.incorrect {
+            background: var(--coral);
+        }
+
+        .question-counter {
+            text-align: center;
+            font-size: 14px;
+            color: var(--dark-gray);
+            margin-bottom: 24px;
+        }
+
+        .question-content {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .question-content img {
+            max-width: 300px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .question-content h2 {
+            font-size: 20px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 20px;
+            background: var(--light-gray);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-item:hover:not(.disabled) {
+            border-color: var(--electric-blue);
+            background: rgba(0, 191, 255, 0.05);
+        }
+
+        .option-item.selected {
+            border-color: var(--electric-blue);
+            background: rgba(0, 191, 255, 0.1);
+        }
+
+        .option-item.correct {
+            border-color: var(--success);
+            background: rgba(40, 167, 69, 0.1);
+        }
+
+        .option-item.incorrect {
+            border-color: var(--coral);
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .option-item.disabled {
+            cursor: default;
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border: 2px solid var(--dark-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .option-item.selected .option-letter {
+            border-color: var(--electric-blue);
+            background: var(--electric-blue);
+            color: white;
+        }
+
+        .option-item.correct .option-letter {
+            border-color: var(--success);
+            background: var(--success);
+            color: white;
+        }
+
+        .option-item.incorrect .option-letter {
+            border-color: var(--coral);
+            background: var(--coral);
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 15px;
+        }
+
+        .option-icon {
+            font-size: 20px;
+            display: none;
+        }
+
+        .option-item.correct .option-icon,
+        .option-item.incorrect .option-icon {
+            display: block;
+        }
+
+        .option-item.correct .option-icon {
+            color: var(--success);
+        }
+
+        .option-item.incorrect .option-icon {
+            color: var(--coral);
+        }
+
+        /* Explanation */
+        .explanation-box {
+            background: rgba(0, 191, 255, 0.1);
+            border-left: 4px solid var(--electric-blue);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-box h4 {
+            font-size: 14px;
+            color: var(--electric-blue);
+            margin-bottom: 8px;
+        }
+
+        .explanation-box.incorrect {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: var(--coral);
+        }
+
+        .explanation-box.incorrect h4 {
+            color: var(--coral);
+        }
+
+        /* Navigation */
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-btn.secondary {
+            background: var(--light-gray);
+            color: var(--navy);
+        }
+
+        .nav-btn.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .nav-btn.primary {
+            background: var(--electric-blue);
+            color: white;
+        }
+
+        .nav-btn.primary:hover {
+            background: #00a3d9;
+        }
+
+        .nav-btn.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Results Page */
+        .quiz-results {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .quiz-results.show {
+            display: block;
+        }
+
+        .results-icon {
+            font-size: 80px;
+            margin-bottom: 24px;
+        }
+
+        .results-icon.passed {
+            color: var(--success);
+        }
+
+        .results-icon.failed {
+            color: var(--coral);
+        }
+
+        .results-score {
+            font-size: 48px;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 8px;
+        }
+
+        .results-score.passed {
+            color: var(--success);
+        }
+
+        .results-score.failed {
+            color: var(--coral);
+        }
+
+        .results-message {
+            font-size: 18px;
+            margin-bottom: 32px;
+        }
+
+        .results-breakdown {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 32px;
+            padding: 20px;
+            background: var(--light-gray);
+            border-radius: 8px;
+        }
+
+        .breakdown-item {
+            text-align: center;
+        }
+
+        .breakdown-item .number {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .breakdown-item .label {
+            font-size: 13px;
+            color: var(--dark-gray);
+        }
+
+        .breakdown-item.correct .number {
+            color: var(--success);
+        }
+
+        .breakdown-item.incorrect .number {
+            color: var(--coral);
+        }
+
+        .results-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        /* Question Container (hide when showing results) */
+        .question-container {
+            display: block;
+        }
+
+        .question-container.hide {
+            display: none;
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        
+        /* Extra small devices (< 375px) */
+        @media (max-width: 374px) {
+            .quiz-page {
+                padding: 12px 10px;
+            }
+            
+            .quiz-header h1 {
+                font-size: 20px;
+            }
+            
+            .quiz-header p {
+                font-size: 13px;
+            }
+            
+            .quiz-container {
+                padding: 14px;
+                border-radius: 10px;
+            }
+            
+            .quiz-info {
+                padding: 12px;
+                gap: 8px;
+            }
+            
+            .quiz-info-item {
+                font-size: 12px;
+            }
+            
+            .progress-dot {
+                height: 4px;
+            }
+            
+            .question-counter {
+                font-size: 12px;
+            }
+            
+            .question-content h2 {
+                font-size: 16px;
+                line-height: 1.4;
+            }
+            
+            .question-content img {
+                max-width: 100%;
+            }
+            
+            .option-item {
+                padding: 12px 14px;
+                gap: 12px;
+                border-radius: 8px;
+            }
+            
+            .option-letter {
+                width: 26px;
+                height: 26px;
+                font-size: 12px;
+            }
+            
+            .option-text {
+                font-size: 13px;
+            }
+            
+            .option-icon {
+                font-size: 16px;
+            }
+            
+            .explanation-box {
+                padding: 12px 14px;
+                font-size: 13px;
+            }
+            
+            .nav-btn {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+            
+            .results-icon {
+                font-size: 56px;
+            }
+            
+            .results-score {
+                font-size: 36px;
+            }
+            
+            .results-message {
+                font-size: 15px;
+            }
+            
+            .breakdown-item .number {
+                font-size: 22px;
+            }
+        }
+        
+        /* Small devices (375px - 639px) */
+        @media (max-width: 639px) {
+            .quiz-page {
+                padding: 16px 14px;
+            }
+            
+            .quiz-header {
+                margin-bottom: 24px;
+            }
+            
+            .quiz-header h1 {
+                font-size: 22px;
+            }
+            
+            .quiz-container {
+                padding: 18px;
+            }
+            
+            .quiz-info {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+            }
+            
+            .quiz-info-item {
+                justify-content: center;
+                padding: 8px 0;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+            }
+            
+            .quiz-info-item:last-child {
+                border-bottom: none;
+            }
+            
+            .question-content h2 {
+                font-size: 17px;
+            }
+            
+            .option-item {
+                padding: 14px 16px;
+                min-height: 52px;
+            }
+            
+            .quiz-navigation {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+                min-height: 48px;
+            }
+            
+            .results-breakdown {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .results-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .results-actions .nav-btn {
+                width: 100%;
+            }
+        }
+        
+        /* Medium devices (640px - 767px) */
+        @media (min-width: 640px) and (max-width: 767px) {
+            .quiz-page {
+                padding: 24px 20px;
+            }
+            
+            .quiz-info {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 16px 32px;
+            }
+            
+            .quiz-navigation {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            
+            .nav-btn {
+                width: auto;
+                min-width: 140px;
+            }
+            
+            .results-breakdown {
+                flex-direction: row;
+            }
+            
+            .results-actions {
+                flex-direction: row;
+            }
+        }
+        
+        /* Tablets (768px - 1023px) */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .quiz-page {
+                padding: 32px 24px;
+            }
+            
+            .quiz-container {
+                padding: 28px;
+            }
+        }
+        
+        /* Touch device optimizations */
+        @media (pointer: coarse) {
+            .option-item {
+                min-height: 56px;
+            }
+            
+            .option-item:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+            
+            .nav-btn {
+                min-height: 48px;
+            }
+            
+            .nav-btn:active {
+                transform: scale(0.97);
+            }
+        }
+        
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Safe area for notched devices */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .quiz-page {
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-page">
+        <div class="quiz-header">
+            <a href="/course/smartwatch/" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Course
+            </a>
+            <h1>Quiz: Getting Started</h1>
+            <p>Test your knowledge before we begin building</p>
+            
+            <div class="quiz-info">
+                <div class="quiz-info-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>5 Questions</span>
+                </div>
+                <div class="quiz-info-item">
+                    <i class="fas fa-clock"></i>
+                    <span>~10 minutes</span>
+                </div>
+                <div class="quiz-info-item">
+                    <i class="fas fa-trophy"></i>
+                    <span>70% to pass</span>
+                </div>
+                <div class="quiz-info-item">
+                    <i class="fas fa-redo"></i>
+                    <span>Unlimited attempts</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="quiz-container">
+            <!-- Progress Bar -->
+            <div class="quiz-progress-bar" id="progressBar">
+                <div class="progress-dot current"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+            </div>
+
+            <!-- Question Container -->
+            <div class="question-container" id="questionContainer">
+                <div class="question-counter">
+                    Question <span id="currentQuestion">1</span> of <span id="totalQuestions">5</span>
+                </div>
+
+                <div class="question-content">
+                    <img id="questionImage" src="" alt="" style="display: none;">
+                    <h2 id="questionText">What is the recommended soldering temperature for this project?</h2>
+                </div>
+
+                <div class="options-list" id="optionsList">
+                    <div class="option-item" data-value="A" onclick="selectOption(this)">
+                        <div class="option-letter">A</div>
+                        <div class="option-text">200C / 390F</div>
+                        <i class="fas fa-check option-icon"></i>
+                    </div>
+                    <div class="option-item" data-value="B" onclick="selectOption(this)">
+                        <div class="option-letter">B</div>
+                        <div class="option-text">350C / 660F</div>
+                        <i class="fas fa-check option-icon"></i>
+                    </div>
+                    <div class="option-item" data-value="C" onclick="selectOption(this)">
+                        <div class="option-letter">C</div>
+                        <div class="option-text">450C / 840F</div>
+                        <i class="fas fa-times option-icon"></i>
+                    </div>
+                    <div class="option-item" data-value="D" onclick="selectOption(this)">
+                        <div class="option-letter">D</div>
+                        <div class="option-text">500C / 930F</div>
+                        <i class="fas fa-times option-icon"></i>
+                    </div>
+                </div>
+
+                <div class="explanation-box" id="explanationBox">
+                    <h4>Explanation</h4>
+                    <p id="explanationText">350C (660F) is the optimal temperature for lead-free solder and safe for the electronic components in this kit.</p>
+                </div>
+
+                <div class="quiz-navigation">
+                    <button class="nav-btn secondary" id="prevBtn" onclick="prevQuestion()" disabled>
+                        <i class="fas fa-arrow-left"></i>
+                        Previous
+                    </button>
+                    <button class="nav-btn primary" id="checkBtn" onclick="checkAnswer()" disabled>
+                        Check Answer
+                    </button>
+                    <button class="nav-btn primary" id="nextBtn" onclick="nextQuestion()" style="display: none;">
+                        Next Question
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="nav-btn success" id="finishBtn" onclick="showResults()" style="display: none;">
+                        See Results
+                        <i class="fas fa-trophy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="quiz-results" id="resultsContainer">
+                <i class="fas fa-trophy results-icon passed" id="resultsIcon"></i>
+                <div class="results-score passed" id="resultsScore">80%</div>
+                <p class="results-message" id="resultsMessage">Great job! You passed the quiz.</p>
+
+                <div class="results-breakdown">
+                    <div class="breakdown-item correct">
+                        <div class="number" id="correctCount">4</div>
+                        <div class="label">Correct</div>
+                    </div>
+                    <div class="breakdown-item incorrect">
+                        <div class="number" id="incorrectCount">1</div>
+                        <div class="label">Incorrect</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="number" id="totalPoints">4/5</div>
+                        <div class="label">Points</div>
+                    </div>
+                </div>
+
+                <div class="results-actions">
+                    <button class="nav-btn secondary" onclick="retryQuiz()">
+                        <i class="fas fa-redo"></i>
+                        Try Again
+                    </button>
+                    <button class="nav-btn success" id="continueBtn" onclick="continueCourse()">
+                        Continue to Next Lesson
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data
+        const quizData = {
+            lessonId: 'lesson-1-5',
+            courseId: 'smartwatch-course',
+            passingScore: 70,
+            questions: [
+                {
+                    id: 'q1-1',
+                    text: 'What is the recommended soldering temperature for this project?',
+                    type: 'multiple_choice',
+                    options: ['200C / 390F', '350C / 660F', '450C / 840F', '500C / 930F'],
+                    correct: 1,
+                    explanation: '350C (660F) is the optimal temperature for lead-free solder and safe for the electronic components in this kit.'
+                },
+                {
+                    id: 'q1-2',
+                    text: 'LiPo batteries are safe to puncture as long as they are not charged.',
+                    type: 'true_false',
+                    options: ['True', 'False'],
+                    correct: 1,
+                    explanation: 'LiPo batteries should NEVER be punctured regardless of charge level. They contain flammable electrolyte that can cause fires.'
+                },
+                {
+                    id: 'q1-3',
+                    text: 'What microcontroller is included in your kit?',
+                    type: 'multiple_choice',
+                    options: ['Arduino Uno', 'ESP32-S3', 'Raspberry Pi Pico', 'STM32'],
+                    correct: 1,
+                    explanation: 'The ESP32-S3 is a powerful microcontroller with built-in WiFi and Bluetooth, perfect for wearable projects.'
+                },
+                {
+                    id: 'q1-4',
+                    text: 'Which of these is NOT included in your kit?',
+                    type: 'multiple_choice',
+                    options: ['Soldering iron', 'Heart rate sensor', 'Display module', 'Watch strap'],
+                    correct: 0,
+                    explanation: 'The soldering iron is a tool you need to provide yourself - it is not included in the kit.'
+                },
+                {
+                    id: 'q1-5',
+                    text: 'What should you do if a LiPo battery starts swelling?',
+                    type: 'multiple_choice',
+                    options: [
+                        'Continue using it carefully',
+                        'Put it in the freezer',
+                        'Move it to a non-flammable surface and do not use it',
+                        'Puncture it to release the gas'
+                    ],
+                    correct: 2,
+                    explanation: 'A swelling LiPo is dangerous. Move it away from flammable materials and dispose of it properly at an electronics recycling center.'
+                }
+            ]
+        };
+
+        // State
+        let currentQuestionIndex = 0;
+        let selectedAnswer = null;
+        let answered = false;
+        let answers = [];
+        let score = 0;
+
+        // Initialize
+        function init() {
+            loadQuestion(0);
+            updateProgressBar();
+        }
+
+        // Load question
+        function loadQuestion(index) {
+            const question = quizData.questions[index];
+            currentQuestionIndex = index;
+            selectedAnswer = null;
+            answered = answers[index] !== undefined;
+
+            // Update counter
+            document.getElementById('currentQuestion').textContent = index + 1;
+            document.getElementById('totalQuestions').textContent = quizData.questions.length;
+
+            // Update question text
+            document.getElementById('questionText').textContent = question.text;
+
+            // Handle image if present
+            const imageEl = document.getElementById('questionImage');
+            if (question.image) {
+                imageEl.src = question.image;
+                imageEl.style.display = 'block';
+            } else {
+                imageEl.style.display = 'none';
+            }
+
+            // Build options
+            const optionsList = document.getElementById('optionsList');
+            const letters = ['A', 'B', 'C', 'D'];
+            optionsList.innerHTML = question.options.map((opt, i) => `
+                <div class="option-item ${getOptionClass(index, i)}" data-value="${i}" onclick="selectOption(this)">
+                    <div class="option-letter">${letters[i]}</div>
+                    <div class="option-text">${opt}</div>
+                    <i class="fas ${question.correct === i ? 'fa-check' : 'fa-times'} option-icon"></i>
+                </div>
+            `).join('');
+
+            // Show explanation if already answered
+            if (answered) {
+                document.getElementById('explanationBox').classList.add('show');
+                document.getElementById('explanationText').textContent = question.explanation;
+                
+                const isCorrect = answers[index] === question.correct;
+                document.getElementById('explanationBox').classList.toggle('incorrect', !isCorrect);
+                
+                // Disable options
+                optionsList.querySelectorAll('.option-item').forEach(opt => {
+                    opt.classList.add('disabled');
+                });
+            } else {
+                document.getElementById('explanationBox').classList.remove('show');
+            }
+
+            // Update buttons
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('checkBtn').style.display = answered ? 'none' : 'flex';
+            document.getElementById('checkBtn').disabled = true;
+            
+            const isLastQuestion = index === quizData.questions.length - 1;
+            const allAnswered = answers.length === quizData.questions.length;
+            
+            document.getElementById('nextBtn').style.display = (answered && !isLastQuestion) ? 'flex' : 'none';
+            document.getElementById('finishBtn').style.display = (answered && isLastQuestion) ? 'flex' : 'none';
+
+            updateProgressBar();
+        }
+
+        // Get option class based on state
+        function getOptionClass(questionIndex, optionIndex) {
+            if (answers[questionIndex] === undefined) return '';
+            
+            const question = quizData.questions[questionIndex];
+            const userAnswer = answers[questionIndex];
+            
+            if (optionIndex === question.correct) {
+                return 'correct disabled';
+            }
+            if (optionIndex === userAnswer && userAnswer !== question.correct) {
+                return 'incorrect disabled';
+            }
+            return 'disabled';
+        }
+
+        // Select option
+        function selectOption(element) {
+            if (answered) return;
+
+            // Remove previous selection
+            document.querySelectorAll('.option-item').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            // Select new option
+            element.classList.add('selected');
+            selectedAnswer = parseInt(element.dataset.value);
+            
+            // Enable check button
+            document.getElementById('checkBtn').disabled = false;
+        }
+
+        // Check answer
+        function checkAnswer() {
+            if (selectedAnswer === null) return;
+
+            const question = quizData.questions[currentQuestionIndex];
+            const isCorrect = selectedAnswer === question.correct;
+            
+            answered = true;
+            answers[currentQuestionIndex] = selectedAnswer;
+            
+            if (isCorrect) {
+                score++;
+            }
+
+            // Show correct/incorrect styling
+            const options = document.querySelectorAll('.option-item');
+            options.forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === question.correct) {
+                    opt.classList.add('correct');
+                    opt.classList.remove('selected');
+                } else if (i === selectedAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                    opt.classList.remove('selected');
+                }
+            });
+
+            // Show explanation
+            const explanationBox = document.getElementById('explanationBox');
+            explanationBox.classList.add('show');
+            explanationBox.classList.toggle('incorrect', !isCorrect);
+            document.getElementById('explanationText').textContent = question.explanation;
+
+            // Update buttons
+            document.getElementById('checkBtn').style.display = 'none';
+            
+            const isLastQuestion = currentQuestionIndex === quizData.questions.length - 1;
+            document.getElementById('nextBtn').style.display = isLastQuestion ? 'none' : 'flex';
+            document.getElementById('finishBtn').style.display = isLastQuestion ? 'flex' : 'none';
+
+            updateProgressBar();
+        }
+
+        // Previous question
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                loadQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        // Next question
+        function nextQuestion() {
+            if (currentQuestionIndex < quizData.questions.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        // Update progress bar
+        function updateProgressBar() {
+            const dots = document.querySelectorAll('.progress-dot');
+            dots.forEach((dot, i) => {
+                dot.className = 'progress-dot';
+                if (answers[i] !== undefined) {
+                    const question = quizData.questions[i];
+                    dot.classList.add(answers[i] === question.correct ? 'completed' : 'incorrect');
+                } else if (i === currentQuestionIndex) {
+                    dot.classList.add('current');
+                }
+            });
+        }
+
+        // Show results
+        function showResults() {
+            document.getElementById('questionContainer').classList.add('hide');
+            document.getElementById('resultsContainer').classList.add('show');
+
+            const percentage = Math.round((score / quizData.questions.length) * 100);
+            const passed = percentage >= quizData.passingScore;
+
+            document.getElementById('resultsScore').textContent = percentage + '%';
+            document.getElementById('resultsScore').className = 'results-score ' + (passed ? 'passed' : 'failed');
+            
+            document.getElementById('resultsIcon').className = 'fas results-icon ' + (passed ? 'fa-trophy passed' : 'fa-times-circle failed');
+            
+            document.getElementById('resultsMessage').textContent = passed 
+                ? 'Great job! You passed the quiz.' 
+                : 'You did not pass. Review the material and try again.';
+
+            document.getElementById('correctCount').textContent = score;
+            document.getElementById('incorrectCount').textContent = quizData.questions.length - score;
+            document.getElementById('totalPoints').textContent = `${score}/${quizData.questions.length}`;
+
+            document.getElementById('continueBtn').style.display = passed ? 'flex' : 'none';
+
+            // Save results to server
+            saveQuizResults(percentage, passed);
+        }
+
+        // Save quiz results
+        async function saveQuizResults(percentage, passed) {
+            try {
+                // Check if user is logged in first
+                const authResponse = await fetch('/api/auth/me', {
+                    credentials: 'include'
+                });
+                const authData = await authResponse.json();
+                
+                if (!authData.user) {
+                    console.log('User not logged in - quiz results saved locally only');
+                    localStorage.setItem(`quiz-${quizData.lessonId}`, JSON.stringify({
+                        score, answers, percentage, passed, timestamp: Date.now()
+                    }));
+                    return;
+                }
+                
+                // Submit to API
+                const response = await fetch('/api/course/quiz', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        lessonId: quizData.lessonId,
+                        courseId: quizData.courseId,
+                        answers: answers
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Quiz submitted successfully:', result);
+                } else {
+                    console.error('Quiz submission failed:', await response.text());
+                }
+            } catch (error) {
+                console.error('Failed to save quiz results:', error);
+                // Save locally as backup
+                localStorage.setItem(`quiz-${quizData.lessonId}`, JSON.stringify({
+                    score, answers, percentage, passed, timestamp: Date.now()
+                }));
+            }
+        }
+
+        // Retry quiz
+        function retryQuiz() {
+            currentQuestionIndex = 0;
+            selectedAnswer = null;
+            answered = false;
+            answers = [];
+            score = 0;
+
+            document.getElementById('questionContainer').classList.remove('hide');
+            document.getElementById('resultsContainer').classList.remove('show');
+
+            loadQuestion(0);
+        }
+
+        // Continue to next lesson
+        function continueCourse() {
+            window.location.href = '/course/smartwatch/?lesson=lesson-2-1';
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

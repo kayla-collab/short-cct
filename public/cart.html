@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart | Short Circuit</title>
+    <meta name="description" content="Review your cart and checkout. Engineering kits for hands-on learning.">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <!-- Shared Responsive & Iframe-Friendly Styles -->
+    <link rel="stylesheet" href="/css/responsive.css">
+    <!-- Shared Auth Header Styles -->
+    <link rel="stylesheet" href="/css/auth-header.css">
+    <!-- Iframe Detection Script (load early) -->
+    <script src="/js/iframe-detect.js"></script>
+    <!-- Stripe.js for secure payment processing -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        :root {
+            --navy: #1a2332;
+            --electric-blue: #00bfff;
+            --coral: #ff6b6b;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #6c757d;
+            --tech-green: #00ff88;
+        }
+
+        /* Loading Screen */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--navy);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-circuit {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .loader-circuit::before,
+        .loader-circuit::after {
+            content: '';
+            position: absolute;
+            border: 3px solid transparent;
+            border-radius: 50%;
+        }
+
+        .loader-circuit::before {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-top-color: var(--electric-blue);
+            animation: loaderSpin 1s linear infinite;
+        }
+
+        .loader-circuit::after {
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border-bottom-color: var(--coral);
+            animation: loaderSpin 0.8s linear infinite reverse;
+        }
+
+        .loader-bolt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            animation: loaderPulse 1s ease-in-out infinite;
+        }
+
+        .loader-text {
+            margin-top: 20px;
+            color: var(--electric-blue);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .loader-bar {
+            width: 150px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-top: 15px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .loader-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--electric-blue), var(--coral));
+            animation: loaderBar 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loaderSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes loaderPulse {
+            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
+        }
+
+        @keyframes loaderBar {
+            0% { width: 0%; margin-left: 0; }
+            50% { width: 100%; margin-left: 0; }
+            100% { width: 0%; margin-left: 100%; }
+        }
+
+        /* Page Transition */
+        .page-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .page-content.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.6;
+            color: var(--navy);
+            background: var(--light-gray);
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--navy);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 36px;
+            width: auto;
+            margin-right: 8px;
+        }
+
+        .logo span {
+            color: var(--electric-blue);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--electric-blue);
+        }
+
+        .cart-icon {
+            position: relative;
+            color: var(--white);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--coral);
+            color: var(--white);
+            font-size: 11px;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--coral);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #e55a5a;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--navy);
+            border: 2px solid var(--navy);
+        }
+
+        .btn-outline:hover {
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        .btn-checkout {
+            background: var(--tech-green);
+            color: var(--navy);
+            font-size: 16px;
+            padding: 16px 32px;
+        }
+
+        .btn-checkout:hover {
+            background: #00e07a;
+            transform: translateY(-2px);
+        }
+
+        /* Cart Header */
+        .cart-header {
+            background: var(--navy);
+            padding: 40px 0;
+            color: var(--white);
+        }
+
+        .cart-header h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .cart-header p {
+            color: var(--electric-blue);
+            font-size: 14px;
+        }
+
+        /* Cart Layout */
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 30px;
+            padding: 40px 0;
+        }
+
+        /* Cart Items */
+        .cart-items {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .cart-items-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .cart-items-header h2 {
+            font-size: 20px;
+        }
+
+        .clear-cart {
+            color: var(--coral);
+            font-size: 14px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-weight: 600;
+        }
+
+        .clear-cart:hover {
+            text-decoration: underline;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 100px 1fr auto;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item-image {
+            width: 100px;
+            height: 100px;
+            background: var(--light-gray);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-item-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .cart-item-details h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-details .category {
+            color: var(--electric-blue);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .cart-item-details .price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--coral);
+        }
+
+        .cart-item-details .original-price {
+            color: var(--dark-gray);
+            text-decoration: line-through;
+            font-size: 14px;
+            margin-right: 8px;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 15px;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .quantity-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--light-gray);
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .quantity-input {
+            width: 50px;
+            height: 36px;
+            text-align: center;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .quantity-input:focus {
+            outline: none;
+        }
+
+        .remove-btn {
+            color: var(--dark-gray);
+            font-size: 13px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .remove-btn:hover {
+            color: var(--coral);
+        }
+
+        .item-total {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        /* Empty Cart */
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-cart-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-cart h2 {
+            margin-bottom: 10px;
+            color: var(--navy);
+        }
+
+        .empty-cart p {
+            color: var(--dark-gray);
+            margin-bottom: 30px;
+        }
+
+        /* Cart Summary */
+        .cart-summary {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .cart-summary h2 {
+            font-size: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        .summary-row.total {
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid var(--navy);
+        }
+
+        .summary-row .label {
+            color: var(--dark-gray);
+        }
+
+        .summary-row.total .label {
+            color: var(--navy);
+        }
+
+        .summary-row .value {
+            font-weight: 600;
+        }
+
+        .savings {
+            color: var(--tech-green);
+        }
+
+        .promo-section {
+            margin: 25px 0;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+
+        .promo-section label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .promo-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .promo-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .promo-input:focus {
+            outline: none;
+            border-color: var(--electric-blue);
+        }
+
+        .promo-btn {
+            padding: 12px 20px;
+            background: var(--navy);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .promo-btn:hover {
+            background: #2a3a4d;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .secure-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: var(--dark-gray);
+        }
+
+        .payment-icons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .payment-icons svg {
+            opacity: 0.6;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--navy);
+            color: var(--white);
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        footer p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        footer a {
+            color: var(--electric-blue);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--navy);
+            color: var(--white);
+            padding: 15px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .cart-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-summary {
+                position: relative;
+                top: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .cart-item {
+                grid-template-columns: 80px 1fr;
+                gap: 15px;
+            }
+
+            .cart-item-actions {
+                grid-column: span 2;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .cart-header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-circuit">
+            <span class="loader-bolt">&#9889;</span>
+        </div>
+        <div class="loader-text">Loading</div>
+        <div class="loader-bar">
+            <div class="loader-bar-fill"></div>
+        </div>
+    </div>
+
+    <div class="page-content" id="pageContent">
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <a href="index.html" class="logo"><img src="/images/logo.png" alt="Short Circuit Logo">SHORT CIRCUIT</a>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="index.html#projects">Projects</a></li>
+                    <!-- HIDDEN: <li><a href="challenge.html">Challenge</a></li> -->
+                    <li><a href="index.html#how-it-works">How it Works</a></li>
+                    <li><a href="shop.html">Shop</a></li>
+                </ul>
+                <div class="nav-right">
+                    <div class="nav-actions">
+                        <!-- Guest Actions (shown when not logged in) -->
+                        <div class="guest-actions" id="guestActions">
+                            <a href="login.html" class="btn btn-outline">Login</a>
+                            <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                        </div>
+                        
+                        <!-- User Menu (shown when logged in) -->
+                        <div class="user-menu" id="userMenu">
+                            <button class="user-menu-btn" id="userMenuBtn">
+                                <span class="user-icon" id="userInitial">U</span>
+                                <span id="userDisplayName">User</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M6 9l6 6 6-6"/>
+                                </svg>
+                            </button>
+                            <div class="user-dropdown" id="userDropdown">
+                                <div class="user-dropdown-header">
+                                    <div class="user-name" id="dropdownUserName">User Name</div>
+                                    <div class="user-email" id="dropdownUserEmail">user@email.com</div>
+                                    <div class="admin-badge" id="adminBadge" style="display: none;">Admin</div>
+                                </div>
+                                <div class="user-dropdown-menu">
+                                    <a href="/account/">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="12" cy="7" r="4"/>
+                                        </svg>
+                                        My Account
+                                    </a>
+                                    <a href="/account/">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                            <path d="M2 17l10 5 10-5"/>
+                                            <path d="M2 12l10 5 10-5"/>
+                                        </svg>
+                                        My Projects
+                                    </a>
+                                    <a href="/orders.html">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                            <line x1="3" y1="6" x2="21" y2="6"/>
+                                            <path d="M16 10a4 4 0 0 1-8 0"/>
+                                        </svg>
+                                        My Orders
+                                    </a>
+                                    
+                                    <!-- Course Access Section (shown for users with course access) -->
+                                    <div class="admin-section" id="courseSection" style="display: none;">
+                                        <a href="/course/smartwatch/" id="smartwatchCourseLink" style="display: none;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                                <line x1="12" y1="17" x2="12" y2="21"/>
+                                            </svg>
+                                            Smartwatch Course
+                                        </a>
+                                        <a href="/course/ballbeam/" id="ballbeamCourseLink" style="display: none;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="10"/>
+                                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                                <circle cx="12" cy="12" r="3"/>
+                                            </svg>
+                                            Ball and Beam Course
+                                        </a>
+                                    </div>
+                                    
+                                    <!-- Admin Section (shown for admins only) -->
+                                    <div class="admin-section" id="adminSection" style="display: none;">
+                                        <a href="/admin/">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="3"/>
+                                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                                            </svg>
+                                            Admin Dashboard
+                                        </a>
+                                    </div>
+                                    
+                                    <a href="#" class="logout-btn" onclick="logoutUser(); return false;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                            <polyline points="16 17 21 12 16 7"/>
+                                            <line x1="21" y1="12" x2="9" y2="12"/>
+                                        </svg>
+                                        Logout
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="cart.html" class="cart-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                    <div class="hamburger" id="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cart Header -->
+    <section class="cart-header">
+        <div class="container">
+            <h1>Your Cart</h1>
+            <p id="itemCountText">0 items in your cart</p>
+        </div>
+    </section>
+
+    <!-- Cart Content -->
+    <div class="container">
+        <div class="cart-layout">
+            <!-- Cart Items -->
+            <div class="cart-items">
+                <div class="cart-items-header">
+                    <h2>Cart Items</h2>
+                    <button class="clear-cart" onclick="clearCart()">Clear All</button>
+                </div>
+                <div id="cartItemsContainer">
+                    <!-- Cart items will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <!-- Cart Summary -->
+            <div class="cart-summary">
+                <h2>Order Summary</h2>
+                <div class="summary-row">
+                    <span class="label">Subtotal</span>
+                    <span class="value" id="subtotal">$0.00</span>
+                </div>
+                <div class="summary-row" id="discountRow" style="display: none;">
+                    <span class="label" id="discountLabel">Discount</span>
+                    <span class="value savings" id="discount">-$0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="label">Shipping</span>
+                    <span class="value" id="shipping">Calculated at checkout</span>
+                </div>
+                <div class="summary-row total">
+                    <span class="label">Total</span>
+                    <span class="value" id="total">$0.00</span>
+                </div>
+
+                <div class="promo-section">
+                    <div style="background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 191, 255, 0.1)); border: 2px solid #00cc6a; border-radius: 8px; padding: 12px; margin-bottom: 15px; text-align: center;">
+                        <span style="color: #00cc6a; font-weight: 700; font-size: 14px;">CIRCUIT25 Applied - 25% OFF</span>
+                    </div>
+                    <label for="promoCode">Have another code?</label>
+                    <div class="promo-input-group">
+                        <input type="text" id="promoCode" class="promo-input" placeholder="CIRCUIT25" value="CIRCUIT25">
+                        <button class="promo-btn" onclick="applyPromo()">Apply</button>
+                    </div>
+                </div>
+
+                <button class="btn btn-checkout checkout-btn" onclick="proceedToCheckout()">
+                    Proceed to Checkout
+                </button>
+
+                <div class="secure-note">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    Secure checkout powered by Stripe
+                </div>
+
+                <div class="payment-icons">
+                    <svg viewBox="0 0 38 24" width="38" height="24"><path opacity=".07" d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.3 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.3-3-3-3z"/><path fill="#fff" d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32"/><path d="M28.3 10.1H28c-.4 1-.7 1.5-1 3h1.9c-.3-1.5-.3-2.2-.6-3zm2.9 5.9h-1.7c-.1 0-.1 0-.2-.1l-.2-.9-.1-.2h-2.4c-.1 0-.2 0-.2.2l-.3.9c0 .1-.1.1-.1.1h-2.1l.2-.5L27 8.7c0-.5.3-.7.8-.7h1.5c.1 0 .2 0 .2.2l1.4 6.5c.1.4.2.7.2 1.1zm-13.4-.3l.4-1.8c.1 0 .2.1.2.1.7.3 1.4.5 2.1.4.2 0 .5-.1.7-.2.5-.2.5-.7.1-1.1-.2-.2-.5-.3-.8-.5-.4-.2-.8-.4-1.1-.7-1.2-1-.8-2.4-.1-3.1.6-.4.9-.8 1.7-.8 1.2 0 2.5 0 3.1.2h.1c-.1.6-.2 1.1-.4 1.7-.5-.2-1-.4-1.5-.4-.3 0-.6 0-.9.1-.2 0-.3.1-.4.2-.2.2-.2.5 0 .7l.5.4c.4.2.8.4 1.1.6.5.3 1 .8 1.1 1.4.2.9-.1 1.7-.9 2.3-.5.4-.7.6-1.4.6-1.4 0-2.5.1-3.4-.2-.1.2-.1.2-.2.1zm-3.5.3c.1-.7.1-.7.2-1 .5-2.2 1-4.5 1.4-6.7.1-.2.1-.3.3-.3H18c-.2 1.2-.4 2.1-.7 3.2-.3 1.5-.6 3-1 4.5 0 .2-.1.2-.3.2M5 8.2c0-.1.2-.2.3-.2h3.4c.5 0 .9.3 1 .8l.9 4.4c0 .1 0 .1.1.2 0-.1.1-.1.1-.1l2.1-5.1c-.1-.1 0-.2.1-.2h2.1c0 .1 0 .1-.1.2l-3.1 7.3c-.1.2-.1.3-.2.4-.1.1-.3 0-.5 0H9.7c-.1 0-.2 0-.2-.2L7.9 9.5c-.2-.2-.5-.5-.9-.6-.6-.3-1.7-.5-1.9-.5L5 8.2z" fill="#142688"/></svg>
+                    <svg viewBox="0 0 38 24" width="38" height="24"><path opacity=".07" d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.3 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.3-3-3-3z"/><path fill="#fff" d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32"/><circle fill="#EB001B" cx="15" cy="12" r="7"/><circle fill="#F79E1B" cx="23" cy="12" r="7"/><path fill="#FF5F00" d="M22 12c0-2.4-1.2-4.5-3-5.7-1.8 1.3-3 3.4-3 5.7s1.2 4.5 3 5.7c1.8-1.2 3-3.3 3-5.7z"/></svg>
+                    <svg viewBox="0 0 38 24" width="38" height="24"><path fill="#000" d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.3 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.3-3-3-3Z" opacity=".07"/><path fill="#006FCF" d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32Z"/><path fill="#FFF" d="M22.012 19.936v-8.421L37 11.528v2.326l-1.732 1.852L37 17.573v2.375h-2.766l-1.47-1.622-1.46 1.628-9.292-.02Z"/></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Short Circuit. All rights reserved.</p>
+            <p style="font-size: 14px; margin-top: 10px;">
+                <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms of Service</a>
+            </p>
+        </div>
+    </footer>
+    </div><!-- End page-content -->
+
+    <script>
+        // Product Data - Regular prices (no pre-applied discount)
+        const products = {
+            'smartwatch': {
+                id: 'smartwatch',
+                name: 'Smartwatch Project Kit',
+                category: 'Embedded',
+                price: 115.00,
+                image: 'images/smartwatch-screens.png',
+                link: 'smartwatch.html'
+            },
+            'ballbeam': {
+                id: 'ballbeam',
+                name: 'Ball and Beam Kit',
+                category: 'Controls, Mechanical',
+                price: 115.00,
+                image: 'images/ballbeam-side.png',
+                link: 'ballbeam.html'
+            }
+        };
+
+        // Promo code state
+        let appliedPromoCode = null;
+        let discountPercent = 0;
+
+        // Cart State
+        let cart = JSON.parse(localStorage.getItem('shortCircuitCart')) || [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCart();
+            updateCartCount();
+            checkSavedPromo();
+        });
+
+        // Render Cart
+        function renderCart() {
+            const container = document.getElementById('cartItemsContainer');
+            
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-cart">
+                        <div class="empty-cart-icon">🛒</div>
+                        <h2>Your cart is empty</h2>
+                        <p>Looks like you haven't added any projects yet.</p>
+                        <a href="shop.html" class="btn btn-primary">Browse Projects</a>
+                    </div>
+                `;
+                document.querySelector('.clear-cart').style.display = 'none';
+            } else {
+                document.querySelector('.clear-cart').style.display = 'block';
+                container.innerHTML = cart.map((item, index) => `
+                    <div class="cart-item">
+                        <div class="cart-item-image">
+                            <a href="${item.link}">
+                                <img src="${item.image}" alt="${item.name}">
+                            </a>
+                        </div>
+                        <div class="cart-item-details">
+                            <div class="category">${item.category}</div>
+                            <h3><a href="${item.link}" style="text-decoration: none; color: inherit;">${item.name}</a></h3>
+                            <div class="price">
+                                $${(item.price || item.originalPrice || 115.00).toFixed(2)}
+                            </div>
+                        </div>
+                        <div class="cart-item-actions">
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
+                                <input type="number" class="quantity-input" value="${item.quantity}" min="1" onchange="setQuantity(${index}, this.value)">
+                                <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                            </div>
+                            <div class="item-total">$${((item.price || item.originalPrice || 115.00) * item.quantity).toFixed(2)}</div>
+                            <button class="remove-btn" onclick="removeItem(${index})">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            updateSummary();
+            updateItemCountText();
+        }
+
+        // Update Summary - discount only applied when promo code is entered
+        function updateSummary() {
+            // Calculate subtotal using current price (no pre-applied discount)
+            const subtotal = cart.reduce((sum, item) => sum + ((item.price || item.originalPrice || 115.00) * item.quantity), 0);
+            
+            // Calculate discount only if promo code is applied
+            const discountAmount = appliedPromoCode ? (subtotal * discountPercent / 100) : 0;
+            const total = subtotal - discountAmount;
+
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            
+            // Show/hide discount row based on whether promo is applied
+            const discountRow = document.getElementById('discountRow');
+            if (appliedPromoCode && discountAmount > 0) {
+                discountRow.style.display = 'flex';
+                document.getElementById('discountLabel').textContent = `Discount (${discountPercent}%)`;
+                document.getElementById('discount').textContent = `-$${discountAmount.toFixed(2)}`;
+            } else {
+                discountRow.style.display = 'none';
+            }
+            
+            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+        }
+
+        // Update Cart Count
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        // Update Item Count Text
+        function updateItemCountText() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('itemCountText').textContent = `${count} item${count !== 1 ? 's' : ''} in your cart`;
+        }
+
+        // Update Quantity
+        function updateQuantity(index, change) {
+            cart[index].quantity += change;
+            if (cart[index].quantity < 1) cart[index].quantity = 1;
+            saveCart();
+            renderCart();
+            updateCartCount();
+        }
+
+        // Set Quantity
+        function setQuantity(index, value) {
+            const qty = parseInt(value);
+            if (qty >= 1) {
+                cart[index].quantity = qty;
+                saveCart();
+                renderCart();
+                updateCartCount();
+            }
+        }
+
+        // Remove Item
+        function removeItem(index) {
+            cart.splice(index, 1);
+            saveCart();
+            renderCart();
+            updateCartCount();
+            showToast('Item removed from cart');
+        }
+
+        // Clear Cart
+        function clearCart() {
+            if (confirm('Are you sure you want to clear your cart?')) {
+                cart = [];
+                saveCart();
+                renderCart();
+                updateCartCount();
+                showToast('Cart cleared');
+            }
+        }
+
+        // Save Cart
+        function saveCart() {
+            localStorage.setItem('shortCircuitCart', JSON.stringify(cart));
+        }
+
+        // Apply Promo - validates code and shows discount in cart, passes to Stripe
+        function applyPromo() {
+            const code = document.getElementById('promoCode').value.trim().toUpperCase();
+            
+            if (!code) {
+                showToast('Please enter a promo code');
+                return;
+            }
+            
+            // Valid promo codes
+            const validCodes = {
+                'CIRCUIT25': 25
+            };
+            
+            if (validCodes[code]) {
+                appliedPromoCode = code;
+                discountPercent = validCodes[code];
+                updateSummary();
+                showToast(`Promo code ${code} applied! ${discountPercent}% discount`);
+                
+                // Store promo code for checkout
+                sessionStorage.setItem('appliedPromoCode', code);
+            } else {
+                appliedPromoCode = null;
+                discountPercent = 0;
+                updateSummary();
+                showToast('Invalid promo code');
+                sessionStorage.removeItem('appliedPromoCode');
+            }
+        }
+        
+        // Remove Promo
+        function removePromo() {
+            appliedPromoCode = null;
+            discountPercent = 0;
+            document.getElementById('promoCode').value = '';
+            sessionStorage.removeItem('appliedPromoCode');
+            updateSummary();
+            showToast('Promo code removed');
+        }
+        
+        // Check for previously applied promo on page load - AUTO-APPLY CIRCUIT25
+        function checkSavedPromo() {
+            // Auto-apply CIRCUIT25 discount
+            document.getElementById('promoCode').value = 'CIRCUIT25';
+            appliedPromoCode = 'CIRCUIT25';
+            discountPercent = 25;
+            sessionStorage.setItem('appliedPromoCode', 'CIRCUIT25');
+            updateSummary();
+        }
+
+        // Proceed to Checkout - Now uses Stripe Checkout (loaded from checkout.js)
+        // The proceedToCheckout function is defined in /js/checkout.js
+
+        // Show Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // Page Loader
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('pageLoader');
+            const content = document.getElementById('pageContent');
+            
+            setTimeout(function() {
+                loader.classList.add('hidden');
+                content.classList.add('loaded');
+            }, 500);
+        });
+    </script>
+    <!-- Stripe Checkout Integration -->
+    <script src="/js/checkout.js"></script>
+    <!-- Auth Header Management -->
+    <script src="/js/auth-header.js"></script>
+</body>
+</html>

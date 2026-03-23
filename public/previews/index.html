@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email & Certificate Previews | Short Circuit</title>
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <div class="mb-8">
+            <a href="/" class="text-blue-500 hover:underline mb-4 inline-block">Back to Home</a>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Email & Certificate Previews</h1>
+            <p class="text-gray-600">Preview all email templates and certificates that customers will receive.</p>
+        </div>
+
+        <div class="space-y-8">
+            <!-- Email Templates -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">Email Templates</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <a href="/previews/emails/welcome.html" target="_blank" class="block p-4 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition">
+                        <h3 class="font-semibold text-gray-800">Welcome Email</h3>
+                        <p class="text-sm text-gray-500">Sent when a user creates an account</p>
+                    </a>
+                    <a href="/previews/emails/subscription.html" target="_blank" class="block p-4 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition">
+                        <h3 class="font-semibold text-gray-800">Subscription Confirmation</h3>
+                        <p class="text-sm text-gray-500">Sent when a user subscribes to updates</p>
+                    </a>
+                    <a href="/previews/emails/order.html" target="_blank" class="block p-4 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition">
+                        <h3 class="font-semibold text-gray-800">Order Confirmation</h3>
+                        <p class="text-sm text-gray-500">Sent after successful purchase</p>
+                    </a>
+                    <a href="/previews/emails/password-reset.html" target="_blank" class="block p-4 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition">
+                        <h3 class="font-semibold text-gray-800">Password Reset</h3>
+                        <p class="text-sm text-gray-500">Sent when user requests password reset</p>
+                    </a>
+                    <a href="/previews/emails/password-reset-success.html" target="_blank" class="block p-4 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition">
+                        <h3 class="font-semibold text-gray-800">Password Reset Success</h3>
+                        <p class="text-sm text-gray-500">Sent after password is changed</p>
+                    </a>
+                    <a href="/previews/emails/course-access.html" target="_blank" class="block p-4 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition">
+                        <h3 class="font-semibold text-gray-800">Course Access Granted</h3>
+                        <p class="text-sm text-gray-500">Sent when course access is activated</p>
+                    </a>
+                    <a href="/previews/emails/module-complete.html" target="_blank" class="block p-4 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition">
+                        <h3 class="font-semibold text-gray-800">Module Complete</h3>
+                        <p class="text-sm text-gray-500">Sent when user completes a module</p>
+                    </a>
+                    <a href="/previews/emails/submission-received.html" target="_blank" class="block p-4 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition">
+                        <h3 class="font-semibold text-gray-800">Submission Received</h3>
+                        <p class="text-sm text-gray-500">Sent when demo is submitted for review</p>
+                    </a>
+                    <a href="/previews/emails/submission-approved.html" target="_blank" class="block p-4 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition">
+                        <h3 class="font-semibold text-gray-800">Submission Approved</h3>
+                        <p class="text-sm text-gray-500">Sent when submission is approved</p>
+                    </a>
+                    <a href="/previews/emails/submission-revision.html" target="_blank" class="block p-4 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition">
+                        <h3 class="font-semibold text-gray-800">Submission Needs Revision</h3>
+                        <p class="text-sm text-gray-500">Sent when revision is requested</p>
+                    </a>
+                    <a href="/previews/emails/certificate-email.html" target="_blank" class="block p-4 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition">
+                        <h3 class="font-semibold text-gray-800">Certificate Issued</h3>
+                        <p class="text-sm text-gray-500">Sent when course certificate is ready</p>
+                    </a>
+                    <a href="/previews/emails/admin-submission.html" target="_blank" class="block p-4 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition">
+                        <h3 class="font-semibold text-gray-800">Admin: New Submission</h3>
+                        <p class="text-sm text-gray-500">Sent to admin when new submission arrives</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Certificate Preview -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">Certificate Preview</h2>
+                <p class="text-gray-600 mb-4">Preview how certificates appear when generated for course completion.</p>
+                <a href="/previews/certificate.html" target="_blank" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition font-semibold">
+                    View Certificate Preview
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

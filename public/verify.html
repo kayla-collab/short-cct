@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Verification | Short Circuit</title>
+    <link rel="icon" href="/images/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --navy: #1a2332;
+            --electric-blue: #00bfff;
+            --coral: #ff6b6b;
+            --tech-green: #00ff88;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--navy) 0%, #2a3444 100%);
+            min-height: 100vh;
+        }
+        
+        .certificate-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .certificate-header {
+            background: linear-gradient(135deg, var(--navy) 0%, #2a3444 100%);
+            border-radius: 16px 16px 0 0;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .verified-badge {
+            background: linear-gradient(135deg, var(--tech-green) 0%, #00cc6a 100%);
+            padding: 8px 24px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--navy);
+        }
+        
+        .skill-tag {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--electric-blue);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 md:p-8">
+    <div class="w-full max-w-2xl">
+        <!-- Loading State -->
+        <div id="loading" class="text-center py-20">
+            <div class="loading-spinner mx-auto mb-4"></div>
+            <p class="text-white text-lg">Verifying certificate...</p>
+        </div>
+        
+        <!-- Error State -->
+        <div id="error" class="hidden text-center py-20">
+            <div class="bg-red-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </div>
+            <h2 class="text-white text-2xl font-bold mb-2">Certificate Not Found</h2>
+            <p class="text-gray-300 mb-6">The certificate number could not be verified. Please check the certificate number and try again.</p>
+            <a href="/" class="inline-block bg-white text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+                Return to Home
+            </a>
+        </div>
+        
+        <!-- Success State -->
+        <div id="certificate" class="hidden certificate-card">
+            <div class="certificate-header">
+                <div class="flex items-center justify-center gap-3 mb-4">
+                    <img src="/images/logo.png" alt="Short Circuit" class="w-12 h-12">
+                    <span class="text-white text-2xl font-bold">SHORT CIRCUIT</span>
+                </div>
+                <h1 class="text-4xl font-bold text-white mb-2" style="font-family: 'Montserrat', sans-serif;">
+                    Certificate of Completion
+                </h1>
+                <p class="text-gray-300">This certifies that</p>
+            </div>
+            
+            <div class="p-8 text-center">
+                <h2 id="recipientName" class="text-3xl font-bold text-gray-900 mb-2"></h2>
+                <p class="text-gray-600 mb-6">has successfully completed</p>
+                
+                <h3 id="courseTitle" class="text-2xl font-semibold text-blue-600 mb-6"></h3>
+                
+                <div class="verified-badge mx-auto mb-8">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span>VERIFIED</span>
+                </div>
+                
+                <div class="mb-8">
+                    <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Skills Demonstrated</h4>
+                    <div id="skills" class="flex flex-wrap justify-center gap-2"></div>
+                </div>
+                
+                <div class="border-t border-gray-200 pt-6 grid grid-cols-2 gap-6 text-left">
+                    <div>
+                        <p class="text-sm text-gray-500">Certificate Number</p>
+                        <p id="certificateNumber" class="font-mono font-semibold text-gray-900"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Completion Date</p>
+                        <p id="completionDate" class="font-semibold text-gray-900"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Instructor</p>
+                        <p id="instructorName" class="font-semibold text-gray-900"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Issued By</p>
+                        <p class="font-semibold text-gray-900">Short Circuit</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 px-8 py-4 rounded-b-2xl border-t border-gray-200">
+                <p class="text-center text-sm text-gray-500">
+                    This certificate has been verified and is authentic. 
+                    <a href="https://shortcircuit-2t9.pages.dev" class="text-blue-600 hover:underline">Learn more about Short Circuit</a>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Manual Verification Form -->
+        <div class="mt-8 text-center">
+            <p class="text-gray-300 mb-4">Have a certificate number to verify?</p>
+            <form id="verifyForm" class="flex gap-2 max-w-md mx-auto">
+                <input 
+                    type="text" 
+                    id="certInput" 
+                    placeholder="Enter certificate number (e.g., SC-SW-2026-00001)"
+                    class="flex-1 px-4 py-3 rounded-lg border-0 focus:ring-2 focus:ring-blue-500 text-gray-900"
+                >
+                <button 
+                    type="submit"
+                    class="px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition"
+                >
+                    Verify
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Get certificate number from URL path
+        const path = window.location.pathname;
+        const match = path.match(/\/verify\/([A-Z0-9-]+)/i);
+        const certNumber = match ? match[1] : null;
+        
+        const loadingEl = document.getElementById('loading');
+        const errorEl = document.getElementById('error');
+        const certificateEl = document.getElementById('certificate');
+        
+        async function verifyCertificate(certificateNumber) {
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            certificateEl.classList.add('hidden');
+            
+            try {
+                const response = await fetch(`/api/verify/${certificateNumber}`);
+                const data = await response.json();
+                
+                loadingEl.classList.add('hidden');
+                
+                if (data.valid && data.certificate) {
+                    displayCertificate(data.certificate);
+                } else {
+                    errorEl.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Verification error:', error);
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+            }
+        }
+        
+        function displayCertificate(cert) {
+            document.getElementById('recipientName').textContent = cert.recipientName;
+            document.getElementById('courseTitle').textContent = cert.courseTitle;
+            document.getElementById('certificateNumber').textContent = cert.certificateNumber;
+            document.getElementById('completionDate').textContent = new Date(cert.completionDate || cert.issuedAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('instructorName').textContent = cert.instructorName || 'Anand Seetharaman';
+            
+            const skillsContainer = document.getElementById('skills');
+            skillsContainer.innerHTML = '';
+            (cert.skills || []).forEach(skill => {
+                const tag = document.createElement('span');
+                tag.className = 'skill-tag';
+                tag.textContent = skill;
+                skillsContainer.appendChild(tag);
+            });
+            
+            certificateEl.classList.remove('hidden');
+        }
+        
+        // Auto-verify if certificate number in URL
+        if (certNumber) {
+            verifyCertificate(certNumber);
+        } else {
+            loadingEl.classList.add('hidden');
+        }
+        
+        // Handle manual verification form
+        document.getElementById('verifyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const input = document.getElementById('certInput').value.trim();
+            if (input) {
+                // Update URL without reload
+                window.history.pushState({}, '', `/verify/${input}`);
+                verifyCertificate(input);
+            }
+        });
+    </script>
+</body>
+</html>

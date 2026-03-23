@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed | Short Circuit</title>
+    <meta name="description" content="Your order has been confirmed. Thank you for your purchase!">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <!-- Shared Responsive & Iframe-Friendly Styles -->
+    <link rel="stylesheet" href="/css/responsive.css">
+    <!-- Iframe Detection Script (load early) -->
+    <script src="/js/iframe-detect.js"></script>
+    <style>
+        :root {
+            --navy: #1a2332;
+            --electric-blue: #00bfff;
+            --coral: #ff6b6b;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #6c757d;
+            --tech-green: #00ff88;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, var(--navy) 0%, #2a3a52 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .success-container {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 50px;
+            text-align: center;
+            max-width: 550px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            width: 90px;
+            height: 90px;
+            background: var(--tech-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 45px;
+            color: var(--navy);
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        h1 {
+            color: var(--navy);
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: var(--dark-gray);
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .order-details {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .order-details h3 {
+            font-size: 16px;
+            color: var(--navy);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .detail-row .label {
+            color: var(--dark-gray);
+        }
+
+        .detail-row .value {
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .detail-row.total {
+            border-top: 2px solid var(--navy);
+            margin-top: 10px;
+            padding-top: 15px;
+            font-size: 18px;
+        }
+
+        .detail-row.total .value {
+            color: var(--coral);
+        }
+
+        .line-items {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .line-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 13px;
+            color: var(--dark-gray);
+        }
+
+        .next-steps {
+            background: linear-gradient(135deg, var(--navy) 0%, #2a3a52 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            color: var(--white);
+            text-align: left;
+        }
+
+        .next-steps h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: var(--electric-blue);
+        }
+
+        .next-steps ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .next-steps li {
+            padding: 8px 0;
+            font-size: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .next-steps li::before {
+            content: "1";
+            background: var(--electric-blue);
+            color: var(--navy);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .next-steps li:nth-child(2)::before { content: "2"; }
+        .next-steps li:nth-child(3)::before { content: "3"; }
+
+        .email-note {
+            color: var(--dark-gray);
+            font-size: 14px;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .email-note strong {
+            color: var(--navy);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 35px;
+            background: var(--coral);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 15px;
+        }
+
+        .btn:hover {
+            background: #e55a5a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--navy);
+            color: var(--navy);
+            margin-left: 10px;
+        }
+
+        .btn-outline:hover {
+            background: var(--navy);
+            color: var(--white);
+            box-shadow: 0 5px 20px rgba(26, 35, 50, 0.3);
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .loading {
+            color: var(--dark-gray);
+            font-style: italic;
+        }
+
+        @media (max-width: 500px) {
+            .success-container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .btn-outline {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">&#10003;</div>
+        <h1>Order Confirmed!</h1>
+        <p class="subtitle">Thank you for your purchase. Your engineering journey starts now.</p>
+        
+        <div class="order-details" id="orderDetails">
+            <h3>Order Summary</h3>
+            <p class="loading">Loading order details...</p>
+        </div>
+
+        <div class="next-steps">
+            <h3>What Happens Next</h3>
+            <ul>
+                <li>Check your email for order confirmation and receipt</li>
+                <li>Your kit will ship within 1-2 business days</li>
+                <li>Access your project materials and virtual support portal</li>
+            </ul>
+        </div>
+        
+        <p class="email-note">
+            A confirmation email has been sent to <strong id="customerEmail">your email address</strong> with tracking information and access to your project materials.
+        </p>
+        
+        <div class="buttons">
+            <a href="/index.html" class="btn">Continue Exploring</a>
+            <!-- HIDDEN: <a href="/challenge.html" class="btn btn-outline">View Design Challenge</a> -->
+        </div>
+    </div>
+    
+    <script>
+        // Fetch order details from session
+        async function loadOrderDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+            
+            const orderDetailsEl = document.getElementById('orderDetails');
+            const customerEmailEl = document.getElementById('customerEmail');
+            
+            if (!sessionId) {
+                orderDetailsEl.innerHTML = `
+                    <h3>Order Summary</h3>
+                    <p>Your order has been confirmed. Check your email for details.</p>
+                `;
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/checkout/session/${sessionId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load order details');
+                }
+                
+                const data = await response.json();
+                
+                // Update customer email
+                if (data.customerEmail) {
+                    customerEmailEl.textContent = data.customerEmail;
+                }
+                
+                // Build line items HTML
+                let lineItemsHtml = '';
+                if (data.lineItems && data.lineItems.length > 0) {
+                    lineItemsHtml = `
+                        <div class="line-items">
+                            ${data.lineItems.map(item => `
+                                <div class="line-item">
+                                    <span>${item.description} x ${item.quantity}</span>
+                                    <span>$${(item.amountTotal / 100).toFixed(2)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Update order details
+                orderDetailsEl.innerHTML = `
+                    <h3>Order Summary</h3>
+                    <div class="detail-row">
+                        <span class="label">Order ID</span>
+                        <span class="value">${sessionId.substring(0, 20)}...</span>
+                    </div>
+                    ${data.customerName ? `
+                    <div class="detail-row">
+                        <span class="label">Name</span>
+                        <span class="value">${data.customerName}</span>
+                    </div>
+                    ` : ''}
+                    <div class="detail-row">
+                        <span class="label">Email</span>
+                        <span class="value">${data.customerEmail || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Payment Status</span>
+                        <span class="value" style="color: var(--tech-green);">${data.paymentStatus === 'paid' ? 'Paid' : 'Processing'}</span>
+                    </div>
+                    ${lineItemsHtml}
+                    <div class="detail-row total">
+                        <span class="label">Total Paid</span>
+                        <span class="value">$${(data.amountTotal / 100).toFixed(2)} ${(data.currency || 'usd').toUpperCase()}</span>
+                    </div>
+                `;
+                
+                // Clear cart backup since order was successful
+                sessionStorage.removeItem('shortCircuitCartBackup');
+                localStorage.removeItem('shortCircuitCart');
+                
+            } catch (error) {
+                console.error('Failed to load order details:', error);
+                orderDetailsEl.innerHTML = `
+                    <h3>Order Summary</h3>
+                    <p>Your order has been confirmed successfully!</p>
+                    <p style="font-size: 13px; color: var(--dark-gray); margin-top: 10px;">
+                        Check your email for complete order details and tracking information.
+                    </p>
+                `;
+            }
+        }
+        
+        // Load order details on page load
+        loadOrderDetails();
+    </script>
+</body>
+</html>

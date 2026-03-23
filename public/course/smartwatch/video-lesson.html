@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soldering Basics | Short Circuit</title>
+    <meta name="description" content="Learn essential soldering techniques for building your smartwatch.">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #1a2332;
+            --electric-blue: #00bfff;
+            --coral: #ff6b6b;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #6c757d;
+            --tech-green: #00ff88;
+            --success: #28a745;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: var(--light-gray);
+            min-height: 100vh;
+            color: var(--navy);
+        }
+
+        .lesson-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--dark-gray);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .back-link:hover {
+            color: var(--electric-blue);
+        }
+
+        .lesson-header {
+            margin-bottom: 24px;
+        }
+
+        .lesson-header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .lesson-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+
+        .lesson-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Video Container */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Video Progress */
+        .video-progress {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--white);
+            border-radius: 8px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--tech-green);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 13px;
+            color: var(--dark-gray);
+            white-space: nowrap;
+        }
+
+        /* Chapter List */
+        .chapters-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .chapters-section h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chapters-section h3 i {
+            color: var(--electric-blue);
+        }
+
+        .chapter-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .chapter-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--light-gray);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chapter-item:hover {
+            background: rgba(0, 191, 255, 0.1);
+        }
+
+        .chapter-item.active {
+            background: rgba(0, 191, 255, 0.15);
+            border-left: 3px solid var(--electric-blue);
+        }
+
+        .chapter-item.completed {
+            background: rgba(40, 167, 69, 0.1);
+        }
+
+        .chapter-time {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--electric-blue);
+            min-width: 50px;
+        }
+
+        .chapter-title {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .chapter-status {
+            font-size: 14px;
+        }
+
+        .chapter-item.completed .chapter-status {
+            color: var(--success);
+        }
+
+        /* Key Points */
+        .key-points {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .key-points h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-points h3 i {
+            color: var(--tech-green);
+        }
+
+        .key-points ul {
+            list-style: none;
+        }
+
+        .key-points li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .key-points li:last-child {
+            border-bottom: none;
+        }
+
+        .key-points li i {
+            color: var(--tech-green);
+            margin-top: 3px;
+        }
+
+        /* Downloads */
+        .downloads-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .downloads-section h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .downloads-section h3 i {
+            color: var(--coral);
+        }
+
+        .download-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .download-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 20px;
+            background: var(--light-gray);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--navy);
+            transition: all 0.2s;
+        }
+
+        .download-item:hover {
+            background: var(--navy);
+            color: white;
+        }
+
+        .download-item i {
+            font-size: 20px;
+        }
+
+        .download-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .download-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .download-size {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        /* Navigation */
+        .lesson-navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 24px;
+            background: var(--white);
+            border: 2px solid var(--navy);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--navy);
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: var(--navy);
+            color: white;
+        }
+
+        .nav-btn.primary {
+            background: var(--electric-blue);
+            border-color: var(--electric-blue);
+            color: white;
+        }
+
+        .nav-btn.primary:hover {
+            background: #00a3d9;
+            border-color: #00a3d9;
+        }
+
+        .nav-btn.complete {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .nav-btn.complete:hover {
+            background: #218838;
+            border-color: #218838;
+        }
+
+        /* Notes Section */
+        .notes-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .notes-section h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notes-section h3 i {
+            color: var(--warning);
+        }
+
+        .notes-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        .notes-textarea:focus {
+            outline: none;
+            border-color: var(--electric-blue);
+        }
+
+        .notes-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        .notes-saved {
+            font-size: 12px;
+            color: var(--success);
+            display: none;
+        }
+
+        .notes-saved.show {
+            display: block;
+        }
+
+        .save-notes-btn {
+            padding: 8px 16px;
+            background: var(--light-gray);
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .save-notes-btn:hover {
+            background: #e0e0e0;
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        
+        /* Extra small devices (< 375px) */
+        @media (max-width: 374px) {
+            .lesson-page {
+                padding: 12px 10px;
+            }
+            
+            .lesson-header h1 {
+                font-size: 20px;
+            }
+            
+            .lesson-meta {
+                gap: 10px;
+                font-size: 12px;
+            }
+            
+            .video-container {
+                border-radius: 8px;
+                margin-bottom: 16px;
+            }
+            
+            .video-progress {
+                padding: 10px 12px;
+                gap: 8px;
+            }
+            
+            .progress-text {
+                font-size: 11px;
+            }
+            
+            .chapters-section,
+            .key-points,
+            .downloads-section,
+            .notes-section {
+                padding: 14px;
+                border-radius: 10px;
+                margin-bottom: 16px;
+            }
+            
+            .chapters-section h3,
+            .key-points h3,
+            .downloads-section h3,
+            .notes-section h3 {
+                font-size: 14px;
+                margin-bottom: 12px;
+            }
+            
+            .chapter-item {
+                padding: 10px 12px;
+                gap: 8px;
+            }
+            
+            .chapter-time {
+                font-size: 11px;
+                min-width: 40px;
+            }
+            
+            .chapter-title {
+                font-size: 12px;
+            }
+            
+            .key-points li {
+                padding: 8px 0;
+                font-size: 13px;
+            }
+            
+            .download-item {
+                padding: 10px 12px;
+            }
+            
+            .download-name {
+                font-size: 12px;
+            }
+            
+            .download-size {
+                font-size: 10px;
+            }
+            
+            .notes-textarea {
+                font-size: 14px;
+                min-height: 100px;
+            }
+            
+            .lesson-navigation {
+                gap: 8px;
+            }
+            
+            .nav-btn {
+                padding: 12px 14px;
+                font-size: 13px;
+            }
+        }
+        
+        /* Small devices (375px - 639px) */
+        @media (max-width: 639px) {
+            .lesson-page {
+                padding: 16px 14px;
+            }
+            
+            .lesson-header h1 {
+                font-size: 22px;
+            }
+            
+            .lesson-meta {
+                gap: 12px;
+            }
+            
+            .video-progress {
+                flex-wrap: wrap;
+            }
+            
+            .chapters-section,
+            .key-points,
+            .downloads-section,
+            .notes-section {
+                padding: 18px;
+            }
+            
+            .chapter-item {
+                padding: 10px 14px;
+            }
+            
+            .download-list {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .download-item {
+                width: 100%;
+            }
+            
+            .lesson-navigation {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+                min-height: 48px;
+            }
+            
+            .notes-footer {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+            }
+            
+            .save-notes-btn {
+                width: 100%;
+            }
+        }
+        
+        /* Medium devices (640px - 767px) */
+        @media (min-width: 640px) and (max-width: 767px) {
+            .lesson-page {
+                padding: 24px 20px;
+            }
+            
+            .lesson-navigation {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            
+            .nav-btn {
+                width: auto;
+                min-width: 140px;
+            }
+            
+            .download-list {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .download-item {
+                width: auto;
+            }
+        }
+        
+        /* Tablets (768px - 1023px) */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .lesson-page {
+                padding: 32px 24px;
+            }
+            
+            .download-list {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        /* Video aspect ratio preservation */
+        @media (max-width: 639px) {
+            .video-container {
+                padding-bottom: 56.25%;
+                border-radius: 8px;
+            }
+        }
+        
+        /* Touch device optimizations */
+        @media (pointer: coarse) {
+            .chapter-item {
+                min-height: 48px;
+            }
+            
+            .chapter-item:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+            
+            .download-item {
+                min-height: 52px;
+            }
+            
+            .download-item:active {
+                transform: scale(0.98);
+            }
+            
+            .nav-btn {
+                min-height: 48px;
+            }
+            
+            .nav-btn:active {
+                transform: scale(0.97);
+            }
+        }
+        
+        /* Landscape mode for video */
+        @media (max-width: 767px) and (orientation: landscape) {
+            .lesson-page {
+                padding: 12px 16px;
+            }
+            
+            .video-container {
+                margin-bottom: 16px;
+            }
+            
+            .back-link {
+                margin-bottom: 12px;
+            }
+            
+            .lesson-header {
+                margin-bottom: 16px;
+            }
+        }
+        
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Safe area for notched devices */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .lesson-page {
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lesson-page">
+        <a href="/course/smartwatch/" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Course
+        </a>
+
+        <div class="lesson-header">
+            <h1>Soldering Basics</h1>
+            <div class="lesson-meta">
+                <span><i class="fas fa-play-circle"></i> Video Lesson</span>
+                <span><i class="far fa-clock"></i> 20 minutes</span>
+                <span><i class="fas fa-layer-group"></i> Module 3: Hardware Assembly</span>
+            </div>
+        </div>
+
+        <!-- Video Player -->
+        <div class="video-container">
+            <iframe 
+                id="videoPlayer"
+                src="https://www.youtube.com/embed/Qps9woUGkvI?enablejsapi=1&rel=0" 
+                title="Soldering Basics Tutorial"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <!-- Video Progress -->
+        <div class="video-progress">
+            <i class="fas fa-play-circle" style="color: var(--electric-blue);"></i>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <span class="progress-text"><span id="watchedTime">0:00</span> / 20:00</span>
+        </div>
+
+        <!-- Chapters -->
+        <div class="chapters-section">
+            <h3><i class="fas fa-list-ol"></i> Video Chapters</h3>
+            <div class="chapter-list">
+                <div class="chapter-item active" onclick="seekTo(0)">
+                    <span class="chapter-time">0:00</span>
+                    <span class="chapter-title">Soldering iron setup</span>
+                    <i class="fas fa-play chapter-status"></i>
+                </div>
+                <div class="chapter-item" onclick="seekTo(180)">
+                    <span class="chapter-time">3:00</span>
+                    <span class="chapter-title">Tinning the tip</span>
+                    <i class="far fa-circle chapter-status"></i>
+                </div>
+                <div class="chapter-item" onclick="seekTo(330)">
+                    <span class="chapter-time">5:30</span>
+                    <span class="chapter-title">Through-hole soldering technique</span>
+                    <i class="far fa-circle chapter-status"></i>
+                </div>
+                <div class="chapter-item" onclick="seekTo(600)">
+                    <span class="chapter-time">10:00</span>
+                    <span class="chapter-title">Surface mount soldering basics</span>
+                    <i class="far fa-circle chapter-status"></i>
+                </div>
+                <div class="chapter-item" onclick="seekTo(840)">
+                    <span class="chapter-time">14:00</span>
+                    <span class="chapter-title">Common mistakes to avoid</span>
+                    <i class="far fa-circle chapter-status"></i>
+                </div>
+                <div class="chapter-item" onclick="seekTo(1020)">
+                    <span class="chapter-time">17:00</span>
+                    <span class="chapter-title">Desoldering and fixing mistakes</span>
+                    <i class="far fa-circle chapter-status"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Points - Commented out per user request
+        <div class="key-points">
+            <h3><i class="fas fa-lightbulb"></i> Key Takeaways</h3>
+            <ul>
+                <li>
+                    <i class="fas fa-check"></i>
+                    <span>Heat the pad AND the component lead together - not just one or the other</span>
+                </li>
+                <li>
+                    <i class="fas fa-check"></i>
+                    <span>Apply solder to the heated joint, not directly to the iron tip</span>
+                </li>
+                <li>
+                    <i class="fas fa-check"></i>
+                    <span>A good solder joint is shiny and cone-shaped, not dull or blobby</span>
+                </li>
+                <li>
+                    <i class="fas fa-check"></i>
+                    <span>Keep the iron tip clean and tinned - wipe on a wet sponge regularly</span>
+                </li>
+                <li>
+                    <i class="fas fa-check"></i>
+                    <span>Work in a well-ventilated area and avoid breathing solder fumes</span>
+                </li>
+            </ul>
+        </div>
+        -->
+
+        <!-- Downloads -->
+        <div class="downloads-section">
+            <h3><i class="fas fa-download"></i> Resources & Downloads</h3>
+            <div class="download-list">
+                <a href="/downloads/soldering-guide.pdf" class="download-item">
+                    <i class="fas fa-file-pdf"></i>
+                    <div class="download-info">
+                        <span class="download-name">Soldering Guide (PDF)</span>
+                        <span class="download-size">2.4 MB</span>
+                    </div>
+                </a>
+                <a href="/downloads/solder-joint-reference.png" class="download-item">
+                    <i class="fas fa-file-image"></i>
+                    <div class="download-info">
+                        <span class="download-name">Good vs Bad Joints Reference</span>
+                        <span class="download-size">450 KB</span>
+                    </div>
+                </a>
+                <a href="https://www.youtube.com/watch?v=Qps9woUGkvI" target="_blank" class="download-item">
+                    <i class="fab fa-youtube"></i>
+                    <div class="download-info">
+                        <span class="download-name">Watch on YouTube</span>
+                        <span class="download-size">External Link</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Personal Notes -->
+        <div class="notes-section">
+            <h3><i class="fas fa-sticky-note"></i> My Notes</h3>
+            <textarea 
+                class="notes-textarea" 
+                id="lessonNotes"
+                placeholder="Take notes while watching the video. Your notes are saved automatically..."
+            ></textarea>
+            <div class="notes-footer">
+                <span class="notes-saved" id="notesSaved">
+                    <i class="fas fa-check"></i> Notes saved
+                </span>
+                <button class="save-notes-btn" onclick="saveNotes()">
+                    <i class="fas fa-save"></i> Save Notes
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="lesson-navigation">
+            <a href="/course/smartwatch/?lesson=lesson-2-4" class="nav-btn">
+                <i class="fas fa-arrow-left"></i>
+                Previous: Quiz
+            </a>
+            <a href="/course/smartwatch/?lesson=lesson-3-2" class="nav-btn complete" onclick="markComplete()">
+                Mark Complete & Continue
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // YouTube API
+        let player;
+        let progressInterval;
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('videoPlayer', {
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            // Load saved progress
+            loadProgress();
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                startProgressTracking();
+            } else {
+                stopProgressTracking();
+            }
+        }
+
+        function startProgressTracking() {
+            progressInterval = setInterval(updateProgress, 1000);
+        }
+
+        function stopProgressTracking() {
+            clearInterval(progressInterval);
+            saveProgress();
+        }
+
+        function updateProgress() {
+            if (player && player.getCurrentTime) {
+                const currentTime = player.getCurrentTime();
+                const duration = player.getDuration() || 1200; // Default 20 min
+                const percent = (currentTime / duration) * 100;
+
+                document.getElementById('progressFill').style.width = percent + '%';
+                document.getElementById('watchedTime').textContent = formatTime(currentTime);
+
+                // Update chapter states
+                updateChapters(currentTime);
+            }
+        }
+
+        function updateChapters(currentTime) {
+            const chapters = document.querySelectorAll('.chapter-item');
+            const chapterTimes = [0, 180, 330, 600, 840, 1020];
+
+            chapters.forEach((chapter, index) => {
+                const startTime = chapterTimes[index];
+                const nextTime = chapterTimes[index + 1] || 1200;
+
+                chapter.classList.remove('active', 'completed');
+
+                if (currentTime >= startTime && currentTime < nextTime) {
+                    chapter.classList.add('active');
+                    chapter.querySelector('.chapter-status').className = 'fas fa-play chapter-status';
+                } else if (currentTime >= nextTime) {
+                    chapter.classList.add('completed');
+                    chapter.querySelector('.chapter-status').className = 'fas fa-check chapter-status';
+                } else {
+                    chapter.querySelector('.chapter-status').className = 'far fa-circle chapter-status';
+                }
+            });
+        }
+
+        function seekTo(seconds) {
+            if (player && player.seekTo) {
+                player.seekTo(seconds, true);
+                player.playVideo();
+            }
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function saveProgress() {
+            if (player && player.getCurrentTime) {
+                const progress = {
+                    lessonId: 'lesson-3-1',
+                    videoTime: player.getCurrentTime(),
+                    savedAt: new Date().toISOString()
+                };
+                localStorage.setItem('video-progress-lesson-3-1', JSON.stringify(progress));
+
+                // Also save to server
+                fetch('/api/course/progress', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        lessonId: 'lesson-3-1',
+                        courseId: 'smartwatch-course',
+                        status: 'in_progress',
+                        videoProgressSeconds: Math.floor(player.getCurrentTime())
+                    })
+                }).catch(console.error);
+            }
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('video-progress-lesson-3-1');
+            if (saved) {
+                const progress = JSON.parse(saved);
+                if (progress.videoTime > 10) {
+                    // Offer to resume
+                    if (confirm(`Resume from ${formatTime(progress.videoTime)}?`)) {
+                        player.seekTo(progress.videoTime, true);
+                    }
+                }
+            }
+        }
+
+        // Notes
+        let notesTimeout;
+
+        function initNotes() {
+            const textarea = document.getElementById('lessonNotes');
+            const saved = localStorage.getItem('notes-lesson-3-1');
+            if (saved) {
+                textarea.value = saved;
+            }
+
+            textarea.addEventListener('input', () => {
+                clearTimeout(notesTimeout);
+                notesTimeout = setTimeout(saveNotes, 2000);
+            });
+        }
+
+        function saveNotes() {
+            const notes = document.getElementById('lessonNotes').value;
+            localStorage.setItem('notes-lesson-3-1', notes);
+
+            const savedIndicator = document.getElementById('notesSaved');
+            savedIndicator.classList.add('show');
+            setTimeout(() => savedIndicator.classList.remove('show'), 2000);
+
+            // Also save to server
+            fetch('/api/course/notes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    lessonId: 'lesson-3-1',
+                    courseId: 'smartwatch-course',
+                    notes: notes
+                })
+            }).catch(console.error);
+        }
+
+        // Mark complete
+        function markComplete() {
+            fetch('/api/course/progress', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    lessonId: 'lesson-3-1',
+                    courseId: 'smartwatch-course',
+                    status: 'completed'
+                })
+            }).catch(console.error);
+        }
+
+        // Load YouTube API
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // Init notes
+        document.addEventListener('DOMContentLoaded', initNotes);
+    </script>
+</body>
+</html>

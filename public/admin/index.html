@@ -1,0 +1,2780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Short Circuit</title>
+    <meta name="description" content="Manage courses, users, submissions, and analytics.">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0f172a;
+            --navy-light: #1e293b;
+            --blue: #3b82f6;
+            --blue-light: #60a5fa;
+            --coral: #f43f5e;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --green: #22c55e;
+            --green-light: #4ade80;
+            --yellow: #f59e0b;
+            --red: #ef4444;
+            --purple: #8b5cf6;
+            --sidebar-width: 260px;
+            --header-height: 64px;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-50);
+            min-height: 100vh;
+            color: var(--navy);
+        }
+
+        /* Layout */
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--navy);
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--navy-light);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--white);
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--blue), var(--green));
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .admin-badge {
+            background: var(--coral);
+            color: var(--white);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            color: var(--gray-400);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 20px 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: var(--navy-light);
+            color: var(--white);
+        }
+
+        .nav-item.active {
+            background: var(--navy-light);
+            color: var(--white);
+            border-left-color: var(--blue);
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .nav-item .badge {
+            margin-left: auto;
+            background: var(--coral);
+            color: var(--white);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--navy-light);
+        }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            color: var(--white);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .user-role {
+            color: var(--gray-400);
+            font-size: 12px;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: var(--navy-light);
+            color: var(--coral);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .page-header {
+            background: var(--white);
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .page-subtitle {
+            color: var(--gray-500);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .page-content {
+            padding: 32px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+
+        .stat-card.highlight {
+            background: linear-gradient(135deg, var(--blue), var(--blue-light));
+            color: var(--white);
+        }
+
+        .stat-card.highlight .stat-label {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stat-icon.blue { background: #dbeafe; color: var(--blue); }
+        .stat-icon.green { background: #dcfce7; color: var(--green); }
+        .stat-icon.yellow { background: #fef3c7; color: var(--yellow); }
+        .stat-icon.purple { background: #ede9fe; color: var(--purple); }
+        .stat-icon.red { background: #fee2e2; color: var(--red); }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+        }
+
+        .stat-trend.up { background: #dcfce7; color: var(--green); }
+        .stat-trend.down { background: #fee2e2; color: var(--red); }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: var(--gray-500);
+            font-size: 14px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title i {
+            color: var(--blue);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* Grid Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .data-table th {
+            background: var(--gray-50);
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-500);
+        }
+
+        .data-table tr:hover td {
+            background: var(--gray-50);
+        }
+
+        .data-table td {
+            font-size: 14px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-success {
+            background: var(--green);
+            color: var(--white);
+        }
+
+        .btn-warning {
+            background: var(--yellow);
+            color: var(--white);
+        }
+
+        .btn-danger {
+            background: var(--red);
+            color: var(--white);
+        }
+
+        .btn-outline {
+            background: var(--white);
+            color: var(--gray-600);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-outline:hover {
+            background: var(--gray-50);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            border-radius: var(--radius-sm);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.pending { background: #fef3c7; color: #92400e; }
+        .status-badge.approved { background: #dcfce7; color: #166534; }
+        .status-badge.needs_revision { background: #fed7aa; color: #9a3412; }
+        .status-badge.rejected { background: #fee2e2; color: #991b1b; }
+        .status-badge.paid { background: #dcfce7; color: #166534; }
+        .status-badge.processing { background: #dbeafe; color: #1e40af; }
+        .status-badge.shipped { background: #e0e7ff; color: #3730a3; }
+        .status-badge.delivered { background: #dcfce7; color: #166534; }
+        .status-badge.admin { background: var(--blue); color: var(--white); }
+        .status-badge.customer { background: var(--gray-200); color: var(--gray-600); }
+
+        /* User Avatar */
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-cell-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-cell-info {
+            line-height: 1.3;
+        }
+
+        .user-cell-name {
+            font-weight: 500;
+        }
+
+        .user-cell-email {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--green);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .filter-select {
+            padding: 10px 16px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            background: var(--white);
+            min-width: 150px;
+        }
+
+        .search-input {
+            padding: 10px 16px 10px 40px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            width: 300px;
+            background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3E%3C/svg%3E") 12px center no-repeat;
+            background-size: 20px;
+        }
+
+        /* Modal - Full Screen */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            align-items: stretch;
+            justify-content: flex-end;
+            z-index: 1000;
+            padding: 0;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: 0;
+            width: 100%;
+            max-width: 900px;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .modal.modal-centered {
+            max-width: 600px;
+            height: auto;
+            max-height: 90vh;
+            border-radius: var(--radius-lg);
+            margin: auto;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            background: var(--gray-50);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-title i {
+            color: var(--blue);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .modal-body {
+            padding: 32px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 20px 32px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-shrink: 0;
+            background: var(--gray-50);
+        }
+
+        /* Modal responsive */
+        @media (max-width: 900px) {
+            .modal {
+                max-width: 100%;
+            }
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Submission Preview - Enhanced for full-screen modal */
+        .submission-preview {
+            background: var(--gray-50);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .submission-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .submission-info {
+            flex: 1;
+        }
+
+        .submission-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .submission-info p {
+            color: var(--gray-500);
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .submission-photos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .submission-photo {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: var(--radius-md);
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .submission-photo:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-md);
+            border-color: var(--blue);
+        }
+
+        .submission-description {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-top: 16px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .submission-description label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .submission-description p {
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .submission-video {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--white);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-200);
+            margin-top: 16px;
+        }
+
+        .submission-video i {
+            font-size: 24px;
+            color: var(--red);
+        }
+
+        .submission-video a {
+            color: var(--blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .submission-video a:hover {
+            text-decoration: underline;
+        }
+
+        /* Photo lightbox */
+        .photo-lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            cursor: zoom-out;
+        }
+
+        .photo-lightbox.show {
+            display: flex;
+        }
+
+        .photo-lightbox img {
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: var(--radius-md);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .pagination-info {
+            color: var(--gray-500);
+            font-size: 14px;
+        }
+
+        .pagination-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--gray-200);
+            border-top-color: var(--blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: var(--gray-500);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: var(--gray-300);
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Quick Stats Row */
+        .quick-stats {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .quick-stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .quick-stat i {
+            color: var(--gray-400);
+        }
+
+        .quick-stat strong {
+            color: var(--navy);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="sidebar-logo">
+                    <div class="logo-icon">&#9889;</div>
+                    <span class="logo-text">SHORT CIRCUIT</span>
+                    <span class="admin-badge">Admin</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <a class="nav-item active" data-tab="dashboard">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a class="nav-item" data-tab="analytics">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analytics</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Course Management</div>
+                    <a class="nav-item" data-tab="courses">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Courses</span>
+                    </a>
+                    <a class="nav-item" data-tab="submissions">
+                        <i class="fas fa-file-upload"></i>
+                        <span>Submissions</span>
+                        <span class="badge" id="pendingSubmissionsBadge">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Users & Orders</div>
+                    <a class="nav-item" data-tab="users">
+                        <i class="fas fa-users"></i>
+                        <span>Users</span>
+                    </a>
+                    <a class="nav-item" data-tab="orders">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span>Orders</span>
+                    </a>
+                    <a class="nav-item" data-tab="inventory">
+                        <i class="fas fa-boxes"></i>
+                        <span>Inventory</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Tools</div>
+                    <a class="nav-item" data-tab="exports">
+                        <i class="fas fa-download"></i>
+                        <span>Export Data</span>
+                    </a>
+                    <a class="nav-item" data-tab="email-testing">
+                        <i class="fas fa-envelope"></i>
+                        <span>Email Testing</span>
+                    </a>
+                    <a class="nav-item" data-tab="support">
+                        <i class="fas fa-life-ring"></i>
+                        <span>Support Tickets</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar" id="adminAvatar">A</div>
+                    <div class="user-info">
+                        <div class="user-name" id="adminName">Admin</div>
+                        <div class="user-role">Administrator</div>
+                    </div>
+                    <button class="logout-btn" onclick="logout()" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Dashboard</h1>
+                        <p class="page-subtitle">Welcome back! Here's what's happening today.</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-outline" onclick="loadDashboard()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div class="page-content">
+                    <!-- Quick Access to Courses -->
+                    <div class="card" style="margin-bottom: 24px;">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-graduation-cap"></i> Quick Access - Your Courses</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                                <a href="/course/smartwatch/" target="_blank" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-clock"></i> Smartwatch Course
+                                </a>
+                                <a href="/course/ballbeam/" target="_blank" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-balance-scale"></i> Ball and Beam Course
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid" id="dashboardStats">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-file-upload"></i> Pending Submissions</h3>
+                                <a href="#" onclick="showTab('submissions')" class="btn btn-sm btn-outline">View All</a>
+                            </div>
+                            <div class="card-body" id="recentSubmissions">
+                                <div class="loading"><div class="loading-spinner"></div></div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-shopping-bag"></i> Recent Orders</h3>
+                                <a href="#" onclick="showTab('orders')" class="btn btn-sm btn-outline">View All</a>
+                            </div>
+                            <div class="card-body" id="recentOrders">
+                                <div class="loading"><div class="loading-spinner"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Analytics</h1>
+                        <p class="page-subtitle">Course performance and user engagement metrics.</p>
+                    </div>
+                </div>
+                <div class="page-content" id="analyticsContent">
+                    <div class="loading"><div class="loading-spinner"></div></div>
+                </div>
+            </div>
+
+            <!-- Courses Tab -->
+            <div id="courses" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Courses</h1>
+                        <p class="page-subtitle">Manage course content and enrollments.</p>
+                    </div>
+                </div>
+                <div class="page-content" id="coursesContent">
+                    <div class="loading"><div class="loading-spinner"></div></div>
+                </div>
+            </div>
+
+            <!-- Submissions Tab -->
+            <div id="submissions" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Submissions</h1>
+                        <p class="page-subtitle">Review and grade student project submissions.</p>
+                    </div>
+                </div>
+                <div class="page-content">
+                    <div class="filters">
+                        <select class="filter-select" id="submissionStatusFilter" onchange="loadSubmissions()">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending Review</option>
+                            <option value="approved">Approved</option>
+                            <option value="needs_revision">Needs Revision</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                        <input type="text" class="search-input" placeholder="Search submissions..." id="submissionSearch" oninput="debounceSearch(loadSubmissions)">
+                    </div>
+                    <div class="card">
+                        <div class="card-body" id="submissionsTable">
+                            <div class="loading"><div class="loading-spinner"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Tab -->
+            <div id="users" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Users</h1>
+                        <p class="page-subtitle">Manage user accounts and permissions.</p>
+                    </div>
+                </div>
+                <div class="page-content">
+                    <div class="filters">
+                        <select class="filter-select" id="userRoleFilter" onchange="loadUsers()">
+                            <option value="">All Roles</option>
+                            <option value="admin">Admins</option>
+                            <option value="customer">Customers</option>
+                        </select>
+                        <input type="text" class="search-input" placeholder="Search users..." id="userSearch" oninput="debounceSearch(loadUsers)">
+                    </div>
+                    <div class="card">
+                        <div class="card-body" id="usersTable">
+                            <div class="loading"><div class="loading-spinner"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Tab -->
+            <div id="orders" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Orders</h1>
+                        <p class="page-subtitle">Manage and fulfill customer orders.</p>
+                    </div>
+                </div>
+                <div class="page-content">
+                    <div class="filters">
+                        <select class="filter-select" id="orderStatusFilter" onchange="loadOrders()">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="paid">Paid</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                        </select>
+                    </div>
+                    <div class="card">
+                        <div class="card-body" id="ordersTable">
+                            <div class="loading"><div class="loading-spinner"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Tab -->
+            <div id="inventory" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Inventory</h1>
+                        <p class="page-subtitle">Manage product stock levels.</p>
+                    </div>
+                </div>
+                <div class="page-content" id="inventoryContent">
+                    <div class="loading"><div class="loading-spinner"></div></div>
+                </div>
+            </div>
+
+            <!-- Exports Tab -->
+            <div id="exports" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Export Data</h1>
+                        <p class="page-subtitle">Download reports and data exports.</p>
+                    </div>
+                </div>
+                <div class="page-content">
+                    <div class="grid-3">
+                        <div class="card">
+                            <div class="card-body" style="text-align: center; padding: 40px;">
+                                <i class="fas fa-users" style="font-size: 48px; color: var(--blue); margin-bottom: 16px;"></i>
+                                <h3 style="margin-bottom: 8px;">Users Export</h3>
+                                <p style="color: var(--gray-500); margin-bottom: 20px;">Download all user data as CSV</p>
+                                <button class="btn btn-primary" onclick="exportData('users')">
+                                    <i class="fas fa-download"></i> Export Users
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body" style="text-align: center; padding: 40px;">
+                                <i class="fas fa-graduation-cap" style="font-size: 48px; color: var(--green); margin-bottom: 16px;"></i>
+                                <h3 style="margin-bottom: 8px;">Enrollments Export</h3>
+                                <p style="color: var(--gray-500); margin-bottom: 20px;">Download course enrollment data</p>
+                                <button class="btn btn-success" onclick="exportData('enrollments')">
+                                    <i class="fas fa-download"></i> Export Enrollments
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body" style="text-align: center; padding: 40px;">
+                                <i class="fas fa-file-upload" style="font-size: 48px; color: var(--yellow); margin-bottom: 16px;"></i>
+                                <h3 style="margin-bottom: 8px;">Submissions Export</h3>
+                                <p style="color: var(--gray-500); margin-bottom: 20px;">Download all submission data</p>
+                                <button class="btn btn-warning" onclick="exportData('submissions')">
+                                    <i class="fas fa-download"></i> Export Submissions
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email Testing Tab -->
+            <div id="email-testing" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Email Testing</h1>
+                        <p class="page-subtitle">Test and preview email templates before sending to users.</p>
+                    </div>
+                </div>
+                <div class="page-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-paper-plane"></i> Send Test Email</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Email Template</label>
+                                    <select id="emailTemplateSelect" onchange="updateEmailPreview()">
+                                        <option value="">Select a template...</option>
+                                        <option value="welcome">Welcome Email</option>
+                                        <option value="subscription">Subscription Confirmation</option>
+                                        <option value="order_confirmation">Order Confirmation</option>
+                                        <option value="course_access_granted">Course Access Granted</option>
+                                        <option value="module_complete">Module Completion</option>
+                                        <option value="submission_received">Submission Received</option>
+                                        <option value="submission_approved">Submission Approved</option>
+                                        <option value="submission_needs_revision">Needs Revision</option>
+                                        <option value="certificate_issued">Certificate Issued</option>
+                                        <option value="password_reset">Password Reset</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Recipient Email</label>
+                                    <input type="email" id="testEmailRecipient" placeholder="Enter email address">
+                                </div>
+                            </div>
+
+                            <div id="emailPreviewContainer" style="display: none; margin-top: 24px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Email Preview</label>
+                                <div id="emailPreview" style="border: 1px solid var(--gray-200); border-radius: 8px; overflow: hidden; max-height: 400px; overflow-y: auto;">
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 24px; display: flex; gap: 12px;">
+                                <button class="btn btn-primary" onclick="sendTestEmail()" id="sendTestEmailBtn" disabled>
+                                    <i class="fas fa-paper-plane"></i> Send Test Email
+                                </button>
+                                <button class="btn btn-outline" onclick="refreshEmailPreview()">
+                                    <i class="fas fa-sync-alt"></i> Refresh Preview
+                                </button>
+                            </div>
+
+                            <div id="emailTestResult" style="margin-top: 16px; display: none;"></div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-top: 24px;">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-info-circle"></i> Email Template Info</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-2">
+                                <div>
+                                    <h4 style="margin-bottom: 12px;">Available Templates</h4>
+                                    <ul style="list-style: none; padding: 0; margin: 0;">
+                                        <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-200);">
+                                            <strong>Welcome</strong> - Sent after account creation
+                                        </li>
+                                        <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-200);">
+                                            <strong>Order Confirmation</strong> - Sent after purchase
+                                        </li>
+                                        <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-200);">
+                                            <strong>Course Access</strong> - Sent when course access is granted
+                                        </li>
+                                        <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-200);">
+                                            <strong>Module Complete</strong> - Sent after completing a module
+                                        </li>
+                                        <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-200);">
+                                            <strong>Submission Received</strong> - Sent after submitting project
+                                        </li>
+                                        <li style="padding: 8px 0;">
+                                            <strong>Certificate Issued</strong> - Sent with course certificate
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 style="margin-bottom: 12px;">Email Settings</h4>
+                                    <div style="background: var(--gray-50); padding: 16px; border-radius: 8px;">
+                                        <p style="margin: 0 0 8px 0;"><strong>From:</strong> Short Circuit &lt;hello@shortcct.com&gt;</p>
+                                        <p style="margin: 0 0 8px 0;"><strong>Reply-To:</strong> support@shortcct.com</p>
+                                        <p style="margin: 0 0 8px 0;"><strong>Provider:</strong> Resend</p>
+                                        <p style="margin: 0;"><strong>Dark Mode:</strong> Supported</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support Tickets Tab -->
+            <div id="support" class="tab-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Support Tickets</h1>
+                        <p class="page-subtitle">Manage and respond to user support requests and Q&A questions.</p>
+                    </div>
+                    <div class="page-actions">
+                        <select id="supportStatusFilter" onchange="loadSupportTickets()">
+                            <option value="">All Tickets</option>
+                            <option value="open">Open</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                        <button class="btn btn-outline" onclick="loadSupportTickets()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="page-content">
+                    <div class="card">
+                        <div class="card-body" id="supportTicketsContent">
+                            <div style="text-align: center; padding: 40px;">
+                                <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: var(--blue);"></i>
+                                <p style="margin-top: 12px; color: var(--gray-500);">Loading tickets...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Submission Review Modal -->
+    <div class="modal-overlay" id="submissionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Review Submission</h3>
+                <button class="modal-close" onclick="closeModal('submissionModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="submissionModalContent">
+            </div>
+        </div>
+    </div>
+
+    <!-- User Detail Modal -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 class="modal-title">User Details</h3>
+                <button class="modal-close" onclick="closeModal('userModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="userModalContent">
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Edit Modal -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Order</h3>
+                <button class="modal-close" onclick="closeModal('orderModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="orderModalContent">
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Ticket Modal -->
+    <div class="modal-overlay" id="ticketModal">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-life-ring"></i> Support Ticket</h3>
+                <button class="modal-close" onclick="closeModal('ticketModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="ticketModalContent">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let searchTimeout = null;
+
+        // Initialize
+        async function init() {
+            try {
+                const res = await fetch('/api/auth/me', { credentials: 'include' });
+                const data = await res.json();
+                
+                if (!data.user || data.user.role !== 'admin') {
+                    window.location.href = '/login.html';
+                    return;
+                }
+                
+                currentUser = data.user;
+                document.getElementById('adminName').textContent = currentUser.name || currentUser.email;
+                document.getElementById('adminAvatar').textContent = (currentUser.name || currentUser.email)[0].toUpperCase();
+                
+                // Setup navigation
+                setupNavigation();
+                
+                // Load initial data
+                loadDashboard();
+                
+            } catch (error) {
+                console.error('Init error:', error);
+                window.location.href = '/login.html';
+            }
+        }
+
+        function setupNavigation() {
+            document.querySelectorAll('.nav-item[data-tab]').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showTab(item.dataset.tab);
+                });
+            });
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            
+            document.querySelector(`.nav-item[data-tab="${tabId}"]`)?.classList.add('active');
+            document.getElementById(tabId)?.classList.add('active');
+            
+            // Load tab content
+            switch(tabId) {
+                case 'dashboard': loadDashboard(); break;
+                case 'analytics': loadAnalytics(); break;
+                case 'courses': loadCourses(); break;
+                case 'submissions': loadSubmissions(); break;
+                case 'users': loadUsers(); break;
+                case 'orders': loadOrders(); break;
+                case 'inventory': loadInventory(); break;
+                case 'support': loadSupportTickets(); break;
+            }
+        }
+
+        // Dashboard
+        async function loadDashboard() {
+            try {
+                const res = await fetch('/api/admin/analytics', { credentials: 'include' });
+                const data = await res.json();
+                
+                // Update pending badge
+                document.getElementById('pendingSubmissionsBadge').textContent = data.pending?.submissions || 0;
+                
+                // Render stats
+                document.getElementById('dashboardStats').innerHTML = `
+                    <div class="stat-card highlight">
+                        <div class="stat-top">
+                            <div class="stat-icon" style="background: rgba(255,255,255,0.2); color: white;">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">$${(data.overview?.totalRevenue || 0).toLocaleString()}</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+                        </div>
+                        <div class="stat-value">${data.overview?.totalUsers || 0}</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <div class="stat-icon green"><i class="fas fa-graduation-cap"></i></div>
+                        </div>
+                        <div class="stat-value">${data.overview?.totalEnrollments || 0}</div>
+                        <div class="stat-label">Course Enrollments</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <div class="stat-icon yellow"><i class="fas fa-file-upload"></i></div>
+                            ${data.pending?.submissions > 0 ? `<span class="stat-trend down"><i class="fas fa-clock"></i> ${data.pending.submissions} pending</span>` : ''}
+                        </div>
+                        <div class="stat-value">${data.pending?.submissions || 0}</div>
+                        <div class="stat-label">Pending Reviews</div>
+                    </div>
+                `;
+
+                // Recent submissions
+                if (data.recentSubmissions && data.recentSubmissions.length > 0) {
+                    document.getElementById('recentSubmissions').innerHTML = `
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Lesson</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.recentSubmissions.slice(0, 5).map(sub => `
+                                    <tr>
+                                        <td>
+                                            <div class="user-cell">
+                                                <div class="user-cell-avatar">${(sub.user_name || sub.user_email)[0].toUpperCase()}</div>
+                                                <div class="user-cell-info">
+                                                    <div class="user-cell-name">${sub.user_name || 'Unknown'}</div>
+                                                    <div class="user-cell-email">${sub.user_email}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>${sub.lesson_title || sub.lesson_id}</td>
+                                        <td><span class="status-badge ${sub.status}">${formatStatus(sub.status)}</span></td>
+                                        <td><button class="btn btn-sm btn-outline" onclick="openSubmission(${sub.id})">Review</button></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    document.getElementById('recentSubmissions').innerHTML = `
+                        <div class="empty-state" style="padding: 40px;">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>All Caught Up!</h3>
+                            <p>No pending submissions to review.</p>
+                        </div>
+                    `;
+                }
+
+                // Recent orders
+                const ordersRes = await fetch('/api/admin/orders?limit=5', { credentials: 'include' });
+                const ordersData = await ordersRes.json();
+                
+                if (ordersData.orders && ordersData.orders.length > 0) {
+                    document.getElementById('recentOrders').innerHTML = `
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Order</th>
+                                    <th>Customer</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${ordersData.orders.map(order => `
+                                    <tr>
+                                        <td>#${(order.stripe_session_id || order.id).toString().slice(-8).toUpperCase()}</td>
+                                        <td>${order.user_email || order.guest_email || 'Guest'}</td>
+                                        <td>$${(order.total_cents / 100).toFixed(2)}</td>
+                                        <td><span class="status-badge ${order.status}">${order.status}</span></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    document.getElementById('recentOrders').innerHTML = `
+                        <div class="empty-state" style="padding: 40px;">
+                            <i class="fas fa-shopping-bag"></i>
+                            <h3>No Orders Yet</h3>
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Dashboard error:', error);
+            }
+        }
+
+        // Analytics
+        async function loadAnalytics() {
+            try {
+                const res = await fetch('/api/admin/analytics', { credentials: 'include' });
+                const data = await res.json();
+                
+                document.getElementById('analyticsContent').innerHTML = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-top">
+                                <div class="stat-icon blue"><i class="fas fa-user-plus"></i></div>
+                            </div>
+                            <div class="stat-value">${data.recent?.signups || 0}</div>
+                            <div class="stat-label">New Users (7 days)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-top">
+                                <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                            </div>
+                            <div class="stat-value">${data.recent?.completions || 0}</div>
+                            <div class="stat-label">Lessons Completed (7 days)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-top">
+                                <div class="stat-icon purple"><i class="fas fa-award"></i></div>
+                            </div>
+                            <div class="stat-value">${data.pending?.submissions || 0}</div>
+                            <div class="stat-label">Pending Submissions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-top">
+                                <div class="stat-icon yellow"><i class="fas fa-shopping-bag"></i></div>
+                            </div>
+                            <div class="stat-value">${data.pending?.orders || 0}</div>
+                            <div class="stat-label">Pending Orders</div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-bottom: 24px;">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-graduation-cap"></i> Course Performance</h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Course</th>
+                                        <th>Enrolled</th>
+                                        <th>Completed</th>
+                                        <th>Completion Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${(data.courses || []).map(course => {
+                                        const rate = course.enrolled_count > 0 
+                                            ? Math.round((course.completed_count / course.enrolled_count) * 100) 
+                                            : 0;
+                                        return `
+                                            <tr>
+                                                <td><strong>${course.title}</strong></td>
+                                                <td>${course.enrolled_count || 0}</td>
+                                                <td>${course.completed_count || 0}</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                                        <div class="progress-bar" style="width: 100px;">
+                                                            <div class="progress-bar-fill" style="width: ${rate}%"></div>
+                                                        </div>
+                                                        <span>${rate}%</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Analytics error:', error);
+            }
+        }
+
+        // Courses
+        async function loadCourses() {
+            try {
+                const res = await fetch('/api/admin/courses', { credentials: 'include' });
+                const data = await res.json();
+                
+                document.getElementById('coursesContent').innerHTML = `
+                    <div class="grid-2">
+                        ${(data.courses || []).map(course => `
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">${course.title}</h3>
+                                    <span class="status-badge ${course.is_published ? 'approved' : 'pending'}">
+                                        ${course.is_published ? 'Published' : 'Draft'}
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="quick-stats">
+                                        <div class="quick-stat">
+                                            <i class="fas fa-layer-group"></i>
+                                            <strong>${course.lesson_count || 0}</strong> lessons
+                                        </div>
+                                        <div class="quick-stat">
+                                            <i class="fas fa-users"></i>
+                                            <strong>${course.enrolled_count || 0}</strong> enrolled
+                                        </div>
+                                        <div class="quick-stat">
+                                            <i class="fas fa-award"></i>
+                                            <strong>${course.completed_count || 0}</strong> completed
+                                        </div>
+                                    </div>
+                                    ${course.pending_submissions > 0 ? `
+                                        <div style="background: #fef3c7; padding: 12px; border-radius: var(--radius-sm); margin-top: 16px;">
+                                            <i class="fas fa-exclamation-triangle" style="color: #92400e;"></i>
+                                            <strong style="color: #92400e;">${course.pending_submissions}</strong> pending submissions
+                                        </div>
+                                    ` : ''}
+                                    <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+                                        <a href="/course/${course.id.replace('-course', '')}/" class="btn btn-primary btn-sm" target="_blank">
+                                            <i class="fas fa-eye"></i> View Course
+                                        </a>
+                                        <button class="btn btn-outline btn-sm" onclick="viewCourseEnrollments('${course.id}')">
+                                            <i class="fas fa-users"></i> Enrollments
+                                        </button>
+                                        <button class="btn btn-outline btn-sm" onclick="grantCourseAccess('${course.id}')">
+                                            <i class="fas fa-plus"></i> Grant Access
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Courses error:', error);
+            }
+        }
+
+        // Submissions
+        async function loadSubmissions() {
+            try {
+                const status = document.getElementById('submissionStatusFilter').value;
+                const search = document.getElementById('submissionSearch').value;
+                
+                let url = '/api/admin/submissions?limit=50';
+                if (status) url += `&status=${status}`;
+                
+                const res = await fetch(url, { credentials: 'include' });
+                const data = await res.json();
+                
+                let submissions = data.submissions || [];
+                
+                // Client-side search
+                if (search) {
+                    const q = search.toLowerCase();
+                    submissions = submissions.filter(s => 
+                        s.user_name?.toLowerCase().includes(q) ||
+                        s.user_email?.toLowerCase().includes(q) ||
+                        s.lesson_title?.toLowerCase().includes(q)
+                    );
+                }
+                
+                if (submissions.length === 0) {
+                    document.getElementById('submissionsTable').innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <h3>No Submissions Found</h3>
+                            <p>Try adjusting your filters.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                document.getElementById('submissionsTable').innerHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Course</th>
+                                <th>Lesson</th>
+                                <th>Submitted</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${submissions.map(sub => `
+                                <tr>
+                                    <td>
+                                        <div class="user-cell">
+                                            <div class="user-cell-avatar">${(sub.user_name || sub.user_email)[0].toUpperCase()}</div>
+                                            <div class="user-cell-info">
+                                                <div class="user-cell-name">${sub.user_name || 'Unknown'}</div>
+                                                <div class="user-cell-email">${sub.user_email}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>${sub.course_title || sub.course_id}</td>
+                                    <td>${sub.lesson_title || sub.lesson_id}</td>
+                                    <td>${formatDate(sub.submitted_at)}</td>
+                                    <td><span class="status-badge ${sub.status}">${formatStatus(sub.status)}</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="openSubmission(${sub.id})">
+                                            <i class="fas fa-eye"></i> Review
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <div class="pagination-info">Showing ${submissions.length} of ${data.total || submissions.length} submissions</div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Submissions error:', error);
+            }
+        }
+
+        async function openSubmission(id) {
+            try {
+                const res = await fetch('/api/admin/submissions?limit=100', { credentials: 'include' });
+                const data = await res.json();
+                const sub = data.submissions.find(s => s.id === id);
+                
+                if (!sub) return;
+                
+                document.getElementById('submissionModalContent').innerHTML = `
+                    <div class="submission-preview">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div><strong>Student:</strong> ${sub.user_name || sub.user_email}</div>
+                            <div><strong>Course:</strong> ${sub.course_title || sub.course_id}</div>
+                            <div><strong>Lesson:</strong> ${sub.lesson_title || sub.lesson_id}</div>
+                            <div><strong>Submitted:</strong> ${formatDate(sub.submitted_at)}</div>
+                        </div>
+                        <div style="margin-top: 16px;">
+                            <strong>Description:</strong>
+                            <p style="margin-top: 8px; color: var(--gray-600);">${sub.description || 'No description provided'}</p>
+                        </div>
+                        ${sub.photo_urls && sub.photo_urls.length > 0 ? `
+                            <div class="submission-photos">
+                                ${sub.photo_urls.map(url => `
+                                    <img src="${url}" class="submission-photo" onclick="window.open('${url}', '_blank')">
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        ${sub.video_url ? `
+                            <div style="margin-top: 16px;">
+                                <strong>Video:</strong>
+                                <a href="${sub.video_url}" target="_blank" style="color: var(--blue); margin-left: 8px;">${sub.video_url}</a>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <form onsubmit="submitReview(event, ${sub.id})">
+                        <div class="form-group">
+                            <label class="form-label">Review Status</label>
+                            <select class="form-select" id="reviewStatus" required>
+                                <option value="pending" ${sub.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="approved" ${sub.status === 'approved' ? 'selected' : ''}>Approved</option>
+                                <option value="needs_revision" ${sub.status === 'needs_revision' ? 'selected' : ''}>Needs Revision</option>
+                                <option value="rejected" ${sub.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Feedback for Student</label>
+                            <textarea class="form-textarea" id="reviewFeedback" placeholder="Provide helpful feedback...">${sub.admin_feedback || ''}</textarea>
+                        </div>
+                        <div class="modal-footer" style="padding: 0; border: none; margin-top: 20px;">
+                            <button type="button" class="btn btn-outline" onclick="closeModal('submissionModal')">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Review</button>
+                        </div>
+                    </form>
+                `;
+                
+                openModal('submissionModal');
+            } catch (error) {
+                console.error('Open submission error:', error);
+            }
+        }
+
+        async function submitReview(e, id) {
+            e.preventDefault();
+            try {
+                const status = document.getElementById('reviewStatus').value;
+                const feedback = document.getElementById('reviewFeedback').value;
+                
+                const res = await fetch(`/api/admin/submissions/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ status, admin_feedback: feedback })
+                });
+                
+                if (res.ok) {
+                    closeModal('submissionModal');
+                    loadSubmissions();
+                    loadDashboard();
+                } else {
+                    alert('Failed to save review');
+                }
+            } catch (error) {
+                console.error('Submit review error:', error);
+            }
+        }
+
+        // Users
+        async function loadUsers() {
+            try {
+                const role = document.getElementById('userRoleFilter').value;
+                const search = document.getElementById('userSearch').value;
+                
+                let url = `/api/admin/users?limit=50`;
+                if (role) url += `&role=${role}`;
+                if (search) url += `&search=${encodeURIComponent(search)}`;
+                
+                const res = await fetch(url, { credentials: 'include' });
+                const data = await res.json();
+                
+                if (!data.users || data.users.length === 0) {
+                    document.getElementById('usersTable').innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-users"></i>
+                            <h3>No Users Found</h3>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                document.getElementById('usersTable').innerHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Role</th>
+                                <th>Courses</th>
+                                <th>Progress</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.users.map(user => `
+                                <tr>
+                                    <td>
+                                        <div class="user-cell">
+                                            <div class="user-cell-avatar">${(user.name || user.email)[0].toUpperCase()}</div>
+                                            <div class="user-cell-info">
+                                                <div class="user-cell-name">${user.name || 'No Name'}</div>
+                                                <div class="user-cell-email">${user.email}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="status-badge ${user.role}">${user.role}</span></td>
+                                    <td>${user.enrolled_courses || 0}</td>
+                                    <td>${user.completed_lessons || 0} lessons</td>
+                                    <td>${formatDate(user.created_at)}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline" onclick="viewUser(${user.id})">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        ${user.id !== currentUser.id ? `
+                                            <button class="btn btn-sm btn-outline" onclick="toggleUserRole(${user.id}, '${user.role}')">
+                                                ${user.role === 'admin' ? 'Remove Admin' : 'Make Admin'}
+                                            </button>
+                                        ` : ''}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <div class="pagination-info">Showing ${data.users.length} of ${data.total || data.users.length} users</div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Users error:', error);
+            }
+        }
+
+        async function viewUser(id) {
+            try {
+                const res = await fetch(`/api/admin/users/${id}`, { credentials: 'include' });
+                const data = await res.json();
+                
+                document.getElementById('userModalContent').innerHTML = `
+                    <div style="display: flex; gap: 20px; margin-bottom: 24px;">
+                        <div class="user-cell-avatar" style="width: 64px; height: 64px; font-size: 24px;">
+                            ${(data.user.name || data.user.email)[0].toUpperCase()}
+                        </div>
+                        <div>
+                            <h3>${data.user.name || 'No Name'}</h3>
+                            <p style="color: var(--gray-500);">${data.user.email}</p>
+                            <span class="status-badge ${data.user.role}">${data.user.role}</span>
+                        </div>
+                    </div>
+
+                    <h4 style="margin-bottom: 12px;">Course Enrollments (${data.enrollments?.length || 0})</h4>
+                    ${data.enrollments && data.enrollments.length > 0 ? `
+                        <table class="data-table" style="margin-bottom: 24px;">
+                            <thead>
+                                <tr>
+                                    <th>Course</th>
+                                    <th>Progress</th>
+                                    <th>Certificate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.enrollments.map(e => {
+                                    const progress = e.total_lessons > 0 ? Math.round((e.completed_lessons / e.total_lessons) * 100) : 0;
+                                    return `
+                                        <tr>
+                                            <td>${e.course_title}</td>
+                                            <td>
+                                                <div style="display: flex; align-items: center; gap: 12px;">
+                                                    <div class="progress-bar" style="width: 80px;">
+                                                        <div class="progress-bar-fill" style="width: ${progress}%"></div>
+                                                    </div>
+                                                    ${progress}%
+                                                </div>
+                                            </td>
+                                            <td>${e.certificate_number ? `<span class="status-badge approved">Earned</span>` : '-'}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    ` : '<p style="color: var(--gray-500); margin-bottom: 24px;">No enrollments</p>'}
+
+                    <h4 style="margin-bottom: 12px;">Recent Submissions (${data.submissions?.length || 0})</h4>
+                    ${data.submissions && data.submissions.length > 0 ? `
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Lesson</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.submissions.map(s => `
+                                    <tr>
+                                        <td>${s.lesson_title}</td>
+                                        <td><span class="status-badge ${s.status}">${formatStatus(s.status)}</span></td>
+                                        <td>${formatDate(s.submitted_at)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    ` : '<p style="color: var(--gray-500);">No submissions</p>'}
+                `;
+                
+                openModal('userModal');
+            } catch (error) {
+                console.error('View user error:', error);
+            }
+        }
+
+        async function toggleUserRole(id, currentRole) {
+            if (!confirm(`${currentRole === 'admin' ? 'Remove admin access from' : 'Grant admin access to'} this user?`)) return;
+            
+            try {
+                const res = await fetch(`/api/admin/users/${id}/role`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ role: currentRole === 'admin' ? 'customer' : 'admin' })
+                });
+                
+                if (res.ok) {
+                    loadUsers();
+                }
+            } catch (error) {
+                console.error('Toggle role error:', error);
+            }
+        }
+
+        // Orders
+        async function loadOrders() {
+            try {
+                const status = document.getElementById('orderStatusFilter').value;
+                let url = '/api/admin/orders?limit=50';
+                if (status) url += `&status=${status}`;
+                
+                const res = await fetch(url, { credentials: 'include' });
+                const data = await res.json();
+                
+                if (!data.orders || data.orders.length === 0) {
+                    document.getElementById('ordersTable').innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-shopping-bag"></i>
+                            <h3>No Orders Found</h3>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                document.getElementById('ordersTable').innerHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.orders.map(order => `
+                                <tr>
+                                    <td><strong>#${(order.stripe_session_id || order.id).toString().slice(-8).toUpperCase()}</strong></td>
+                                    <td>${order.user_email || order.guest_email || 'Guest'}</td>
+                                    <td>$${(order.total_cents / 100).toFixed(2)}</td>
+                                    <td><span class="status-badge ${order.status}">${order.status}</span></td>
+                                    <td>${formatDate(order.created_at)}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline" onclick="editOrder(${order.id}, '${order.status}', '${order.tracking_number || ''}')">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Orders error:', error);
+            }
+        }
+
+        function editOrder(id, status, tracking) {
+            document.getElementById('orderModalContent').innerHTML = `
+                <form onsubmit="updateOrder(event, ${id})">
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="orderStatus">
+                            <option value="pending" ${status === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="paid" ${status === 'paid' ? 'selected' : ''}>Paid</option>
+                            <option value="processing" ${status === 'processing' ? 'selected' : ''}>Processing</option>
+                            <option value="shipped" ${status === 'shipped' ? 'selected' : ''}>Shipped</option>
+                            <option value="delivered" ${status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                            <option value="cancelled" ${status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tracking Number</label>
+                        <input type="text" class="form-input" id="orderTracking" value="${tracking}" placeholder="Enter tracking number">
+                    </div>
+                    <div class="modal-footer" style="padding: 0; border: none; margin-top: 20px;">
+                        <button type="button" class="btn btn-outline" onclick="closeModal('orderModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            `;
+            openModal('orderModal');
+        }
+
+        async function updateOrder(e, id) {
+            e.preventDefault();
+            try {
+                const status = document.getElementById('orderStatus').value;
+                const tracking_number = document.getElementById('orderTracking').value;
+                
+                const res = await fetch(`/api/admin/orders/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ status, tracking_number })
+                });
+                
+                if (res.ok) {
+                    closeModal('orderModal');
+                    loadOrders();
+                }
+            } catch (error) {
+                console.error('Update order error:', error);
+            }
+        }
+
+        // Inventory
+        async function loadInventory() {
+            try {
+                const res = await fetch('/api/admin/inventory', { credentials: 'include' });
+                const data = await res.json();
+                
+                document.getElementById('inventoryContent').innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fas fa-boxes"></i> Product Stock</h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Current Stock</th>
+                                        <th>Low Stock Alert</th>
+                                        <th>Status</th>
+                                        <th>Update</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${(data.inventory || []).map(item => `
+                                        <tr>
+                                            <td><strong>${item.product_name}</strong></td>
+                                            <td>
+                                                <input type="number" class="form-input" style="width: 80px;" 
+                                                       id="stock_${item.product_id}" value="${item.quantity}" min="0">
+                                            </td>
+                                            <td>${item.low_stock_threshold}</td>
+                                            <td>
+                                                ${item.quantity <= item.low_stock_threshold 
+                                                    ? `<span class="status-badge pending">Low Stock</span>` 
+                                                    : `<span class="status-badge approved">In Stock</span>`}
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary" onclick="updateStock('${item.product_id}')">
+                                                    Update
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Inventory error:', error);
+            }
+        }
+
+        async function updateStock(productId) {
+            const quantity = parseInt(document.getElementById(`stock_${productId}`).value);
+            try {
+                const res = await fetch(`/api/admin/inventory/${productId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ quantity })
+                });
+                
+                if (res.ok) {
+                    alert('Stock updated!');
+                    loadInventory();
+                }
+            } catch (error) {
+                console.error('Update stock error:', error);
+            }
+        }
+
+        // Course Access
+        async function grantCourseAccess(courseId) {
+            const email = prompt('Enter user email to grant access:');
+            if (!email) return;
+            
+            try {
+                // First find the user
+                const userRes = await fetch(`/api/admin/users?search=${encodeURIComponent(email)}&limit=1`, { credentials: 'include' });
+                const userData = await userRes.json();
+                
+                if (!userData.users || userData.users.length === 0) {
+                    alert('User not found');
+                    return;
+                }
+                
+                const userId = userData.users[0].id;
+                
+                const res = await fetch('/api/admin/course-access', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ userId, courseId, accessType: 'admin' })
+                });
+                
+                if (res.ok) {
+                    alert('Access granted!');
+                    loadCourses();
+                } else {
+                    alert('Failed to grant access');
+                }
+            } catch (error) {
+                console.error('Grant access error:', error);
+            }
+        }
+
+        // Export Data
+        function exportData(type) {
+            window.open(`/api/admin/export/${type}`, '_blank');
+        }
+
+        // Helpers
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            return new Date(dateStr).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        function formatStatus(status) {
+            const labels = {
+                'pending': 'Pending',
+                'approved': 'Approved',
+                'needs_revision': 'Needs Revision',
+                'rejected': 'Rejected'
+            };
+            return labels[status] || status;
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('show');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        function debounceSearch(fn) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(fn, 300);
+        }
+
+        async function logout() {
+            await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+            window.location.href = '/';
+        }
+
+        // ============================================
+        // EMAIL TESTING FUNCTIONS
+        // ============================================
+
+        const emailTemplateDescriptions = {
+            welcome: { name: 'Welcome Email', description: 'Sent to new users after they create an account' },
+            subscription: { name: 'Subscription Confirmation', description: 'Sent when user subscribes to newsletter' },
+            order_confirmation: { name: 'Order Confirmation', description: 'Sent after a successful purchase' },
+            course_access_granted: { name: 'Course Access Granted', description: 'Sent when course access is granted after payment verification' },
+            module_complete: { name: 'Module Completion', description: 'Sent when user completes a course module' },
+            submission_received: { name: 'Submission Received', description: 'Sent when user submits their final project' },
+            submission_approved: { name: 'Submission Approved', description: 'Sent when instructor approves the submission' },
+            submission_needs_revision: { name: 'Needs Revision', description: 'Sent when submission needs updates' },
+            certificate_issued: { name: 'Certificate Issued', description: 'Sent with the official certificate' },
+            password_reset: { name: 'Password Reset', description: 'Sent when user requests password reset' }
+        };
+
+        function updateEmailPreview() {
+            const template = document.getElementById('emailTemplateSelect').value;
+            const previewContainer = document.getElementById('emailPreviewContainer');
+            const sendBtn = document.getElementById('sendTestEmailBtn');
+            const recipient = document.getElementById('testEmailRecipient').value;
+            
+            if (template) {
+                previewContainer.style.display = 'block';
+                sendBtn.disabled = !recipient;
+                refreshEmailPreview();
+            } else {
+                previewContainer.style.display = 'none';
+                sendBtn.disabled = true;
+            }
+        }
+
+        function refreshEmailPreview() {
+            const template = document.getElementById('emailTemplateSelect').value;
+            if (!template) return;
+
+            const previewHtml = getEmailPreviewHtml(template);
+            document.getElementById('emailPreview').innerHTML = previewHtml;
+        }
+
+        function getEmailPreviewHtml(template) {
+            const baseStyles = `
+                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f1f5f9; padding: 20px;">
+                    <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <div style="background: linear-gradient(135deg, #1a2332 0%, #2a3444 100%); padding: 20px; text-align: center;">
+                            <span style="color: white; font-size: 18px; font-weight: bold;">SHORT CIRCUIT</span>
+                        </div>
+                        <div style="padding: 30px;">
+            `;
+            
+            const footer = `
+                        </div>
+                        <div style="background: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0;">
+                            <p style="margin: 0; color: #64748b; font-size: 14px;">Questions? Contact us at support@shortcct.com</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            let content = '';
+            switch (template) {
+                case 'welcome':
+                    content = `
+                        <h1 style="color: #1a2332; font-size: 24px; margin: 0 0 16px 0;">Welcome to Short Circuit!</h1>
+                        <p style="color: #495057; line-height: 1.6;">Hey [Name],</p>
+                        <p style="color: #495057; line-height: 1.6;">Welcome to Short Circuit! We are excited to have you join our community of hardware enthusiasts.</p>
+                        <a href="#" style="display: inline-block; background: #00bfff; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; margin-top: 16px;">Explore Courses</a>
+                    `;
+                    break;
+                case 'order_confirmation':
+                    content = `
+                        <h1 style="color: #1a2332; font-size: 24px; margin: 0 0 16px 0;">Order Confirmed!</h1>
+                        <p style="color: #495057; line-height: 1.6;">Hey [Name],</p>
+                        <p style="color: #495057; line-height: 1.6;">Thank you for your order! Your kit will be shipped within 2-3 business days.</p>
+                        <div style="background: #f8f9fa; padding: 16px; border-radius: 8px; margin: 16px 0;">
+                            <p style="margin: 0;"><strong>Order #:</strong> ABC12345</p>
+                            <p style="margin: 8px 0 0;"><strong>Total:</strong> $99.00</p>
+                        </div>
+                    `;
+                    break;
+                case 'course_access_granted':
+                    content = `
+                        <h1 style="color: #1a2332; font-size: 24px; margin: 0 0 16px 0;">Your Course Access is Confirmed!</h1>
+                        <p style="color: #495057; line-height: 1.6;">Hey [Name],</p>
+                        <p style="color: #495057; line-height: 1.6;">Your payment has been verified and you now have full access to <strong>Smartwatch Course</strong>.</p>
+                        <div style="background: linear-gradient(135deg, #e8f5e9 0%, #e3f2fd 100%); padding: 16px; border-radius: 8px; margin: 16px 0;">
+                            <h3 style="margin: 0 0 12px 0;">What is Next?</h3>
+                            <ol style="margin: 0; padding-left: 20px;">
+                                <li>Wait for your kit to arrive</li>
+                                <li>Start with Module 1</li>
+                                <li>Follow video tutorials</li>
+                            </ol>
+                        </div>
+                        <a href="#" style="display: inline-block; background: #00bfff; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none;">Start Learning</a>
+                    `;
+                    break;
+                case 'module_complete':
+                    content = `
+                        <h1 style="color: #1a2332; font-size: 24px; margin: 0 0 16px 0;">Module Complete!</h1>
+                        <p style="color: #495057; line-height: 1.6;">Awesome work! You have completed <strong>Module 1: Getting Started</strong>.</p>
+                        <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 16px 0;">
+                            <div style="font-size: 48px; color: #00bfff;">33%</div>
+                            <div style="color: #6c757d;">Overall Progress (2/6 modules)</div>
+                        </div>
+                        <a href="#" style="display: inline-block; background: #00bfff; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none;">Continue to Next Module</a>
+                    `;
+                    break;
+                case 'certificate_issued':
+                    content = `
+                        <h1 style="color: #1a2332; font-size: 24px; margin: 0 0 16px 0;">Your Certificate is Ready!</h1>
+                        <p style="color: #495057; line-height: 1.6;">Congratulations on completing <strong>Smartwatch Course</strong>!</p>
+                        <div style="background: linear-gradient(135deg, #1a2332 0%, #2a3444 100%); padding: 24px; border-radius: 12px; text-align: center; margin: 16px 0;">
+                            <div style="color: #00bfff; font-size: 12px; text-transform: uppercase;">Certificate of Completion</div>
+                            <div style="color: white; font-size: 20px; font-weight: bold; margin-top: 8px;">[Student Name]</div>
+                            <div style="color: #adb5bd; font-size: 14px;">Certificate #SC-SW-2026-00001</div>
+                        </div>
+                        <a href="#" style="display: inline-block; background: #ff6b6b; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none;">Download Certificate</a>
+                    `;
+                    break;
+                default:
+                    content = `
+                        <h1 style="color: #1a2332; font-size: 24px; margin: 0 0 16px 0;">${emailTemplateDescriptions[template]?.name || 'Email Template'}</h1>
+                        <p style="color: #495057; line-height: 1.6;">${emailTemplateDescriptions[template]?.description || 'Preview not available'}</p>
+                    `;
+            }
+
+            return baseStyles + content + footer;
+        }
+
+        async function sendTestEmail() {
+            const template = document.getElementById('emailTemplateSelect').value;
+            const recipient = document.getElementById('testEmailRecipient').value;
+            const resultDiv = document.getElementById('emailTestResult');
+            
+            if (!template || !recipient) {
+                resultDiv.innerHTML = '<div class="alert alert-danger">Please select a template and enter an email address.</div>';
+                resultDiv.style.display = 'block';
+                return;
+            }
+
+            const btn = document.getElementById('sendTestEmailBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            resultDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/admin/test-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ templateType: template, recipientEmail: recipient })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div style="background: #d1fae5; border: 1px solid #10b981; color: #065f46; padding: 12px; border-radius: 8px;"><i class="fas fa-check-circle"></i> Test email sent successfully to ${recipient}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div style="background: #fee2e2; border: 1px solid #ef4444; color: #991b1b; padding: 12px; border-radius: 8px;"><i class="fas fa-exclamation-circle"></i> ${data.error || 'Failed to send email'}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div style="background: #fee2e2; border: 1px solid #ef4444; color: #991b1b; padding: 12px; border-radius: 8px;"><i class="fas fa-exclamation-circle"></i> Error: ${error.message}</div>`;
+            }
+
+            resultDiv.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Test Email';
+        }
+
+        document.getElementById('testEmailRecipient')?.addEventListener('input', function() {
+            const template = document.getElementById('emailTemplateSelect').value;
+            document.getElementById('sendTestEmailBtn').disabled = !template || !this.value;
+        });
+
+        // ============================================
+        // SUPPORT TICKETS FUNCTIONS
+        // ============================================
+
+        let supportTickets = [];
+
+        async function loadSupportTickets() {
+            const container = document.getElementById('supportTicketsContent');
+            const status = document.getElementById('supportStatusFilter')?.value || '';
+            
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: var(--blue);"></i>
+                    <p style="margin-top: 12px; color: var(--gray-500);">Loading tickets...</p>
+                </div>
+            `;
+
+            try {
+                const url = status ? `/api/admin/support/tickets?status=${status}` : '/api/admin/support/tickets';
+                const response = await fetch(url, { credentials: 'include' });
+                const data = await response.json();
+                supportTickets = data.tickets || [];
+                renderSupportTickets();
+            } catch (error) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--red);">
+                        <i class="fas fa-exclamation-circle" style="font-size: 32px;"></i>
+                        <p style="margin-top: 12px;">Failed to load tickets. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderSupportTickets() {
+            const container = document.getElementById('supportTicketsContent');
+            
+            if (supportTickets.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <i class="fas fa-inbox" style="font-size: 48px; color: var(--gray-300);"></i>
+                        <h3 style="margin-top: 16px; color: var(--gray-500);">No Support Tickets</h3>
+                        <p style="color: var(--gray-400);">All caught up! No pending tickets.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${supportTickets.map(ticket => `
+                            <tr>
+                                <td>#${ticket.id}</td>
+                                <td>
+                                    <div style="font-weight: 500;">${ticket.user_name || 'Unknown'}</div>
+                                    <div style="font-size: 12px; color: var(--gray-500);">${ticket.user_email || ''}</div>
+                                </td>
+                                <td><span class="badge badge-info">${formatTicketCategory(ticket.category)}</span></td>
+                                <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(ticket.description)}">${escapeHtml(ticket.description)}</td>
+                                <td><span class="badge ${getTicketStatusClass(ticket.status)}">${formatTicketStatus(ticket.status)}</span></td>
+                                <td>${formatDate(ticket.created_at)}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="openTicketModal(${ticket.id})">
+                                        <i class="fas fa-reply"></i> View/Reply
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function formatTicketCategory(category) {
+            const categories = {
+                'technical': 'Technical',
+                'hardware': 'Hardware',
+                'software': 'Software',
+                'content': 'Content',
+                'other': 'Other'
+            };
+            return categories[category] || category;
+        }
+
+        function formatTicketStatus(status) {
+            const statuses = {
+                'open': 'Open',
+                'in_progress': 'In Progress',
+                'resolved': 'Resolved',
+                'closed': 'Closed'
+            };
+            return statuses[status] || status;
+        }
+
+        function getTicketStatusClass(status) {
+            const classes = {
+                'open': 'badge-warning',
+                'in_progress': 'badge-info',
+                'resolved': 'badge-success',
+                'closed': 'badge-secondary'
+            };
+            return classes[status] || 'badge-secondary';
+        }
+
+        function openTicketModal(ticketId) {
+            const ticket = supportTickets.find(t => t.id === ticketId);
+            if (!ticket) return;
+
+            const modalContent = document.getElementById('ticketModalContent');
+            modalContent.innerHTML = `
+                <div class="ticket-detail">
+                    <div class="grid-2" style="gap: 24px;">
+                        <div>
+                            <h4 style="margin-bottom: 12px;">Ticket Information</h4>
+                            <div style="background: var(--gray-50); padding: 16px; border-radius: 8px;">
+                                <p style="margin: 0 0 8px 0;"><strong>User:</strong> ${ticket.user_name || 'Unknown'} (${ticket.user_email || 'N/A'})</p>
+                                <p style="margin: 0 0 8px 0;"><strong>Category:</strong> ${formatTicketCategory(ticket.category)}</p>
+                                <p style="margin: 0 0 8px 0;"><strong>Course:</strong> ${ticket.course_title || 'N/A'}</p>
+                                <p style="margin: 0 0 8px 0;"><strong>Lesson:</strong> ${ticket.lesson_title || 'N/A'}</p>
+                                <p style="margin: 0 0 8px 0;"><strong>Status:</strong> <span class="badge ${getTicketStatusClass(ticket.status)}">${formatTicketStatus(ticket.status)}</span></p>
+                                <p style="margin: 0;"><strong>Created:</strong> ${formatDate(ticket.created_at)}</p>
+                                ${ticket.video_link ? `<p style="margin: 8px 0 0;"><strong>Video:</strong> <a href="${ticket.video_link}" target="_blank">${ticket.video_link}</a></p>` : ''}
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="margin-bottom: 12px;">Description</h4>
+                            <div style="background: var(--gray-50); padding: 16px; border-radius: 8px; max-height: 200px; overflow-y: auto;">
+                                <p style="margin: 0; white-space: pre-wrap;">${escapeHtml(ticket.description)}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${ticket.admin_response ? `
+                        <div style="margin-top: 24px;">
+                            <h4 style="margin-bottom: 12px;">Previous Response</h4>
+                            <div style="background: #f0f9ff; padding: 16px; border-radius: 8px; border-left: 3px solid var(--blue);">
+                                <p style="margin: 0; white-space: pre-wrap;">${escapeHtml(ticket.admin_response)}</p>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <div style="margin-top: 24px;">
+                        <h4 style="margin-bottom: 12px;">Reply to User</h4>
+                        <textarea id="ticketReplyText" rows="4" placeholder="Type your response here..." style="width: 100%; padding: 12px; border: 1px solid var(--gray-300); border-radius: 8px; resize: vertical;"></textarea>
+                    </div>
+
+                    <div style="margin-top: 16px; display: flex; gap: 12px; align-items: center;">
+                        <select id="ticketStatusSelect" style="padding: 10px 12px; border: 1px solid var(--gray-300); border-radius: 6px;">
+                            <option value="open" ${ticket.status === 'open' ? 'selected' : ''}>Open</option>
+                            <option value="in_progress" ${ticket.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+                            <option value="resolved" ${ticket.status === 'resolved' ? 'selected' : ''}>Resolved</option>
+                            <option value="closed" ${ticket.status === 'closed' ? 'selected' : ''}>Closed</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="submitTicketReply(${ticket.id})">
+                            <i class="fas fa-reply"></i> Send Reply & Update
+                        </button>
+                        <button class="btn btn-outline" onclick="closeModal('ticketModal')">Cancel</button>
+                    </div>
+                </div>
+            `;
+
+            openModal('ticketModal');
+        }
+
+        async function submitTicketReply(ticketId) {
+            const replyText = document.getElementById('ticketReplyText').value.trim();
+            const newStatus = document.getElementById('ticketStatusSelect').value;
+
+            if (!replyText && !newStatus) {
+                alert('Please provide a reply or select a status change.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/support/tickets/${ticketId}/reply`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ 
+                        response: replyText,
+                        status: newStatus
+                    })
+                });
+
+                if (response.ok) {
+                    closeModal('ticketModal');
+                    loadSupportTickets();
+                    showNotification('Reply sent successfully!', 'success');
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Failed to send reply');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i> ${message}`;
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; padding: 16px 24px; border-radius: 8px;
+                background: ${type === 'success' ? '#d1fae5' : '#dbeafe'}; color: ${type === 'success' ? '#065f46' : '#1e40af'};
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999; animation: slideIn 0.3s ease;
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>

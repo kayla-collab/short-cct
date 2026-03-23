@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Short Circuit</title>
+    <meta name="description" content="Get in touch with Short Circuit - Engineering project kits and educational resources. We're here to help.">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Shared Responsive & Iframe-Friendly Styles -->
+    <link rel="stylesheet" href="/css/responsive.css">
+    <!-- Iframe Detection Script (load early) -->
+    <script src="/js/iframe-detect.js"></script>
+    <style>
+        :root {
+            --navy: #1a2332;
+            --electric-blue: #00bfff;
+            --coral: #ff6b6b;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #6c757d;
+            --tech-green: #00ff88;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.8;
+            color: var(--navy);
+            background: var(--white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--navy);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 36px;
+            margin-right: 8px;
+        }
+
+        .back-link {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-link:hover {
+            color: var(--electric-blue);
+        }
+
+        /* Header */
+        .contact-header {
+            background: linear-gradient(135deg, var(--navy) 0%, #2a3a52 100%);
+            color: var(--white);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .contact-header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .contact-header p {
+            font-size: 18px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Content */
+        .contact-content {
+            padding: 60px 0;
+            flex: 1;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .contact-card {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--electric-blue), #0099cc);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .contact-icon svg {
+            width: 36px;
+            height: 36px;
+            stroke: var(--white);
+            fill: none;
+        }
+
+        .contact-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            color: var(--navy);
+            margin-bottom: 10px;
+        }
+
+        .contact-card p {
+            color: var(--dark-gray);
+            margin-bottom: 15px;
+        }
+
+        .contact-card a {
+            color: var(--electric-blue);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .contact-card a:hover {
+            color: #0099cc;
+        }
+
+        /* Info Section */
+        .info-section {
+            background: var(--light-gray);
+            padding: 40px 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        .info-item h4 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .info-item p {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+
+        /* FAQ Link */
+        .faq-cta {
+            text-align: center;
+            padding: 40px 0;
+            background: var(--white);
+        }
+
+        .faq-cta h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--navy);
+            margin-bottom: 10px;
+        }
+
+        .faq-cta p {
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--electric-blue);
+            color: var(--navy);
+        }
+
+        .btn-primary:hover {
+            background: #0099cc;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border: 2px solid var(--navy);
+            color: var(--navy);
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        /* Footer */
+        .contact-footer {
+            background: var(--navy);
+            color: var(--white);
+            padding: 30px 0;
+            text-align: center;
+        }
+
+        .contact-footer p {
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+
+        .contact-footer a {
+            color: var(--electric-blue);
+            text-decoration: none;
+        }
+
+        .contact-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo"><img src="/images/logo.png" alt="Short Circuit Logo">SHORT CIRCUIT</a>
+            <a href="index.html" class="back-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Home
+            </a>
+        </div>
+    </nav>
+
+    <header class="contact-header">
+        <div class="container">
+            <h1>Contact Us</h1>
+            <p>Have questions about our project kits or need help with your order? We're here to help.</p>
+        </div>
+    </header>
+
+    <main class="contact-content">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <svg viewBox="0 0 24 24" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                    </div>
+                    <h3>Email Support</h3>
+                    <p>For general inquiries, course questions, or technical support</p>
+                    <a href="mailto:support@shortcct.com">support@shortcct.com</a>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <svg viewBox="0 0 24 24" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <h3>Response Time</h3>
+                    <p>We typically respond within 24-48 hours on business days</p>
+                    <span style="color: var(--tech-green); font-weight: 600;">Monday - Friday</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section class="info-section">
+        <div class="container">
+            <div class="info-grid">
+                <div class="info-item">
+                    <h4>Order Issues</h4>
+                    <p>Questions about shipping, returns, or your order status</p>
+                </div>
+                <div class="info-item">
+                    <h4>Course Help</h4>
+                    <p>Technical questions or guidance on project completion</p>
+                </div>
+                <div class="info-item">
+                    <h4>General Inquiries</h4>
+                    <p>Partnership opportunities or general questions</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq-cta">
+        <div class="container">
+            <h3>Looking for quick answers?</h3>
+            <p>Check our FAQ section for answers to common questions about our kits and courses.</p>
+            <a href="index.html#faq" class="btn btn-primary">View FAQ</a>
+        </div>
+    </section>
+
+    <footer class="contact-footer">
+        <div class="container">
+            <p>&copy; 2026 Short Circuit LLC. All rights reserved.</p>
+            <p><a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms of Service</a> | <a href="index.html">Home</a></p>
+        </div>
+    </footer>
+    <script src="/js/auth-header.js"></script>
+</body>
+</html>

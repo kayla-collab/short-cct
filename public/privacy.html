@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | Short Circuit LLC</title>
+    <meta name="description" content="Privacy Policy for Short Circuit LLC - Learn how we collect, use, and protect your personal information.">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <!-- Shared Responsive & Iframe-Friendly Styles -->
+    <link rel="stylesheet" href="/css/responsive.css">
+    <!-- Iframe Detection Script (load early) -->
+    <script src="/js/iframe-detect.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #1a2332;
+            --electric-blue: #00bfff;
+            --coral: #ff6b6b;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #6c757d;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.8;
+            color: var(--navy);
+            background: var(--light-gray);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .navbar {
+            background: var(--navy);
+            padding: 20px 0;
+            color: var(--white);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 36px;
+            margin-right: 8px;
+            font-size: 28px;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            margin-left: 30px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--electric-blue);
+        }
+
+        .legal-header {
+            background: var(--navy);
+            color: var(--white);
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .legal-header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .legal-header p {
+            opacity: 0.8;
+            font-size: 16px;
+        }
+
+        .legal-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            background: var(--white);
+            min-height: calc(100vh - 400px);
+        }
+
+        .legal-content h2 {
+            font-size: 24px;
+            margin: 40px 0 20px;
+            color: var(--navy);
+            border-bottom: 2px solid var(--electric-blue);
+            padding-bottom: 10px;
+        }
+
+        .legal-content h2:first-child {
+            margin-top: 0;
+        }
+
+        .legal-content h3 {
+            font-size: 18px;
+            margin: 25px 0 15px;
+            color: var(--navy);
+        }
+
+        .legal-content p {
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .legal-content ul {
+            margin: 15px 0 15px 30px;
+            color: #444;
+        }
+
+        .legal-content li {
+            margin-bottom: 10px;
+        }
+
+        .legal-content a {
+            color: var(--electric-blue);
+            text-decoration: none;
+        }
+
+        .legal-content a:hover {
+            text-decoration: underline;
+        }
+
+        .contact-box {
+            background: var(--light-gray);
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+
+        .contact-box h4 {
+            margin-bottom: 15px;
+            color: var(--navy);
+        }
+
+        footer {
+            background: var(--navy);
+            color: var(--white);
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        footer p {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        footer a {
+            color: var(--electric-blue);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .legal-header h1 {
+                font-size: 28px;
+            }
+
+            .legal-content {
+                padding: 40px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="/css/auth-header.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-container container">
+            <a href="index.html" class="logo"><img src="/images/logo.png" alt="Short Circuit Logo">SHORT CIRCUIT</a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="index.html#projects">Projects</a></li>
+                <!-- HIDDEN: <li><a href="challenge.html">Challenge</a></li> -->
+                <li><a href="index.html#how-it-works">How it Works</a></li>
+                <li><a href="shop.html">Shop</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="nav-actions">
+                    <!-- Guest Actions (shown when not logged in) -->
+                    <div class="guest-actions" id="guestActions">
+                        <a href="login.html" class="btn btn-outline">Login</a>
+                        <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                    </div>
+                    
+                    <!-- User Menu (shown when logged in) -->
+                    <div class="user-menu" id="userMenu">
+                        <button class="user-menu-btn" id="userMenuBtn">
+                            <span class="user-icon" id="userInitial">U</span>
+                            <span id="userDisplayName">User</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-dropdown-header">
+                                <div class="user-name" id="dropdownUserName">User Name</div>
+                                <div class="user-email" id="dropdownUserEmail">user@email.com</div>
+                                <div class="admin-badge" id="adminBadge" style="display: none;">Admin</div>
+                            </div>
+                            <div class="user-dropdown-menu">
+                                <a href="/account/">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                    My Account
+                                </a>
+                                <a href="/account/">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                        <path d="M2 17l10 5 10-5"/>
+                                        <path d="M2 12l10 5 10-5"/>
+                                    </svg>
+                                    My Projects
+                                </a>
+                                <a href="/orders.html">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                        <line x1="3" y1="6" x2="21" y2="6"/>
+                                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                                    </svg>
+                                    My Orders
+                                </a>
+                                
+                                <!-- Course Access Section (shown for users with course access) -->
+                                <div class="admin-section" id="courseSection" style="display: none;">
+                                    <a href="/course/smartwatch/" id="smartwatchCourseLink" style="display: none;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                            <line x1="8" y1="21" x2="16" y2="21"/>
+                                            <line x1="12" y1="17" x2="12" y2="21"/>
+                                        </svg>
+                                        Smartwatch Course
+                                    </a>
+                                    <a href="/course/ballbeam/" id="ballbeamCourseLink" style="display: none;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <line x1="2" y1="12" x2="22" y2="12"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                        </svg>
+                                        Ball and Beam Course
+                                    </a>
+                                </div>
+                                
+                                <!-- Admin Section (shown for admins only) -->
+                                <div class="admin-section" id="adminSection" style="display: none;">
+                                    <a href="/admin/">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="3"/>
+                                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                                        </svg>
+                                        Admin Dashboard
+                                    </a>
+                                </div>
+                                
+                                <a href="#" class="logout-btn" onclick="logoutUser(); return false;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                        <polyline points="16 17 21 12 16 7"/>
+                                        <line x1="21" y1="12" x2="9" y2="12"/>
+                                    </svg>
+                                    Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a href="cart.html" class="cart-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="legal-header">
+        <h1>Privacy Policy</h1>
+        <p>Short Circuit LLC | Effective Date: 01/01/2026 | Last Updated: 12/27/2025</p>
+    </header>
+
+    <main class="legal-content">
+        <h2>1. Introduction and Scope</h2>
+        
+        <h3>1.1.</h3>
+        <p>This Privacy Policy ("Policy") describes how Short Circuit LLC ("Company," "we," "us," or "our"), the operator of www.shortcct.com (the "Website" or "Site"), collects, uses, discloses, and protects the "Personal Information" of its users and customers.</p>
+
+        <h3>1.2. Applicability</h3>
+        <p>This Policy applies to information we collect:</p>
+        <ul>
+            <li>When you visit or interact with our Website.</li>
+            <li>When you create an account or log in via third-party services.</li>
+            <li>When you make a purchase, contact support, or participate in activities like Design Challenges.</li>
+            <li>From third-party service providers acting on our behalf.</li>
+        </ul>
+
+        <h3>1.3. Definitions</h3>
+        <p>"Personal Information" means any information that identifies, relates to, describes, is reasonably capable of being associated with, or could reasonably be linked, directly or indirectly, with a particular individual or household. "De-identified" or "Aggregated" data is not considered Personal Information.</p>
+
+        <h3>1.4. User Eligibility and Age Restriction</h3>
+        <p>Our Website and services are intended for, and directed to, individuals who are eighteen (18) years of age or older. We do not knowingly collect, solicit, or maintain Personal Information from anyone under the age of 18. If we learn we have collected such information, we will delete it promptly. If you believe a minor has provided us with information, please contact us immediately at <a href="mailto:support@shortcct.com">support@shortcct.com</a>.</p>
+
+        <h2>2. Information We Collect</h2>
+        <p>We collect information you provide directly, automatically through your use of the Site, and from third parties.</p>
+
+        <h3>2.1. Information You Provide Directly</h3>
+        <ul>
+            <li><strong>Account & Purchase Data:</strong> Name, email address, password, billing/shipping address, phone number, and order history.</li>
+            <li><strong>Payment Information:</strong> Credit/debit card details are processed directly and securely by our third-party payment processor, Wix Payments. We do not store full payment card numbers on our servers.</li>
+            <li><strong>Communication Data:</strong> Contents of emails, support tickets, feedback, product reviews, and Design Challenge submissions (which may include code, photos, videos, and descriptions of your projects).</li>
+            <li><strong>Profile Data:</strong> Preferences and account settings.</li>
+        </ul>
+
+        <h3>2.2. Information Collected Automatically</h3>
+        <p>When you visit our Website, we and our service providers may use cookies, web beacons, and other tracking technologies to collect:</p>
+        <ul>
+            <li><strong>Device and Usage Data:</strong> IP address, browser type, operating system, device identifiers, referring URLs, pages viewed, links clicked, and the dates/times of your visits.</li>
+            <li><strong>Location Data:</strong> General geographic location derived from your IP address.</li>
+            <li><strong>Cookies:</strong> Essential cookies are required for site functionality (e.g., shopping cart, login session). We also use performance and analytics cookies (e.g., Google Analytics) to understand how users interact with our Site. You can manage cookie preferences through your browser settings.</li>
+        </ul>
+
+        <h3>2.3. Information from Third Parties</h3>
+        <p>We may receive information about you from:</p>
+        <ul>
+            <li><strong>Social Media Platforms:</strong> When you choose to log in or link your account via services like Google or Facebook, we may receive your basic profile information as permitted by your privacy settings on those platforms.</li>
+            <li><strong>Service Providers:</strong> Such as payment processors confirming a transaction or analytics providers offering aggregated insights.</li>
+        </ul>
+
+        <h2>3. How We Use Your Information</h2>
+        <p>We use your Personal Information for the following business and commercial purposes:</p>
+
+        <h3>3.1. To Fulfill Our Contract with You</h3>
+        <p>To process and ship your orders, manage your account, provide customer support, and administer programs like Design Challenges.</p>
+
+        <h3>3.2. For Our Legitimate Business Interests</h3>
+        <p>To operate, secure, and improve our Website and products; to perform analytics and research; to detect and prevent fraud; and to communicate with you about your account or orders.</p>
+
+        <h3>3.3. With Your Consent</h3>
+        <p>To send you promotional and marketing communications about new products, features, or offers. You may opt-out of these at any time.</p>
+
+        <h3>3.4. To Comply with Legal Obligations</h3>
+        <p>To meet tax, regulatory, and legal reporting requirements, and to respond to lawful requests from public authorities.</p>
+
+        <h2>4. How We Disclose and Share Your Information</h2>
+        <p>We do not and will not sell your Personal Information to third parties. We share your information only in the following limited circumstances:</p>
+
+        <h3>4.1. Service Providers</h3>
+        <p>We share necessary information with trusted third-party vendors who perform services on our behalf under strict confidentiality agreements. These include:</p>
+        <ul>
+            <li>Wix Payments for payment processing.</li>
+            <li>Shipping carriers (e.g., USPS, FedEx, UPS) to fulfill and deliver your orders.</li>
+            <li>Hosting and IT service providers (e.g., Wix.com) to maintain our Website.</li>
+            <li>Analytics providers (e.g., Google Analytics) to analyze Site usage.</li>
+        </ul>
+
+        <h3>4.2. Legal Requirements and Protection</h3>
+        <p>We may disclose information if required by law, subpoena, or other legal process, or if we believe in good faith that disclosure is necessary to protect our rights, your safety, or the safety of others, investigate fraud, or respond to a government request.</p>
+
+        <h3>4.3. Business Transfers</h3>
+        <p>In connection with any merger, sale of company assets, financing, or acquisition of all or a portion of our business by another company, your information may be transferred as a business asset.</p>
+
+        <h2>5. Your Privacy Rights and Choices</h2>
+        <p>Depending on your location, you may have certain rights regarding your Personal Information.</p>
+
+        <h3>5.1. General Rights (All Users)</h3>
+        <ul>
+            <li><strong>Access & Correction:</strong> You can access and update your account information by logging into your account on our Website.</li>
+            <li><strong>Marketing Opt-Out:</strong> You can unsubscribe from promotional emails by clicking the "unsubscribe" link in any email or by contacting us. You will still receive transactional messages related to your orders.</li>
+            <li><strong>Do Not Track:</strong> Our Site does not currently respond to "Do Not Track" browser signals.</li>
+        </ul>
+
+        <h3>5.2. Rights for California Residents (CCPA/CPRA)</h3>
+        <p>California consumers have the right to:</p>
+        <ul>
+            <li>Know what Personal Information we have collected, used, disclosed, and sold.</li>
+            <li>Request Deletion of their Personal Information, subject to certain exceptions.</li>
+            <li>Correct inaccurate Personal Information.</li>
+            <li>Opt-Out of the "sale" or "sharing" of Personal Information (we do not engage in these activities).</li>
+            <li>Non-Discrimination for exercising their rights.</li>
+        </ul>
+        <p>To exercise any of these rights, please submit a verifiable request to us at <a href="mailto:support@shortcct.com">support@shortcct.com</a>. We will respond within 45 days and will not discriminate against you for exercising your rights.</p>
+
+        <h3>5.3. Exercising Your Rights</h3>
+        <p>To submit a request to know, delete, or correct your information, please email us at <a href="mailto:support@shortcct.com">support@shortcct.com</a> with the subject line "Privacy Rights Request." We will need to verify your identity before processing your request.</p>
+
+        <h2>6. Data Retention, Security, and Integrity</h2>
+
+        <h3>6.1. Data Retention</h3>
+        <p>We retain your Personal Information only for as long as necessary to fulfill the purposes outlined in this Policy, unless a longer retention period is required or permitted by law (e.g., for tax, accounting, or legal obligations). For example, we retain order records for a minimum of seven (7) years to comply with financial regulations.</p>
+
+        <h3>6.2. Data Security</h3>
+        <p>We implement and maintain commercially reasonable administrative, technical, and physical security measures designed to protect your Personal Information from unauthorized access, destruction, use, modification, or disclosure. These measures include SSL/TLS encryption for data in transit, secure data storage, and access controls. However, no method of transmission over the Internet or electronic storage is 100% secure, and we cannot guarantee absolute security.</p>
+
+        <h3>6.3. Data Breach Notification</h3>
+        <p>In the event of a security breach that compromises your Personal Information, we will notify you and the relevant authorities as required by applicable law.</p>
+
+        <h2>7. Third-Party Links and Services</h2>
+        <p>Our Website may contain links to third-party websites, plug-ins, or services (e.g., social media platforms, YouTube for tutorial videos). This Policy does not apply to information you provide to or that is collected by third parties. We encourage you to review the privacy policies of every website and service you visit.</p>
+
+        <h2>8. International Data Transfers</h2>
+        <p>Our operations are located in the United States. If you are located outside the U.S., please be aware that any information you provide to us will be transferred to and processed in the U.S. By using our Website or providing us with your information, you consent to this transfer.</p>
+
+        <h2>9. Changes to This Privacy Policy</h2>
+        <p>We may update this Policy from time to time to reflect changes in our practices, technology, legal requirements, or for other reasons. The "Last Updated" date at the top of this page will indicate when it was revised. Material changes will be communicated to you via email or a prominent notice on our Website prior to the change becoming effective. Your continued use of the Website after the updated Policy is posted constitutes your acceptance of the changes.</p>
+
+        <h2>10. Contact Us</h2>
+        <p>If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us at:</p>
+
+        <div class="contact-box">
+            <h4>Short Circuit LLC</h4>
+            <p>1961 Creek Bank Drive<br>
+            Columbus, IN 47201<br>
+            Email: <a href="mailto:support@shortcct.com">support@shortcct.com</a><br>
+            Phone: +1 (568) 522-7634</p>
+        </div>
+
+        <p>We will respond to your inquiry within a reasonable timeframe.</p>
+
+        <p><strong>Thank You for Your Attention to Privacy</strong><br>
+        Short Circuit LLC is committed to transparency and your data protection.</p>
+    </main>
+
+    <footer>
+        <p>Effective Date: 01/01/2026 | Last Updated: 12/27/2025</p>
+        <p style="margin-top: 15px;">© 2026 Short Circuit LLC. All rights reserved.</p>
+        <p style="margin-top: 10px;"><a href="index.html">Home</a> | <a href="terms.html">Terms of Service</a> | <a href="privacy.html">Privacy Policy</a></p>
+    </footer>
+    <script src="/js/auth-header.js"></script>
+</body>
+</html>

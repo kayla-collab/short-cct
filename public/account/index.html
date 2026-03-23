@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Learning Dashboard | Short Circuit</title>
+    <meta name="description" content="Track your learning progress, access courses, and view certificates.">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0a0e1a;
+            --navy-light: #141b2d;
+            --navy-medium: #1a2238;
+            --electric-blue: #3b82f6;
+            --cyber-green: #00ff88;
+            --neon-purple: #8b5cf6;
+            --hot-pink: #ec4899;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --green: #22c55e;
+            --yellow: #f59e0b;
+            --red: #ef4444;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --glow-blue: 0 0 20px rgba(59, 130, 246, 0.3);
+            --glow-green: 0 0 20px rgba(0, 255, 136, 0.3);
+            --glow-purple: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--navy);
+            min-height: 100vh;
+            color: var(--white);
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow-1 {
+            top: -200px;
+            right: -100px;
+            background: var(--electric-blue);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-glow-2 {
+            bottom: -200px;
+            left: -100px;
+            background: var(--neon-purple);
+            animation: float 25s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(50px, 30px); }
+        }
+
+        /* Header */
+        .header {
+            background: rgba(10, 14, 26, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 0 32px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--white);
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--electric-blue), var(--cyber-green));
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: var(--glow-blue);
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 4px;
+        }
+
+        .nav-link {
+            padding: 10px 18px;
+            color: var(--gray-400);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--white);
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .nav-link.active {
+            color: var(--cyber-green);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 2px;
+            background: var(--cyber-green);
+            border-radius: 2px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .user-menu:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--electric-blue), var(--neon-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--white);
+            box-shadow: var(--glow-purple);
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            color: var(--white);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            color: var(--cyber-green);
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Main Content */
+        .main {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 32px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--navy-light), var(--navy-medium));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: var(--radius-xl);
+            padding: 48px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-greeting {
+            font-size: 14px;
+            color: var(--cyber-green);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-greeting i {
+            font-size: 12px;
+        }
+
+        .hero-title {
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--white), var(--gray-300));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            color: var(--gray-400);
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        .streak-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 16px;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+        }
+
+        .streak-badge i {
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--navy-light), var(--navy-medium));
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-4px);
+            box-shadow: var(--glow-blue);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .stat-card.blue::before { background: linear-gradient(90deg, var(--electric-blue), #60a5fa); }
+        .stat-card.green::before { background: linear-gradient(90deg, var(--cyber-green), #4ade80); }
+        .stat-card.yellow::before { background: linear-gradient(90deg, var(--yellow), #fbbf24); }
+        .stat-card.purple::before { background: linear-gradient(90deg, var(--neon-purple), #a78bfa); }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card.blue .stat-icon {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--electric-blue);
+        }
+
+        .stat-card.green .stat-icon {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--cyber-green);
+        }
+
+        .stat-card.yellow .stat-icon {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--yellow);
+        }
+
+        .stat-card.purple .stat-icon {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--neon-purple);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 4px;
+        }
+
+        .stat-card.blue .stat-value { color: var(--electric-blue); }
+        .stat-card.green .stat-value { color: var(--cyber-green); }
+        .stat-card.yellow .stat-value { color: var(--yellow); }
+        .stat-card.purple .stat-value { color: var(--neon-purple); }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--gray-400);
+            font-weight: 500;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: linear-gradient(135deg, var(--navy-light), var(--navy-medium));
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-title i {
+            color: var(--cyber-green);
+        }
+
+        .card-link {
+            color: var(--electric-blue);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .card-link:hover {
+            color: var(--cyber-green);
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* Course Cards */
+        .course-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .course-card {
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .course-card:hover {
+            border-color: var(--electric-blue);
+            background: rgba(59, 130, 246, 0.08);
+            transform: translateX(4px);
+        }
+
+        .course-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .course-info h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .course-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--gray-400);
+        }
+
+        .course-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .course-progress-container {
+            margin-bottom: 16px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .progress-label {
+            color: var(--gray-400);
+        }
+
+        .progress-value {
+            color: var(--cyber-green);
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--electric-blue), var(--cyber-green));
+            border-radius: 100px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .course-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .next-lesson {
+            font-size: 13px;
+            color: var(--gray-400);
+        }
+
+        .next-lesson span {
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--electric-blue), #2563eb);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--cyber-green), #22c55e);
+            color: var(--navy);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: var(--electric-blue);
+        }
+
+        .btn-outline:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--electric-blue);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .empty-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: var(--electric-blue);
+            position: relative;
+        }
+
+        .empty-icon::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px dashed rgba(59, 130, 246, 0.3);
+            animation: spin 20s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: var(--gray-400);
+            margin-bottom: 24px;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Activity Feed */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.lesson {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--electric-blue);
+        }
+
+        .activity-icon.quiz {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--cyber-green);
+        }
+
+        .activity-icon.cert {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--neon-purple);
+        }
+
+        .activity-icon.order {
+            background: rgba(236, 72, 153, 0.15);
+            color: var(--hot-pink);
+        }
+
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .activity-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .activity-badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 100px;
+            font-weight: 600;
+        }
+
+        .activity-badge.success {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--cyber-green);
+        }
+
+        .activity-badge.fail {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--red);
+        }
+
+        .activity-desc {
+            font-size: 13px;
+            color: var(--gray-400);
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: var(--gray-500);
+            white-space: nowrap;
+        }
+
+        /* Orders */
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(236, 72, 153, 0.15);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--hot-pink);
+        }
+
+        .order-info {
+            flex: 1;
+        }
+
+        .order-id {
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .order-date {
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+
+        .order-amount {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--cyber-green);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-top-color: var(--electric-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Certificates Section */
+        .certificates-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .certificate-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .certificate-card:hover {
+            border-color: var(--neon-purple);
+            transform: translateY(-4px);
+            box-shadow: var(--glow-purple);
+        }
+
+        .certificate-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 12px;
+            background: linear-gradient(135deg, var(--neon-purple), var(--electric-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--white);
+        }
+
+        .certificate-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .certificate-date {
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 16px;
+            }
+            .header-nav {
+                display: none;
+            }
+            .main {
+                padding: 24px 16px;
+            }
+            .hero-section {
+                padding: 32px 24px;
+            }
+            .hero-title {
+                font-size: 28px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .stat-card {
+                padding: 16px;
+            }
+            .stat-value {
+                font-size: 28px;
+            }
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        /* Support Section Styles */
+        .support-card {
+            background: linear-gradient(135deg, #1a2332 0%, #2a3444 100%);
+            border: none;
+        }
+        .support-card .card-header {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+        .support-card .card-title {
+            color: #ffffff;
+        }
+        .support-card .card-title i {
+            color: var(--electric-blue);
+        }
+        .support-contact p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+        .support-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .support-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--electric-blue);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .support-link:hover {
+            color: #3dcfff;
+        }
+        .support-link i {
+            width: 20px;
+            text-align: center;
+        }
+        .support-btn {
+            background: transparent;
+            border: 1px solid rgba(0, 191, 255, 0.5);
+            color: #ffffff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .support-btn:hover {
+            background: rgba(0, 191, 255, 0.15);
+            border-color: var(--electric-blue);
+        }
+        
+        /* Tickets Section */
+        .tickets-section {
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .ticket-item {
+            padding: 16px;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s;
+        }
+        .ticket-item:hover {
+            border-color: var(--electric-blue);
+        }
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .ticket-category {
+            font-weight: 600;
+            color: var(--navy);
+        }
+        .ticket-status {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        .ticket-status.open {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .ticket-status.in_progress {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .ticket-status.resolved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .ticket-status.closed {
+            background: var(--gray-200);
+            color: var(--gray-600);
+        }
+        .ticket-description {
+            color: var(--gray-600);
+            font-size: 14px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .ticket-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+        .ticket-response {
+            margin-top: 12px;
+            padding: 12px;
+            background: #f0f9ff;
+            border-radius: 6px;
+            border-left: 3px solid var(--electric-blue);
+        }
+        .ticket-response-header {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--electric-blue);
+            margin-bottom: 6px;
+        }
+        .ticket-response-text {
+            font-size: 14px;
+            color: var(--navy);
+            line-height: 1.5;
+        }
+        .btn-text {
+            background: transparent;
+            border: none;
+            color: var(--gray-500);
+            cursor: pointer;
+            padding: 8px 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .btn-text:hover {
+            color: var(--navy);
+        }
+        .empty-tickets {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-500);
+        }
+        .empty-tickets i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: var(--gray-300);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <a href="/" class="logo">
+                <div class="logo-icon"><i class="fas fa-bolt"></i></div>
+                <span>SHORT CIRCUIT</span>
+            </a>
+            <nav class="header-nav">
+                <a href="/account/" class="nav-link active">Dashboard</a>
+                <a href="/shop.html" class="nav-link">Shop</a>
+                <a href="/orders.html" class="nav-link">Orders</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+            <div class="user-menu" onclick="toggleUserDropdown()">
+                <div class="user-info">
+                    <div class="user-name" id="userName">Loading...</div>
+                    <div class="user-role" id="userRole">Student</div>
+                </div>
+                <div class="user-avatar" id="userAvatar">?</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div id="mainContent">
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentUser = null;
+        let userStats = {};
+        let userCourses = [];
+        let userActivity = [];
+        let userCertificates = [];
+        let userOrders = [];
+
+        async function initDashboard() {
+            try {
+                // Check authentication
+                const authRes = await fetch('/api/auth/me', { credentials: 'include' });
+                const authData = await authRes.json();
+                
+                if (!authData.user) {
+                    window.location.href = '/login.html?redirect=/account/';
+                    return;
+                }
+                
+                currentUser = authData.user;
+                updateHeader();
+                
+                // Load all data in parallel
+                const [statsRes, coursesRes, activityRes, certsRes, ordersRes] = await Promise.all([
+                    fetch('/api/my/stats', { credentials: 'include' }),
+                    fetch('/api/my/courses', { credentials: 'include' }),
+                    fetch('/api/my/activity', { credentials: 'include' }),
+                    fetch('/api/my/certificates', { credentials: 'include' }),
+                    fetch('/api/account/orders', { credentials: 'include' })
+                ]);
+                
+                userStats = (await statsRes.json()) || {};
+                userCourses = (await coursesRes.json()).courses || [];
+                userActivity = (await activityRes.json()).activity || [];
+                userCertificates = (await certsRes.json()).certificates || [];
+                userOrders = (await ordersRes.json()).orders || [];
+                
+                renderDashboard();
+                
+            } catch (error) {
+                console.error('Dashboard init error:', error);
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h3>Failed to Load Dashboard</h3>
+                        <p>Please try refreshing the page.</p>
+                        <button class="btn btn-primary" onclick="location.reload()">
+                            <i class="fas fa-redo"></i> Refresh
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function updateHeader() {
+            document.getElementById('userName').textContent = currentUser.name || currentUser.email.split('@')[0];
+            document.getElementById('userRole').textContent = currentUser.role === 'admin' ? 'Administrator' : 'Student';
+            document.getElementById('userAvatar').textContent = (currentUser.name || currentUser.email)[0].toUpperCase();
+            
+            // Add admin link if admin
+            if (currentUser.role === 'admin') {
+                const nav = document.querySelector('.header-nav');
+                nav.innerHTML += '<a href="/admin/" class="nav-link">Admin</a>';
+            }
+        }
+
+        function renderDashboard() {
+            const container = document.getElementById('mainContent');
+            
+            container.innerHTML = `
+                <!-- Hero Section -->
+                <div class="hero-section">
+                    <div class="hero-content">
+                        <div class="hero-greeting">
+                            <i class="fas fa-terminal"></i>
+                            Welcome back, engineer
+                        </div>
+                        <h1 class="hero-title">${currentUser.name || 'Learner'}</h1>
+                        <p class="hero-subtitle">
+                            ${userCourses.length > 0 
+                                ? `You have ${userCourses.length} active ${userCourses.length === 1 ? 'project' : 'projects'}. Keep building and learning.`
+                                : 'Ready to start your embedded systems journey? Get your first project kit and begin building.'}
+                        </p>
+                        ${userStats.currentStreak > 0 
+                            ? `<div class="streak-badge"><i class="fas fa-fire"></i> ${userStats.currentStreak} Day Streak</div>` 
+                            : ''}
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card blue">
+                        <div class="stat-icon">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <div class="stat-value">${userStats.enrolledCourses || 0}</div>
+                        <div class="stat-label">Projects Active</div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="stat-value">${userStats.completedLessons || 0}</div>
+                        <div class="stat-label">Lessons Completed</div>
+                    </div>
+                    <div class="stat-card yellow">
+                        <div class="stat-icon">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <div class="stat-value">${userStats.quizzesPassed || 0}</div>
+                        <div class="stat-label">Quizzes Passed</div>
+                    </div>
+                    <div class="stat-card purple">
+                        <div class="stat-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div class="stat-value">${userStats.certificatesEarned || 0}</div>
+                        <div class="stat-label">Certificates Earned</div>
+                    </div>
+                </div>
+
+                <!-- Content Grid -->
+                <div class="content-grid">
+                    <!-- Left Column - Courses -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-rocket"></i>
+                                My Projects
+                            </h2>
+                            <a href="/shop.html" class="card-link">
+                                Browse All <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            ${renderCourseList()}
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div style="display: flex; flex-direction: column; gap: 24px;">
+                        <!-- Recent Activity -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <i class="fas fa-bolt"></i>
+                                    Recent Activity
+                                </h2>
+                            </div>
+                            <div class="card-body">
+                                ${renderActivity()}
+                            </div>
+                        </div>
+
+                        <!-- Recent Orders -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <i class="fas fa-shopping-bag"></i>
+                                    Recent Orders
+                                </h2>
+                                <a href="/orders.html" class="card-link">
+                                    View All <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                ${renderOrders()}
+                            </div>
+                        </div>
+
+                        <!-- Support Section -->
+                        <div class="card support-card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <i class="fas fa-life-ring"></i>
+                                    Need Help?
+                                </h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="support-contact">
+                                    <div class="support-info">
+                                        <p>Our founder Anand Seetharaman is here to help you succeed with your project.</p>
+                                        <div class="support-options">
+                                            <a href="mailto:support@shortcct.com" class="support-link">
+                                                <i class="fas fa-envelope"></i>
+                                                <span>support@shortcct.com</span>
+                                            </a>
+                                            <button onclick="showMyTickets()" class="btn btn-outline support-btn">
+                                                <i class="fas fa-ticket-alt"></i>
+                                                My Support Tickets
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Tickets Section -->
+                <div id="myTicketsSection" class="card tickets-section" style="display: none; margin-top: 24px;">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-ticket-alt"></i>
+                            My Support Tickets
+                        </h2>
+                        <button onclick="hideMyTickets()" class="btn btn-text">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                    </div>
+                    <div class="card-body" id="myTicketsContent">
+                        <div style="text-align: center; padding: 32px;">
+                            <i class="fas fa-spinner fa-spin" style="font-size: 24px; color: var(--electric-blue);"></i>
+                            <p style="margin-top: 12px; color: var(--gray-500);">Loading tickets...</p>
+                        </div>
+                    </div>
+                </div>
+
+                ${userCertificates.length > 0 ? renderCertificates() : ''}
+            `;
+        }
+
+        function renderCourseList() {
+            if (userCourses.length === 0) {
+                return `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <h3>No Active Projects</h3>
+                        <p>Purchase a project kit to unlock hands-on learning with real hardware.</p>
+                        <a href="/shop.html" class="btn btn-primary">
+                            <i class="fas fa-shopping-cart"></i>
+                            Browse Kits
+                        </a>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="course-list">
+                    ${userCourses.map(course => `
+                        <div class="course-card">
+                            <div class="course-header">
+                                <div class="course-info">
+                                    <h3>${course.title}</h3>
+                                    <div class="course-meta">
+                                        <span><i class="fas fa-layer-group"></i> ${course.total_lessons} lessons</span>
+                                        <span><i class="fas fa-clock"></i> ${course.duration || '~4 weeks'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="course-progress-container">
+                                <div class="progress-header">
+                                    <span class="progress-label">Progress</span>
+                                    <span class="progress-value">${course.progressPercent}%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${course.progressPercent}%"></div>
+                                </div>
+                            </div>
+                            <div class="course-footer">
+                                <div class="next-lesson">
+                                    ${course.nextLessonTitle 
+                                        ? `Next: <span>${course.nextLessonTitle}</span>`
+                                        : course.certificate_number 
+                                            ? '<span style="color: var(--cyber-green);"><i class="fas fa-check-circle"></i> Completed</span>'
+                                            : ''}
+                                </div>
+                                <a href="/course/${course.slug || course.id}/" class="btn btn-primary">
+                                    ${course.progressPercent > 0 ? 'Continue' : 'Start'}
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderActivity() {
+            if (userActivity.length === 0) {
+                return `
+                    <div style="text-align: center; padding: 32px; color: var(--gray-400);">
+                        <i class="fas fa-inbox" style="font-size: 32px; margin-bottom: 12px; opacity: 0.5;"></i>
+                        <p>No activity yet</p>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="activity-list">
+                    ${userActivity.slice(0, 5).map(activity => {
+                        let icon = 'fas fa-book';
+                        let iconClass = 'lesson';
+                        let title = activity.lesson_title || activity.course_title || 'Activity';
+                        let desc = activity.course_title || '';
+                        let badge = '';
+
+                        if (activity.type === 'quiz_attempted') {
+                            icon = 'fas fa-flask';
+                            iconClass = 'quiz';
+                            title = `Quiz attempted (${activity.score || 0}%)`;
+                            badge = activity.passed 
+                                ? '<span class="activity-badge success">Passed</span>'
+                                : '<span class="activity-badge fail">Retry</span>';
+                        } else if (activity.type === 'certificate_earned') {
+                            icon = 'fas fa-award';
+                            iconClass = 'cert';
+                            title = 'Certificate earned';
+                        } else if (activity.type === 'lesson_completed') {
+                            icon = 'fas fa-check-circle';
+                            iconClass = 'lesson';
+                            title = activity.lesson_title;
+                        }
+
+                        return `
+                            <div class="activity-item">
+                                <div class="activity-icon ${iconClass}">
+                                    <i class="${icon}"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">
+                                        ${title}
+                                        ${badge}
+                                    </div>
+                                    <div class="activity-desc">${desc}</div>
+                                </div>
+                                <div class="activity-time">${formatTimeAgo(activity.timestamp)}</div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function renderOrders() {
+            if (userOrders.length === 0) {
+                return `
+                    <div style="text-align: center; padding: 32px; color: var(--gray-400);">
+                        <i class="fas fa-shopping-bag" style="font-size: 32px; margin-bottom: 12px; opacity: 0.5;"></i>
+                        <p>No orders yet</p>
+                    </div>
+                `;
+            }
+
+            return userOrders.slice(0, 3).map(order => `
+                <div class="order-item">
+                    <div class="order-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="order-info">
+                        <div class="order-id">#${order.id.slice(-8).toUpperCase()}</div>
+                        <div class="order-date">${new Date(order.created_at).toLocaleDateString()}</div>
+                    </div>
+                    <div class="order-amount">$${(order.total / 100).toFixed(2)}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderCertificates() {
+            return `
+                <div class="card" style="margin-top: 24px;">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-certificate"></i>
+                            My Certificates
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="certificates-grid">
+                            ${userCertificates.map(cert => `
+                                <a href="/course/certificate.html?id=${cert.certificate_number}" class="certificate-card" style="text-decoration: none; color: inherit;">
+                                    <div class="certificate-icon">
+                                        <i class="fas fa-award"></i>
+                                    </div>
+                                    <div class="certificate-title">${cert.course_title}</div>
+                                    <div class="certificate-date">Issued ${new Date(cert.issued_at).toLocaleDateString()}</div>
+                                </a>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatTimeAgo(timestamp) {
+            if (!timestamp) return '';
+            const now = new Date();
+            const date = new Date(timestamp);
+            const diff = Math.floor((now - date) / 1000);
+            
+            if (diff < 60) return 'Just now';
+            if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+            if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+            return date.toLocaleDateString();
+        }
+
+        function toggleUserDropdown() {
+            // Simple logout for now
+            if (confirm('Sign out?')) {
+                fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
+                    .then(() => window.location.href = '/');
+            }
+        }
+
+        // Support Tickets Functions
+        let userTickets = [];
+
+        async function showMyTickets() {
+            const section = document.getElementById('myTicketsSection');
+            section.style.display = 'block';
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            try {
+                const response = await fetch('/api/support/tickets', { credentials: 'include' });
+                if (!response.ok) throw new Error('Failed to load tickets');
+                const data = await response.json();
+                userTickets = data.tickets || [];
+                renderTickets();
+            } catch (error) {
+                console.error('Error loading tickets:', error);
+                document.getElementById('myTicketsContent').innerHTML = `
+                    <div class="empty-tickets">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Failed to load tickets. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function hideMyTickets() {
+            document.getElementById('myTicketsSection').style.display = 'none';
+        }
+
+        function renderTickets() {
+            const container = document.getElementById('myTicketsContent');
+            
+            if (userTickets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-tickets">
+                        <i class="fas fa-ticket-alt"></i>
+                        <h3>No Support Tickets</h3>
+                        <p>You have not submitted any support tickets yet.</p>
+                        <p style="margin-top: 8px; font-size: 14px;">Need help? Submit a ticket from within your course or email us at <a href="mailto:support@shortcct.com" style="color: var(--electric-blue);">support@shortcct.com</a></p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = userTickets.map(ticket => `
+                <div class="ticket-item">
+                    <div class="ticket-header">
+                        <span class="ticket-category">${formatCategory(ticket.category)}</span>
+                        <span class="ticket-status ${ticket.status}">${formatStatus(ticket.status)}</span>
+                    </div>
+                    <div class="ticket-description">${escapeHtml(ticket.description)}</div>
+                    ${ticket.admin_response ? `
+                        <div class="ticket-response">
+                            <div class="ticket-response-header">
+                                <i class="fas fa-reply"></i> Response from Support
+                            </div>
+                            <div class="ticket-response-text">${escapeHtml(ticket.admin_response)}</div>
+                        </div>
+                    ` : ''}
+                    <div class="ticket-meta">
+                        <span><i class="fas fa-clock"></i> ${formatTimeAgo(ticket.created_at)}</span>
+                        ${ticket.course_title ? `<span><i class="fas fa-book"></i> ${ticket.course_title}</span>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function formatCategory(category) {
+            const categories = {
+                'technical': 'Technical Issue',
+                'hardware': 'Hardware Problem',
+                'software': 'Software/Code Help',
+                'content': 'Course Content',
+                'other': 'Other'
+            };
+            return categories[category] || category;
+        }
+
+        function formatStatus(status) {
+            const statuses = {
+                'open': 'Open',
+                'in_progress': 'In Progress',
+                'resolved': 'Resolved',
+                'closed': 'Closed'
+            };
+            return statuses[status] || status;
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>

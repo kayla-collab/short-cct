@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Engineering Design Challenge | Short Circuit</title>
+    <meta name="description" content="Join the Short Circuit Engineering Design Challenge. Win up to $2,250 in prizes by building innovative projects.">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <!-- Shared Responsive & Iframe-Friendly Styles -->
+    <link rel="stylesheet" href="/css/responsive.css">
+    <!-- Shared Auth Header Styles -->
+    <link rel="stylesheet" href="/css/auth-header.css">
+    <!-- Iframe Detection Script (load early) -->
+    <script src="/js/iframe-detect.js"></script>
+    <style>
+        /* CSS Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Embed-friendly base styles */
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        :root {
+            --navy: #1a2332;
+            --electric-blue: #00bfff;
+            --coral: #ff6b6b;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #6c757d;
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+        }
+
+        /* Loading Screen */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--navy);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-circuit {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .loader-circuit::before,
+        .loader-circuit::after {
+            content: '';
+            position: absolute;
+            border: 3px solid transparent;
+            border-radius: 50%;
+        }
+
+        .loader-circuit::before {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-top-color: var(--electric-blue);
+            animation: loaderSpin 1s linear infinite;
+        }
+
+        .loader-circuit::after {
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border-bottom-color: var(--coral);
+            animation: loaderSpin 0.8s linear infinite reverse;
+        }
+
+        .loader-bolt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            animation: loaderPulse 1s ease-in-out infinite;
+        }
+
+        .loader-text {
+            margin-top: 20px;
+            color: var(--electric-blue);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .loader-bar {
+            width: 150px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-top: 15px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .loader-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--electric-blue), var(--coral));
+            animation: loaderBar 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loaderSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes loaderPulse {
+            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
+        }
+
+        @keyframes loaderBar {
+            0% { width: 0%; margin-left: 0; }
+            50% { width: 100%; margin-left: 0; }
+            100% { width: 0%; margin-left: 100%; }
+        }
+
+        /* Page Transition */
+        .page-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .page-content.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Scroll Reveal */
+        .reveal {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.6;
+            color: var(--navy);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: var(--coral);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #e55a5a;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
+
+        .btn-outline:hover {
+            background: var(--white);
+            color: var(--navy);
+        }
+
+        .btn-large {
+            padding: 16px 32px;
+            font-size: 18px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--navy);
+            padding: 20px 0;
+            color: var(--white);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 36px;
+            margin-right: 8px;
+            font-size: 28px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: var(--electric-blue);
+        }
+
+        .cart-icon {
+            position: relative;
+            color: var(--white);
+            margin-right: 15px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .cart-icon:hover {
+            color: var(--electric-blue);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--coral);
+            color: var(--white);
+            font-size: 11px;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Challenge Hero */
+        .challenge-hero {
+            background: linear-gradient(135deg, var(--navy) 0%, #2a3444 100%);
+            padding: 100px 0;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M10,10 L90,10 L90,90 L10,90 Z" fill="none" stroke="%2300bfff" stroke-width="0.5" opacity="0.1"/><circle cx="20" cy="20" r="2" fill="%2300bfff" opacity="0.2"/><circle cx="80" cy="20" r="2" fill="%2300bfff" opacity="0.2"/><circle cx="20" cy="80" r="2" fill="%2300bfff" opacity="0.2"/><circle cx="80" cy="80" r="2" fill="%2300bfff" opacity="0.2"/></svg>') repeat;
+            opacity: 0.1;
+        }
+
+        .challenge-hero h1 {
+            font-size: 56px;
+            margin-bottom: 20px;
+            color: var(--electric-blue);
+        }
+
+        .challenge-hero p {
+            font-size: 24px;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            opacity: 0.9;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 60px;
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stat-item h3 {
+            font-size: 36px;
+            color: var(--coral);
+            margin-bottom: 5px;
+        }
+
+        .stat-item p {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        /* Sections */
+        .section {
+            padding: 80px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 36px;
+            color: var(--navy);
+            margin-bottom: 15px;
+        }
+
+        /* The Brief */
+        .brief-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .brief-text {
+            font-size: 18px;
+            color: var(--dark-gray);
+        }
+
+        .brief-text ul {
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+
+        .brief-text li {
+            margin-bottom: 10px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 15px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border: 1px solid #e0e0e0;
+        }
+
+        .comparison-table th {
+            background: var(--navy);
+            color: var(--white);
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: var(--light-gray);
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(0, 191, 255, 0.1);
+        }
+
+        .comparison-table td:first-child {
+            color: var(--dark-gray);
+        }
+
+        .comparison-table td:last-child {
+            color: var(--navy);
+            font-weight: 500;
+        }
+
+        /* Prizes */
+        .prize-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .prize-card {
+            text-align: center;
+            padding: 40px;
+            border-radius: 12px;
+            background: var(--white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prize-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .prize-rank {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--navy);
+        }
+
+        .prize-amount {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--coral);
+        }
+
+        .prize-perks {
+            list-style: none;
+            color: var(--dark-gray);
+        }
+
+        .prize-perks li {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .prize-perks li:last-child {
+            border-bottom: none;
+        }
+
+        /* Timeline */
+        .timeline {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background: var(--electric-blue);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            margin-bottom: 40px;
+            position: relative;
+            width: 50%;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+            padding-right: 40px;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+            padding-left: 40px;
+        }
+
+        .timeline-dot {
+            width: 20px;
+            height: 20px;
+            background: var(--coral);
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-dot {
+            right: -10px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: -10px;
+        }
+
+        .timeline-date {
+            font-weight: 700;
+            color: var(--electric-blue);
+            margin-bottom: 5px;
+        }
+
+        /* Rules */
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .rule-card {
+            background: var(--light-gray);
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 4px solid var(--navy);
+        }
+
+        .rule-card h4 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--navy);
+            color: var(--white);
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .brief-content, .prize-grid, .rules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-table {
+                font-size: 13px;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 10px 12px;
+            }
+            
+            .timeline::before {
+                left: 20px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 50px !important;
+                padding-right: 0 !important;
+                text-align: left !important;
+                left: 0 !important;
+            }
+            
+            .timeline-item:nth-child(odd) .timeline-dot,
+            .timeline-item:nth-child(even) .timeline-dot {
+                left: 10px;
+                right: auto;
+            }
+
+            .challenge-hero h1 {
+                font-size: 32px;
+            }
+
+            .challenge-hero p {
+                font-size: 16px;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 480px) {
+            .challenge-hero h1 {
+                font-size: 26px;
+                line-height: 1.2;
+            }
+
+            .challenge-hero p {
+                font-size: 14px;
+                padding: 0 10px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 25px;
+            }
+
+            .stat-item h3 {
+                font-size: 28px;
+            }
+
+            .stat-item p {
+                font-size: 12px;
+            }
+
+            .section-header h2 {
+                font-size: 24px;
+            }
+
+            .section-header p {
+                font-size: 14px;
+            }
+
+            .btn {
+                padding: 10px 18px;
+                font-size: 13px;
+            }
+
+            .btn-large {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+
+            .section {
+                padding: 30px 0;
+            }
+
+            .comparison-table {
+                font-size: 11px;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 8px 6px;
+            }
+
+            .prize-card {
+                padding: 20px;
+            }
+
+            .prize-amount {
+                font-size: 32px;
+            }
+
+            .criteria-card {
+                padding: 20px;
+            }
+
+            .criteria-card h4 {
+                font-size: 16px;
+            }
+        }
+
+        /* Extra small - embedded */
+        @media (max-width: 360px) {
+            .challenge-hero h1 {
+                
+            }
+
+            .stats-grid {
+                padding: 20px;
+            }
+
+            .stat-item h3 {
+                font-size: 24px;
+            }
+
+            .section-header h2 {
+                font-size: 20px;
+            }
+
+            .navbar {
+                padding: 10px 0;
+            }
+
+            .logo {
+                font-size: 14px;
+            }
+
+            .comparison-table {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-circuit">
+            <span class="loader-bolt">&#9889;</span>
+        </div>
+        <div class="loader-text">Loading</div>
+        <div class="loader-bar">
+            <div class="loader-bar-fill"></div>
+        </div>
+    </div>
+
+    <div class="page-content" id="pageContent">
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <a href="index.html" class="logo"><img src="/images/logo.png" alt="Short Circuit Logo">SHORT CIRCUIT</a>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="index.html#projects">Projects</a></li>
+                    <!-- HIDDEN: <li><a href="challenge.html" class="active">Challenge</a></li> -->
+                    <li><a href="index.html#how-it-works">How it Works</a></li>
+                    <li><a href="shop.html">Shop</a></li>
+                </ul>
+                <div class="nav-right">
+                    <div class="nav-actions">
+                        <!-- Guest Actions (shown when not logged in) -->
+                        <div class="guest-actions" id="guestActions">
+                            <a href="login.html" class="btn btn-outline">Login</a>
+                            <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                        </div>
+                        
+                        <!-- User Menu (shown when logged in) -->
+                        <div class="user-menu" id="userMenu">
+                            <button class="user-menu-btn" id="userMenuBtn">
+                                <span class="user-icon" id="userInitial">U</span>
+                                <span id="userDisplayName">User</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M6 9l6 6 6-6"/>
+                                </svg>
+                            </button>
+                            <div class="user-dropdown" id="userDropdown">
+                                <div class="user-dropdown-header">
+                                    <div class="user-name" id="dropdownUserName">User Name</div>
+                                    <div class="user-email" id="dropdownUserEmail">user@email.com</div>
+                                    <div class="admin-badge" id="adminBadge" style="display: none;">Admin</div>
+                                </div>
+                                <div class="user-dropdown-menu">
+                                    <a href="/account/">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="12" cy="7" r="4"/>
+                                        </svg>
+                                        My Account
+                                    </a>
+                                    <a href="/account/">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                            <path d="M2 17l10 5 10-5"/>
+                                            <path d="M2 12l10 5 10-5"/>
+                                        </svg>
+                                        My Projects
+                                    </a>
+                                    <a href="/orders.html">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                            <line x1="3" y1="6" x2="21" y2="6"/>
+                                            <path d="M16 10a4 4 0 0 1-8 0"/>
+                                        </svg>
+                                        My Orders
+                                    </a>
+                                    
+                                    <!-- Course Access Section (shown for users with course access) -->
+                                    <div class="admin-section" id="courseSection" style="display: none;">
+                                        <a href="/course/smartwatch/" id="smartwatchCourseLink" style="display: none;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                                <line x1="12" y1="17" x2="12" y2="21"/>
+                                            </svg>
+                                            Smartwatch Course
+                                        </a>
+                                        <a href="/course/ballbeam/" id="ballbeamCourseLink" style="display: none;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="10"/>
+                                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                                <circle cx="12" cy="12" r="3"/>
+                                            </svg>
+                                            Ball and Beam Course
+                                        </a>
+                                    </div>
+                                    
+                                    <!-- Admin Section (shown for admins only) -->
+                                    <div class="admin-section" id="adminSection" style="display: none;">
+                                        <a href="/admin/">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="3"/>
+                                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                                            </svg>
+                                            Admin Dashboard
+                                        </a>
+                                    </div>
+                                    
+                                    <a href="#" class="logout-btn" onclick="logoutUser(); return false;">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                            <polyline points="16 17 21 12 16 7"/>
+                                            <line x1="21" y1="12" x2="9" y2="12"/>
+                                        </svg>
+                                        Logout
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="cart.html" class="cart-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                    <div class="hamburger" id="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="challenge-hero">
+        <div class="container">
+            <h1>2026 Engineering<br>Design Challenge</h1>
+            <p>Extend or Reimagine a Short Circuit baseline project to add new features, improve performance, or build something entirely new. Compete for cash prizes, mentorship, and certification</p>
+            <a href="#brief" class="btn btn-primary btn-large">Read the Brief</a>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>$2,250</h3>
+                    <p>Total Prizes</p>
+                </div>
+                <div class="stat-item">
+                    <h3 id="daysLeft">--</h3>
+                    <p>Days Left</p>
+                </div>
+                <div class="stat-item">
+                    <h3>3</h3>
+                    <p>Winner Spots</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Brief -->
+    <section class="section" id="brief">
+        <div class="container">
+            <div class="section-header">
+                <h2>The Brief</h2>
+                <p>Innovate. Build. Document.</p>
+            </div>
+            <div class="brief-content">
+                <div class="brief-text">
+                    <p>Level up your baseline. Your mission is to iterate on a standard Short Circuit project to solve a complex engineering problem, optimize its performance, or engineer a completely original extension.</p>
+                    <br>
+                    <p><strong>Examples of Acceptable Modifications:</strong></p>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Current Version</th>
+                                <th>Design Challenge Modification</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Basic local smartwatch with limited networking</td>
+                                <td>Cloud connected smartwatch with live notifications</td>
+                            </tr>
+                            <tr>
+                                <td>Basic ball and beam with PID controller and EMA filtering</td>
+                                <td>Ball and Beam with Kalman filtering and advanced controllers</td>
+                            </tr>
+                            <tr>
+                                <td>Basic lane-tracking autonomous car</td>
+                                <td>Car reactive to stop signs on the race track</td>
+                            </tr>
+                            <tr>
+                                <td>Basic pick and place robotic arm under uncertain conditions</td>
+                                <td>Robotic arm able to pick and place objects of various colors and sizes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="brief-image">
+                    <img src="images/design-challenge.png" alt="Design Challenge" style="width: 100%; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); background: #fff;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cash Prizes -->
+    <section class="section" style="background: var(--light-gray);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Cash Prizes</h2>
+            </div>
+            <div class="prize-grid">
+                <div class="prize-card">
+                    <div class="prize-rank">2nd Place</div>
+                    <div class="prize-amount">$750</div>
+                </div>
+                <div class="prize-card" style="transform: scale(1.05); border: 2px solid var(--gold);">
+                    <div class="prize-rank" style="color: var(--gold);">1st Place</div>
+                    <div class="prize-amount" style="color: var(--gold);">$1,000</div>
+                </div>
+                <div class="prize-card">
+                    <div class="prize-rank">3rd Place</div>
+                    <div class="prize-amount">$500</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Judging Criteria -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Judging Criteria</h2>
+            </div>
+            <div class="rules-grid">
+                <div class="rule-card">
+                    <h4>Problem Framing (20%)</h4>
+                    <p>Does the project show a clear problem definition, explicit constraints, and measurable success criteria?</p>
+                </div>
+                <div class="rule-card">
+                    <h4>Technical Execution (30%)</h4>
+                    <p>Does the project include a clean structured implementation and clear technical depth?</p>
+                </div>
+                <div class="rule-card">
+                    <h4>Creativity (30%)</h4>
+                    <p>Does the project try an experimental or novel method to change or improve their system?</p>
+                </div>
+                <div class="rule-card">
+                    <h4>Documentation (20%)</h4>
+                    <p>Does the project include documentation outlining the competencies from the rest of the rubric?</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Submission CTA -->
+    <section class="section" id="submit" style="background: var(--navy); color: var(--white); text-align: center;">
+        <div class="container">
+            <h2>Ready to Submit Your Project?</h2>
+            <p style="margin-bottom: 30px; opacity: 0.9;">Specific project submission instructions are available in your program materials upon purchase.</p>
+            <a href="shop.html" class="btn btn-primary btn-large">Browse Project Kits</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 Short Circuit. All rights reserved.</p>
+            <p style="font-size: 14px; margin-top: 10px; opacity: 0.7;">This challenge is open to students in the US.</p>
+            <p style="font-size: 14px; margin-top: 10px;"><a href="privacy.html" style="color: var(--electric-blue);">Privacy Policy</a> | <a href="terms.html" style="color: var(--electric-blue);">Terms of Service</a></p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Calculate days until June 1st, 2026
+        function updateDaysLeft() {
+            const deadline = new Date('2026-06-01T23:59:59');
+            const now = new Date();
+            const diffTime = deadline - now;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const daysElement = document.getElementById('daysLeft');
+            if (daysElement) {
+                daysElement.textContent = diffDays > 0 ? diffDays : 0;
+            }
+        }
+        updateDaysLeft();
+        setInterval(updateDaysLeft, 86400000); // Update daily
+
+        // Page Loader
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('pageLoader');
+            const content = document.getElementById('pageContent');
+            
+            setTimeout(function() {
+                loader.classList.add('hidden');
+                content.classList.add('loaded');
+            }, 600);
+        });
+
+        // Scroll Reveal
+        function revealOnScroll() {
+            const reveals = document.querySelectorAll('.reveal');
+            
+            reveals.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const revealPoint = 100;
+                
+                if (elementTop < windowHeight - revealPoint) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll();
+
+        // Smooth scroll for anchor links on this page
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const target = document.querySelector(targetId);
+                if (target) {
+                    const headerOffset = 80; // Account for sticky header
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+    <!-- Shared Cart Functionality -->
+    <script src="/js/cart-shared.js"></script>
+    <!-- Auth Header Management -->
+    <script src="/js/auth-header.js"></script>
+    </div><!-- End page-content -->
+</body>
+</html>

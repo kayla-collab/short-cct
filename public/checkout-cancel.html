@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Cancelled | Short Circuit</title>
+    <meta name="description" content="Your checkout was cancelled. Your cart items are still saved.">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <!-- Shared Responsive & Iframe-Friendly Styles -->
+    <link rel="stylesheet" href="/css/responsive.css">
+    <!-- Iframe Detection Script (load early) -->
+    <script src="/js/iframe-detect.js"></script>
+    <style>
+        :root {
+            --navy: #1a2332;
+            --electric-blue: #00bfff;
+            --coral: #ff6b6b;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #6c757d;
+            --tech-green: #00ff88;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, var(--navy) 0%, #2a3a52 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .cancel-container {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 50px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cancel-icon {
+            width: 90px;
+            height: 90px;
+            background: var(--light-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 45px;
+            color: var(--dark-gray);
+            border: 3px solid #e0e0e0;
+        }
+
+        h1 {
+            color: var(--navy);
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: var(--dark-gray);
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .info-box h3 {
+            font-size: 16px;
+            color: var(--navy);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box h3::before {
+            content: "i";
+            background: var(--electric-blue);
+            color: var(--navy);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            font-style: italic;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-box li {
+            padding: 8px 0;
+            font-size: 14px;
+            color: var(--dark-gray);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box li::before {
+            content: "\\2713";
+            color: var(--tech-green);
+            font-weight: bold;
+        }
+
+        .help-text {
+            color: var(--dark-gray);
+            font-size: 14px;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .help-text a {
+            color: var(--electric-blue);
+            text-decoration: none;
+        }
+
+        .help-text a:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 35px;
+            background: var(--coral);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 15px;
+        }
+
+        .btn:hover {
+            background: #e55a5a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--navy);
+            color: var(--navy);
+        }
+
+        .btn-outline:hover {
+            background: var(--navy);
+            color: var(--white);
+            box-shadow: 0 5px 20px rgba(26, 35, 50, 0.3);
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .cart-restored {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--tech-green);
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            color: var(--navy);
+        }
+
+        .cart-restored::before {
+            content: "\\2713 ";
+            color: var(--tech-green);
+            font-weight: bold;
+        }
+
+        @media (max-width: 500px) {
+            .cancel-container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cancel-container">
+        <div class="cancel-icon">&#10005;</div>
+        <h1>Checkout Cancelled</h1>
+        <p class="subtitle">No worries - your cart items are still saved and waiting for you.</p>
+        
+        <div id="cartStatus" class="cart-restored" style="display: none;">
+            Your cart has been restored with all items intact.
+        </div>
+
+        <div class="info-box">
+            <h3>Good to Know</h3>
+            <ul>
+                <li>No payment was processed</li>
+                <li>Your cart items are still saved</li>
+                <li>You can checkout anytime</li>
+                <li>Promo codes can be applied at checkout</li>
+            </ul>
+        </div>
+        
+        <p class="help-text">
+            Having trouble with checkout? Feel free to <a href="mailto:support@shortcct.com">contact us</a> for assistance.
+        </p>
+        
+        <div class="buttons">
+            <a href="/cart.html" class="btn">Return to Cart</a>
+            <a href="/shop.html" class="btn btn-outline">Continue Shopping</a>
+        </div>
+    </div>
+    
+    <script>
+        // Restore cart from backup if available
+        function restoreCart() {
+            const backup = sessionStorage.getItem('shortCircuitCartBackup');
+            const currentCart = localStorage.getItem('shortCircuitCart');
+            const cartStatus = document.getElementById('cartStatus');
+            
+            // If we have a backup and no current cart, restore it
+            if (backup && !currentCart) {
+                localStorage.setItem('shortCircuitCart', backup);
+                sessionStorage.removeItem('shortCircuitCartBackup');
+                
+                // Show cart restored message
+                if (cartStatus) {
+                    cartStatus.style.display = 'block';
+                }
+                console.log('Cart restored from backup');
+            } else if (currentCart) {
+                // Cart already exists
+                if (cartStatus) {
+                    cartStatus.textContent = 'Your cart items are ready for checkout.';
+                    cartStatus.style.display = 'block';
+                }
+            }
+        }
+        
+        // Run on page load
+        restoreCart();
+    </script>
+</body>
+</html>

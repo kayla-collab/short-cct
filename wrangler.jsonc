@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "shortcircuits",
+  "compatibility_date": "2026-02-01",
+  "pages_build_output_dir": "./dist",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  // IMPORTANT: Secrets should be set via Cloudflare Dashboard or wrangler secret put
+  // See README.md for setup instructions
+  "vars": {
+    "ADMIN_EMAILS": "kayla@kaylasierra.com,support@shortcct.com"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "shortcircuits-db",
+      "database_id": "9564b58f-4035-494a-8cfd-ed1dbcc96cbc"
+    }
+  ]
+  // NOTE: R2 bucket disabled - enable R2 in Cloudflare Dashboard before uncommenting
+  // "r2_buckets": [
+  //   {
+  //     "binding": "R2",
+  //     "bucket_name": "shortcircuits-uploads"
+  //   }
+  // ]
+}

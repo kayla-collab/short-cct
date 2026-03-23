@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Short Circuit</title>
+    <meta name="description" content="Create your Short Circuit account to track orders and get exclusive updates.">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <style>
+        :root {
+            --navy: #1a2332;
+            --electric-blue: #00bfff;
+            --coral: #ff6b6b;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #6c757d;
+            --tech-green: #00ff88;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, var(--navy) 0%, #2a3a4a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-container {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-logo {
+            margin-bottom: 10px;
+        }
+
+        .auth-logo img {
+            height: 64px;
+            width: auto;
+        }
+
+        .auth-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .auth-subtitle {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--electric-blue);
+            box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.1);
+        }
+
+        .form-input.error {
+            border-color: var(--coral);
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--dark-gray);
+            margin-top: 6px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, var(--coral), #ff8585);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: #fff5f5;
+            border: 1px solid #ffcccc;
+            color: #cc0000;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            color: #22543d;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .auth-footer p {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+
+        .auth-footer a {
+            color: var(--electric-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--dark-gray);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .back-link:hover {
+            color: var(--electric-blue);
+        }
+
+        .password-requirements {
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 8px;
+        }
+
+        .password-requirements ul {
+            list-style: none;
+            font-size: 12px;
+            color: var(--dark-gray);
+        }
+
+        .password-requirements li {
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .password-requirements li.valid {
+            color: var(--tech-green);
+        }
+
+        .password-requirements li::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+
+        .password-requirements li.valid::before {
+            background: var(--tech-green);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper .form-input {
+            padding-right: 50px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--dark-gray);
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toggle-password:hover {
+            color: var(--electric-blue);
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <a href="/" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Home
+        </a>
+
+        <div class="auth-header">
+            <div class="auth-logo"><img src="/images/logo.png" alt="Short Circuit Logo"></div>
+            <h1 class="auth-title">Create Account</h1>
+            <p class="auth-subtitle">Join Short Circuit and start building</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+
+        <form id="signupForm">
+            <div class="form-group">
+                <label class="form-label" for="name">Full Name</label>
+                <input type="text" class="form-input" id="name" name="name" autocomplete="name">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input type="email" class="form-input" id="email" name="email" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <div class="password-wrapper">
+                    <input type="password" class="form-input" id="password" name="password" required autocomplete="new-password">
+                    <button type="button" class="toggle-password" onclick="togglePassword('password', this)" aria-label="Toggle password visibility">
+                        <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="password-requirements">
+                    <ul>
+                        <li id="req-length">At least 8 characters</li>
+                        <li id="req-letter">Contains a letter</li>
+                        <li id="req-number">Contains a number</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="confirmPassword">Confirm Password</label>
+                <div class="password-wrapper">
+                    <input type="password" class="form-input" id="confirmPassword" name="confirmPassword" required autocomplete="new-password">
+                    <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword', this)" aria-label="Toggle password visibility">
+                        <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">Create Account</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="/login.html">Login</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            const eyeIcon = button.querySelector('.eye-icon');
+            const eyeOffIcon = button.querySelector('.eye-off-icon');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeIcon.style.display = 'none';
+                eyeOffIcon.style.display = 'block';
+            } else {
+                input.type = 'password';
+                eyeIcon.style.display = 'block';
+                eyeOffIcon.style.display = 'none';
+            }
+        }
+
+        // Check if already logged in
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/me', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.user) {
+                    window.location.href = '/account/';
+                }
+            } catch (error) {
+                console.error('Auth check error:', error);
+            }
+        }
+        checkAuth();
+
+        const form = document.getElementById('signupForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const submitBtn = document.getElementById('submitBtn');
+        const passwordInput = document.getElementById('password');
+
+        // Password validation
+        const reqLength = document.getElementById('req-length');
+        const reqLetter = document.getElementById('req-letter');
+        const reqNumber = document.getElementById('req-number');
+
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            
+            reqLength.classList.toggle('valid', password.length >= 8);
+            reqLetter.classList.toggle('valid', /[a-zA-Z]/.test(password));
+            reqNumber.classList.toggle('valid', /[0-9]/.test(password));
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Reset messages
+            errorMessage.classList.remove('show');
+            successMessage.classList.remove('show');
+
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            // Validate password requirements
+            if (password.length < 8) {
+                errorMessage.textContent = 'Password must be at least 8 characters';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            if (!/[a-zA-Z]/.test(password)) {
+                errorMessage.textContent = 'Password must contain at least one letter';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            if (!/[0-9]/.test(password)) {
+                errorMessage.textContent = 'Password must contain at least one number';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating account...';
+
+            try {
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, name }),
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Signup failed');
+                }
+
+                // Success - redirect based on role
+                if (data.user.role === 'admin') {
+                    window.location.href = '/admin/';
+                } else {
+                    const returnUrl = new URLSearchParams(window.location.search).get('return') || '/account/';
+                    window.location.href = returnUrl;
+                }
+
+            } catch (error) {
+                errorMessage.textContent = error.message;
+                errorMessage.classList.add('show');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Account';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Lookup | Short Circuit</title>
+    <meta name="description" content="Look up your order status and details. Enter your email to view your orders.">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <!-- Shared Responsive & Iframe-Friendly Styles -->
+    <link rel="stylesheet" href="/css/responsive.css">
+    <!-- Shared Auth Header Styles -->
+    <link rel="stylesheet" href="/css/auth-header.css">
+    <!-- Iframe Detection Script (load early) -->
+    <script src="/js/iframe-detect.js"></script>
+    <style>
+        :root {
+            --navy: #1a2332;
+            --electric-blue: #00bfff;
+            --coral: #ff6b6b;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #6c757d;
+            --tech-green: #00ff88;
+        }
+
+        /* Loading Screen */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--navy);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-circuit {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .loader-circuit::before,
+        .loader-circuit::after {
+            content: '';
+            position: absolute;
+            border: 3px solid transparent;
+            border-radius: 50%;
+        }
+
+        .loader-circuit::before {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-top-color: var(--electric-blue);
+            animation: loaderSpin 1s linear infinite;
+        }
+
+        .loader-circuit::after {
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border-bottom-color: var(--coral);
+            animation: loaderSpin 0.8s linear infinite reverse;
+        }
+
+        .loader-bolt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            animation: loaderPulse 1s ease-in-out infinite;
+        }
+
+        .loader-text {
+            margin-top: 20px;
+            color: var(--electric-blue);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .loader-bar {
+            width: 150px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-top: 15px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .loader-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--electric-blue), var(--coral));
+            animation: loaderBar 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loaderSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes loaderPulse {
+            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
+        }
+
+        @keyframes loaderBar {
+            0% { width: 0%; margin-left: 0; }
+            50% { width: 100%; margin-left: 0; }
+            100% { width: 0%; margin-left: 100%; }
+        }
+
+        /* Page Transition */
+        .page-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .page-content.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.6;
+            color: var(--navy);
+            background: var(--light-gray);
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--navy);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 36px;
+            width: auto;
+            margin-right: 8px;
+        }
+
+        .logo span {
+            color: var(--electric-blue);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--electric-blue);
+        }
+
+        .cart-icon {
+            position: relative;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .cart-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            fill: none;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--coral);
+            color: var(--white);
+            font-size: 11px;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--coral);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #e55a5a;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--navy);
+            border: 2px solid var(--navy);
+        }
+
+        .btn-outline:hover {
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        /* Page Header */
+        .page-header {
+            background: var(--navy);
+            padding: 40px 0;
+            color: var(--white);
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .page-header p {
+            color: var(--electric-blue);
+            font-size: 14px;
+        }
+
+        /* Order Lookup Section */
+        .order-lookup-section {
+            padding: 40px 0;
+        }
+
+        .lookup-card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .lookup-card h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .lookup-card p {
+            color: var(--dark-gray);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .lookup-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .lookup-form input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .lookup-form input:focus {
+            outline: none;
+            border-color: var(--electric-blue);
+        }
+
+        .lookup-form button {
+            padding: 14px 30px;
+            white-space: nowrap;
+        }
+
+        /* Orders List */
+        .orders-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .orders-loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--dark-gray);
+        }
+
+        .orders-empty {
+            text-align: center;
+            padding: 60px 40px;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .orders-empty svg {
+            width: 80px;
+            height: 80px;
+            stroke: var(--dark-gray);
+            margin-bottom: 20px;
+        }
+
+        .orders-empty h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--navy);
+        }
+
+        .orders-empty p {
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+        }
+
+        .order-card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        .order-number {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .order-date {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .order-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .order-status.paid {
+            background: var(--tech-green);
+            color: var(--navy);
+        }
+
+        .order-body {
+            padding: 25px;
+        }
+
+        .order-items {
+            margin-bottom: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+            font-weight: 500;
+        }
+
+        .item-quantity {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+
+        .item-price {
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 2px solid var(--navy);
+            margin-top: 15px;
+        }
+
+        .order-total-label {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .order-total-amount {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--coral);
+        }
+
+        .order-shipping {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .order-shipping h4 {
+            font-size: 14px;
+            color: var(--dark-gray);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .order-shipping p {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--navy);
+            color: var(--white);
+            padding: 30px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .footer a {
+            color: var(--electric-blue);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 15px;
+            }
+
+            .lookup-form {
+                flex-direction: column;
+            }
+
+            .lookup-form button {
+                width: 100%;
+            }
+
+            .order-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .page-header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-circuit">
+            <span class="loader-bolt">⚡</span>
+        </div>
+        <div class="loader-text">Loading</div>
+        <div class="loader-bar">
+            <div class="loader-bar-fill"></div>
+        </div>
+    </div>
+
+    <div class="page-content" id="pageContent">
+        <!-- Navigation -->
+        <nav class="navbar" id="navbar">
+            <div class="container">
+                <div class="nav-container">
+                    <a href="index.html" class="logo"><img src="/images/logo.png" alt="Short Circuit Logo">SHORT CIRCUIT</a>
+                    <ul class="nav-menu" id="nav-menu">
+                        <li><a href="index.html#projects">Projects</a></li>
+                        <!-- HIDDEN: <li><a href="challenge.html">Challenge</a></li> -->
+                        <li><a href="index.html#how-it-works">How it Works</a></li>
+                        <li><a href="shop.html">Shop</a></li>
+                    </ul>
+                    <div class="nav-right">
+                        <div class="nav-actions">
+                            <!-- Guest Actions (shown when not logged in) -->
+                            <div class="guest-actions" id="guestActions">
+                                <a href="login.html" class="btn btn-outline">Login</a>
+                                <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                            </div>
+                            
+                            <!-- User Menu (shown when logged in) -->
+                            <div class="user-menu" id="userMenu">
+                                <button class="user-menu-btn" id="userMenuBtn">
+                                    <span class="user-icon" id="userInitial">U</span>
+                                    <span id="userDisplayName">User</span>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M6 9l6 6 6-6"/>
+                                    </svg>
+                                </button>
+                                <div class="user-dropdown" id="userDropdown">
+                                    <div class="user-dropdown-header">
+                                        <div class="user-name" id="dropdownUserName">User Name</div>
+                                        <div class="user-email" id="dropdownUserEmail">user@email.com</div>
+                                        <div class="admin-badge" id="adminBadge" style="display: none;">Admin</div>
+                                    </div>
+                                    <div class="user-dropdown-menu">
+                                        <a href="/account/">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                                <circle cx="12" cy="7" r="4"/>
+                                            </svg>
+                                            My Account
+                                        </a>
+                                        <a href="/account/">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                                <path d="M2 17l10 5 10-5"/>
+                                                <path d="M2 12l10 5 10-5"/>
+                                            </svg>
+                                            My Projects
+                                        </a>
+                                        <a href="/orders.html">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                                <line x1="3" y1="6" x2="21" y2="6"/>
+                                                <path d="M16 10a4 4 0 0 1-8 0"/>
+                                            </svg>
+                                            My Orders
+                                        </a>
+                                        
+                                        <!-- Course Access Section (shown for users with course access) -->
+                                        <div class="admin-section" id="courseSection" style="display: none;">
+                                            <a href="/course/smartwatch/" id="smartwatchCourseLink" style="display: none;">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                                    <line x1="8" y1="21" x2="16" y2="21"/>
+                                                    <line x1="12" y1="17" x2="12" y2="21"/>
+                                                </svg>
+                                                Smartwatch Course
+                                            </a>
+                                            <a href="/course/ballbeam/" id="ballbeamCourseLink" style="display: none;">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="10"/>
+                                                    <line x1="2" y1="12" x2="22" y2="12"/>
+                                                    <circle cx="12" cy="12" r="3"/>
+                                                </svg>
+                                                Ball and Beam Course
+                                            </a>
+                                        </div>
+                                        
+                                        <!-- Admin Section (shown for admins only) -->
+                                        <div class="admin-section" id="adminSection" style="display: none;">
+                                            <a href="/admin/">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="3"/>
+                                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                                                </svg>
+                                                Admin Dashboard
+                                            </a>
+                                        </div>
+                                        
+                                        <a href="#" class="logout-btn" onclick="logoutUser(); return false;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                                <polyline points="16 17 21 12 16 7"/>
+                                                <line x1="21" y1="12" x2="9" y2="12"/>
+                                            </svg>
+                                            Logout
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="cart.html" class="cart-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                            <span class="cart-count" id="cartCount">0</span>
+                        </a>
+                        <div class="hamburger" id="hamburger">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Header -->
+        <header class="page-header">
+            <div class="container">
+                <h1>Order Lookup</h1>
+                <p>View your order history and status</p>
+            </div>
+        </header>
+
+        <!-- Order Lookup Section -->
+        <section class="order-lookup-section">
+            <div class="container">
+                <div class="lookup-card">
+                    <h2>Find Your Orders</h2>
+                    <p>Enter the email address you used when placing your order</p>
+                    <form class="lookup-form" id="lookupForm" onsubmit="lookupOrders(event)">
+                        <input type="email" id="lookupEmail" placeholder="Enter your email address" required>
+                        <button type="submit" class="btn btn-primary" id="lookupBtn">Look Up</button>
+                    </form>
+                </div>
+
+                <div class="orders-container" id="ordersContainer">
+                    <!-- Orders will be displayed here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>2026 Short Circuit. <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms of Service</a></p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/js/cart-shared.js"></script>
+    <script>
+        // Page Loader
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('pageLoader');
+            const content = document.getElementById('pageContent');
+            
+            setTimeout(function() {
+                loader.classList.add('hidden');
+                content.classList.add('loaded');
+            }, 500);
+        });
+
+        // Order Lookup Function
+        async function lookupOrders(event) {
+            event.preventDefault();
+            
+            const emailInput = document.getElementById('lookupEmail');
+            const lookupBtn = document.getElementById('lookupBtn');
+            const ordersContainer = document.getElementById('ordersContainer');
+            const email = emailInput.value.trim();
+
+            if (!email) {
+                alert('Please enter your email address.');
+                return;
+            }
+
+            // Show loading state
+            const originalText = lookupBtn.textContent;
+            lookupBtn.disabled = true;
+            lookupBtn.textContent = 'Searching...';
+            ordersContainer.innerHTML = '<div class="orders-loading">Searching for orders...</div>';
+
+            try {
+                const response = await fetch('/api/orders/lookup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to look up orders');
+                }
+
+                if (data.orders.length === 0) {
+                    ordersContainer.innerHTML = `
+                        <div class="orders-empty">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            <h3>No Orders Found</h3>
+                            <p>We could not find any orders associated with ${email}</p>
+                            <a href="shop.html" class="btn btn-primary">Browse Products</a>
+                        </div>
+                    `;
+                } else {
+                    ordersContainer.innerHTML = data.orders.map(order => `
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div>
+                                    <div class="order-number">Order #${order.orderNumber}</div>
+                                    <div class="order-date">${order.date}</div>
+                                </div>
+                                <span class="order-status ${order.status.toLowerCase()}">${order.status}</span>
+                            </div>
+                            <div class="order-body">
+                                <div class="order-items">
+                                    ${order.items.map(item => `
+                                        <div class="order-item">
+                                            <div>
+                                                <div class="item-name">${item.name}</div>
+                                                <div class="item-quantity">Qty: ${item.quantity}</div>
+                                            </div>
+                                            <div class="item-price">$${item.amount}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div class="order-total">
+                                    <span class="order-total-label">Total</span>
+                                    <span class="order-total-amount">$${order.total} ${order.currency}</span>
+                                </div>
+                                ${order.shippingAddress ? `
+                                    <div class="order-shipping">
+                                        <h4>Shipping Address</h4>
+                                        <p>
+                                            ${order.customerName}<br>
+                                            ${order.shippingAddress.line1}<br>
+                                            ${order.shippingAddress.line2 ? order.shippingAddress.line2 + '<br>' : ''}
+                                            ${order.shippingAddress.city}, ${order.shippingAddress.state} ${order.shippingAddress.postalCode}<br>
+                                            ${order.shippingAddress.country}
+                                        </p>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+            } catch (error) {
+                console.error('Order lookup error:', error);
+                ordersContainer.innerHTML = `
+                    <div class="orders-empty">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        <h3>Something Went Wrong</h3>
+                        <p>${error.message || 'Unable to look up orders. Please try again later.'}</p>
+                        <button class="btn btn-outline" onclick="lookupOrders(event)">Try Again</button>
+                    </div>
+                `;
+            } finally {
+                lookupBtn.disabled = false;
+                lookupBtn.textContent = originalText;
+            }
+        }
+    </script>
+    <!-- Auth Header Management -->
+    <script src="/js/auth-header.js"></script>
+</body>
+</html>

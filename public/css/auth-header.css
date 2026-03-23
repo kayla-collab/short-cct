@@ -1,0 +1,222 @@
+/**
+ * Shared Auth Header Styles
+ * Include this CSS on any page that needs the user menu
+ */
+
+/* Nav layout fix for auth pages */
+.navbar { display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 70px; background: var(--navy, #1a2332); position: sticky; top: 0; z-index: 1000; }
+.nav-logo { font-weight: 700; font-size: 20px; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+.nav-menu { display: flex !important; list-style: none; gap: 20px; align-items: center; margin: 0 20px; flex-direction: row !important; position: static !important; left: auto !important; width: auto !important; background: transparent !important; padding: 0 !important; }
+.nav-menu a { color: #fff; text-decoration: none; font-weight: 500; font-size: 14px; }
+@media (max-width: 768px) { .nav-menu { position: fixed !important; left: -100% !important; top: 70px; flex-direction: column !important; background: var(--navy, #1a2332) !important; width: 100% !important; transition: left 0.3s ease !important; } .nav-menu.active { left: 0 !important; } }
+
+/* Nav Right Section */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.guest-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.guest-actions .btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.guest-actions .btn-outline {
+    border: 1px solid var(--electric-blue, #00bfff);
+    color: var(--white, #ffffff);
+    background: transparent;
+}
+
+.guest-actions .btn-outline:hover {
+    background: var(--electric-blue, #00bfff);
+    color: var(--navy, #1a2332);
+}
+
+.guest-actions .btn-primary {
+    background: var(--electric-blue, #00bfff);
+    color: var(--navy, #1a2332);
+    border: none;
+}
+
+.guest-actions .btn-primary:hover {
+    background: #00d4ff;
+}
+
+/* User Menu */
+.user-menu {
+    position: relative;
+    display: none;
+}
+
+.user-menu.active {
+    display: block;
+}
+
+.user-menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 1px solid var(--electric-blue, #00bfff);
+    color: var(--white, #ffffff);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.user-menu-btn:hover {
+    background: var(--electric-blue, #00bfff);
+    color: var(--navy, #1a2332);
+}
+
+.user-menu-btn .user-icon {
+    width: 28px;
+    height: 28px;
+    background: var(--electric-blue, #00bfff);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy, #1a2332);
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: var(--white, #ffffff);
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    min-width: 240px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.user-menu:hover .user-dropdown,
+.user-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-dropdown-header {
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.user-dropdown-header .user-name {
+    font-weight: 600;
+    color: var(--navy, #1a2332);
+    font-size: 14px;
+}
+
+.user-dropdown-header .user-email {
+    font-size: 12px;
+    color: var(--dark-gray, #6c757d);
+    margin-top: 2px;
+}
+
+.admin-badge {
+    display: inline-block;
+    background: var(--tech-green, #00ff88);
+    color: var(--navy, #1a2332);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-top: 8px;
+    text-transform: uppercase;
+}
+
+.user-dropdown-menu {
+    padding: 8px 0;
+}
+
+.user-dropdown-menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: var(--navy, #1a2332);
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.user-dropdown-menu a:hover {
+    background: #f5f5f5;
+}
+
+.user-dropdown-menu a svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--dark-gray, #6c757d);
+}
+
+.user-dropdown-menu .logout-btn {
+    color: #e74c3c;
+    border-top: 1px solid #eee;
+    margin-top: 8px;
+    padding-top: 16px;
+}
+
+.user-dropdown-menu .logout-btn svg {
+    stroke: #e74c3c;
+}
+
+.admin-section {
+    border-top: 1px solid #eee;
+    margin-top: 8px;
+    padding-top: 8px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .guest-actions {
+        gap: 8px;
+    }
+    
+    .guest-actions .btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .user-menu-btn {
+        padding: 6px 12px;
+    }
+    
+    .user-menu-btn span:not(.user-icon) {
+        display: none;
+    }
+    
+    .user-dropdown {
+        right: -50px;
+    }
+}

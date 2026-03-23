@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkpoint: Assembly Photo | Short Circuit</title>
+    <meta name="description" content="Upload your completed assembly for review.">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #1a2332;
+            --electric-blue: #00bfff;
+            --coral: #ff6b6b;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #6c757d;
+            --tech-green: #00ff88;
+            --success: #28a745;
+            --warning: #ffc107;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: var(--light-gray);
+            min-height: 100vh;
+            color: var(--navy);
+        }
+
+        .submission-page {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--dark-gray);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .back-link:hover {
+            color: var(--electric-blue);
+        }
+
+        .page-header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: var(--dark-gray);
+            line-height: 1.6;
+        }
+
+        /* Requirements Box */
+        .requirements-box {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .requirements-box h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .requirements-box h3 i {
+            color: var(--electric-blue);
+        }
+
+        .requirements-list {
+            list-style: none;
+        }
+
+        .requirements-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+        }
+
+        .requirements-list li i {
+            color: var(--tech-green);
+            margin-top: 3px;
+        }
+
+        /* Submission Form */
+        .submission-container {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        /* Upload Zone */
+        .upload-section {
+            margin-bottom: 28px;
+        }
+
+        .upload-section h3 {
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .upload-zone {
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            padding: 48px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--light-gray);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--electric-blue);
+            background: rgba(0, 191, 255, 0.05);
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--electric-blue);
+            background: rgba(0, 191, 255, 0.1);
+            transform: scale(1.01);
+        }
+
+        .upload-zone.has-files {
+            border-style: solid;
+            border-color: var(--success);
+            background: rgba(40, 167, 69, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--dark-gray);
+            margin-bottom: 16px;
+        }
+
+        .upload-zone.has-files .upload-icon {
+            color: var(--success);
+        }
+
+        .upload-text {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            font-size: 13px;
+            color: var(--dark-gray);
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        /* Preview Grid */
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .preview-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--light-gray);
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-item .remove-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 28px;
+            height: 28px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .preview-item .remove-btn:hover {
+            background: var(--coral);
+        }
+
+        .preview-item .file-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            font-size: 11px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Video URL Input */
+        .video-section {
+            margin-bottom: 28px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-hint {
+            font-size: 13px;
+            color: var(--dark-gray);
+            margin-bottom: 12px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--electric-blue);
+        }
+
+        .form-input::placeholder {
+            color: #aaa;
+        }
+
+        /* Description */
+        .description-section {
+            margin-bottom: 28px;
+        }
+
+        .form-textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--electric-blue);
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: var(--dark-gray);
+            margin-top: 8px;
+        }
+
+        /* Submit Button */
+        .submit-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .save-draft-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--light-gray);
+            color: var(--navy);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .save-draft-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .submit-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: #218838;
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Uploading State */
+        .uploading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .uploading-overlay.show {
+            display: flex;
+        }
+
+        .uploading-content {
+            background: white;
+            padding: 48px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .uploading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e0e0e0;
+            border-top-color: var(--electric-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .uploading-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .uploading-progress {
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+
+        /* Success State */
+        .success-container {
+            display: none;
+            text-align: center;
+            padding: 48px;
+        }
+
+        .success-container.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            color: var(--success);
+            margin-bottom: 24px;
+        }
+
+        .success-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+
+        .success-message {
+            font-size: 16px;
+            color: var(--dark-gray);
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .success-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .action-btn.primary {
+            background: var(--electric-blue);
+            color: white;
+            border: none;
+        }
+
+        .action-btn.primary:hover {
+            background: #00a3d9;
+        }
+
+        .action-btn.secondary {
+            background: var(--light-gray);
+            color: var(--navy);
+            border: none;
+        }
+
+        .action-btn.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* Previous Submissions */
+        .previous-submissions {
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .previous-submissions h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        .submission-card {
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .submission-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .submission-date {
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+
+        .submission-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .submission-status.pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #856404;
+        }
+
+        .submission-status.approved {
+            background: rgba(40, 167, 69, 0.2);
+            color: #155724;
+        }
+
+        .submission-status.needs-revision {
+            background: rgba(255, 107, 107, 0.2);
+            color: #721c24;
+        }
+
+        .submission-feedback {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+            font-size: 14px;
+            border-left: 3px solid var(--electric-blue);
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        
+        /* Extra small devices (< 375px) */
+        @media (max-width: 374px) {
+            .submission-page {
+                padding: 12px 10px;
+            }
+            
+            .page-header h1 {
+                font-size: 20px;
+            }
+            
+            .page-header p {
+                font-size: 13px;
+            }
+            
+            .requirements-box {
+                padding: 14px;
+                border-radius: 10px;
+            }
+            
+            .requirements-box h3 {
+                font-size: 14px;
+            }
+            
+            .requirements-list li {
+                padding: 6px 0;
+                font-size: 12px;
+            }
+            
+            .submission-container {
+                padding: 14px;
+                border-radius: 10px;
+            }
+            
+            .upload-zone {
+                padding: 24px 12px;
+                border-radius: 10px;
+            }
+            
+            .upload-icon {
+                font-size: 36px;
+            }
+            
+            .upload-text {
+                font-size: 14px;
+            }
+            
+            .upload-hint {
+                font-size: 11px;
+            }
+            
+            .preview-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .form-label {
+                font-size: 14px;
+            }
+            
+            .form-hint {
+                font-size: 12px;
+            }
+            
+            .form-input,
+            .form-textarea {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+            
+            .save-draft-btn,
+            .submit-btn {
+                padding: 12px 14px;
+                font-size: 13px;
+            }
+            
+            .success-icon {
+                font-size: 56px;
+            }
+            
+            .success-title {
+                font-size: 22px;
+            }
+            
+            .success-message {
+                font-size: 14px;
+            }
+            
+            .action-btn {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+        }
+        
+        /* Small devices (375px - 639px) */
+        @media (max-width: 639px) {
+            .submission-page {
+                padding: 16px 14px;
+            }
+            
+            .page-header {
+                margin-bottom: 20px;
+            }
+            
+            .page-header h1 {
+                font-size: 22px;
+            }
+            
+            .requirements-box {
+                padding: 16px;
+                margin-bottom: 20px;
+            }
+            
+            .submission-container {
+                padding: 18px;
+            }
+            
+            .upload-zone {
+                padding: 32px 16px;
+            }
+            
+            .preview-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .submit-section {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .save-draft-btn,
+            .submit-btn {
+                width: 100%;
+                justify-content: center;
+                min-height: 48px;
+            }
+            
+            .success-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+                min-height: 48px;
+            }
+            
+            .previous-submissions h3 {
+                font-size: 16px;
+            }
+            
+            .submission-item {
+                padding: 14px;
+            }
+        }
+        
+        /* Medium devices (640px - 767px) */
+        @media (min-width: 640px) and (max-width: 767px) {
+            .submission-page {
+                padding: 24px 20px;
+            }
+            
+            .preview-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .submit-section {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            
+            .save-draft-btn,
+            .submit-btn {
+                width: auto;
+                min-width: 160px;
+            }
+            
+            .success-actions {
+                flex-direction: row;
+                justify-content: center;
+                gap: 12px;
+            }
+            
+            .action-btn {
+                width: auto;
+            }
+        }
+        
+        /* Tablets (768px - 1023px) */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .submission-page {
+                padding: 32px 24px;
+            }
+            
+            .submission-container {
+                padding: 28px;
+            }
+            
+            .preview-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        /* Touch device optimizations */
+        @media (pointer: coarse) {
+            .upload-zone {
+                min-height: 150px;
+            }
+            
+            .upload-zone:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+            
+            .preview-item {
+                min-height: 80px;
+            }
+            
+            .remove-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+            
+            .save-draft-btn,
+            .submit-btn,
+            .action-btn {
+                min-height: 48px;
+            }
+            
+            .save-draft-btn:active,
+            .submit-btn:active,
+            .action-btn:active {
+                transform: scale(0.97);
+            }
+            
+            .form-input,
+            .form-textarea {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+        }
+        
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Safe area for notched devices */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .submission-page {
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="submission-page">
+        <div class="page-header">
+            <a href="/course/smartwatch/" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Course
+            </a>
+            <h1><i class="fas fa-upload" style="color: var(--electric-blue); margin-right: 12px;"></i>Checkpoint: Assembly Photo</h1>
+            <p>Upload a photo of your completed PCB assembly before we move on to software. This helps us verify your progress and provide feedback if needed.</p>
+        </div>
+
+        <div class="requirements-box">
+            <h3><i class="fas fa-clipboard-check"></i> Submission Requirements</h3>
+            <ul class="requirements-list">
+                <li>
+                    <i class="fas fa-check"></i>
+                    <span>Clear, well-lit photo showing the entire PCB</span>
+                </li>
+                <li>
+                    <i class="fas fa-check"></i>
+                    <span>All components should be visible and soldered in place</span>
+                </li>
+                <li>
+                    <i class="fas fa-check"></i>
+                    <span>Include a close-up of solder joints if possible</span>
+                </li>
+                <li>
+                    <i class="fas fa-check"></i>
+                    <span>Optional: Video showing the assembly process or any issues encountered</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="submission-container" id="formContainer">
+            <!-- Photo Upload -->
+            <div class="upload-section">
+                <h3>Upload Photos</h3>
+                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p class="upload-text">Drag and drop photos here, or click to browse</p>
+                    <p class="upload-hint">Supports JPG, PNG, GIF up to 10MB each</p>
+                </div>
+                <input type="file" id="fileInput" class="upload-input" multiple accept="image/*" onchange="handleFiles(this.files)">
+                
+                <div class="preview-grid" id="previewGrid"></div>
+            </div>
+
+            <!-- Video URL -->
+            <div class="video-section">
+                <label class="form-label">Video Link (Optional)</label>
+                <p class="form-hint">Share a YouTube or Vimeo link showing your assembly or testing</p>
+                <input type="url" class="form-input" id="videoUrl" placeholder="https://youtube.com/watch?v=...">
+            </div>
+
+            <!-- Description -->
+            <div class="description-section">
+                <label class="form-label">Description</label>
+                <p class="form-hint">Describe any challenges you faced, modifications you made, or questions you have</p>
+                <textarea class="form-textarea" id="description" placeholder="Tell us about your assembly experience..." maxlength="2000"></textarea>
+                <div class="char-count"><span id="charCount">0</span>/2000 characters</div>
+            </div>
+
+            <!-- Submit -->
+            <div class="submit-section">
+                <button class="save-draft-btn" onclick="saveDraft()">
+                    <i class="fas fa-save"></i>
+                    Save Draft
+                </button>
+                <button class="submit-btn" id="submitBtn" onclick="submitCheckpoint()" disabled>
+                    <i class="fas fa-paper-plane"></i>
+                    Submit for Review
+                </button>
+            </div>
+
+            <!-- Previous Submissions -->
+            <div class="previous-submissions" id="previousSubmissions" style="display: none;">
+                <h3>Previous Submissions</h3>
+                <div id="submissionsList"></div>
+            </div>
+        </div>
+
+        <!-- Success State -->
+        <div class="submission-container success-container" id="successContainer">
+            <i class="fas fa-check-circle success-icon"></i>
+            <h2 class="success-title">Submission Received!</h2>
+            <p class="success-message">
+                Your assembly checkpoint has been submitted for review. You will receive feedback within 24-48 hours.
+                <br><br>
+                In the meantime, feel free to continue with the next module!
+            </p>
+            <div class="success-actions">
+                <a href="/course/smartwatch/?lesson=lesson-4-1" class="action-btn primary">
+                    Continue to Software Setup
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <button class="action-btn secondary" onclick="submitAnother()">
+                    Submit Another
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uploading Overlay -->
+    <div class="uploading-overlay" id="uploadingOverlay">
+        <div class="uploading-content">
+            <div class="uploading-spinner"></div>
+            <p class="uploading-text">Uploading your submission...</p>
+            <p class="uploading-progress" id="uploadProgress">Uploading photos (0/0)</p>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let uploadedFiles = [];
+        const maxFiles = 5;
+        const maxFileSize = 10 * 1024 * 1024; // 10MB
+
+        // Initialize
+        function init() {
+            setupDragAndDrop();
+            setupCharCounter();
+            loadDraft();
+            loadPreviousSubmissions();
+        }
+
+        // Drag and drop
+        function setupDragAndDrop() {
+            const zone = document.getElementById('uploadZone');
+
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('dragover');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('dragover');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+        }
+
+        // Handle file selection
+        function handleFiles(files) {
+            for (let file of files) {
+                if (uploadedFiles.length >= maxFiles) {
+                    alert(`Maximum ${maxFiles} files allowed`);
+                    break;
+                }
+
+                if (file.size > maxFileSize) {
+                    alert(`${file.name} is too large. Maximum size is 10MB.`);
+                    continue;
+                }
+
+                if (!file.type.startsWith('image/')) {
+                    alert(`${file.name} is not an image file.`);
+                    continue;
+                }
+
+                uploadedFiles.push(file);
+            }
+
+            renderPreviews();
+            updateSubmitButton();
+        }
+
+        // Render preview images
+        function renderPreviews() {
+            const grid = document.getElementById('previewGrid');
+            grid.innerHTML = '';
+
+            uploadedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const div = document.createElement('div');
+                    div.className = 'preview-item';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" alt="${file.name}">
+                        <button class="remove-btn" onclick="removeFile(${index})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="file-name">${file.name}</div>
+                    `;
+                    grid.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Update upload zone state
+            const zone = document.getElementById('uploadZone');
+            zone.classList.toggle('has-files', uploadedFiles.length > 0);
+        }
+
+        // Remove file
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            renderPreviews();
+            updateSubmitButton();
+        }
+
+        // Character counter
+        function setupCharCounter() {
+            const textarea = document.getElementById('description');
+            const counter = document.getElementById('charCount');
+
+            textarea.addEventListener('input', () => {
+                counter.textContent = textarea.value.length;
+                updateSubmitButton();
+            });
+        }
+
+        // Update submit button state
+        function updateSubmitButton() {
+            const hasPhotos = uploadedFiles.length > 0;
+            const hasDescription = document.getElementById('description').value.trim().length > 0;
+            
+            document.getElementById('submitBtn').disabled = !(hasPhotos && hasDescription);
+        }
+
+        // Save draft
+        function saveDraft() {
+            const draft = {
+                description: document.getElementById('description').value,
+                videoUrl: document.getElementById('videoUrl').value,
+                savedAt: new Date().toISOString()
+            };
+            localStorage.setItem('checkpoint-draft-lesson-3-6', JSON.stringify(draft));
+            alert('Draft saved!');
+        }
+
+        // Load draft
+        function loadDraft() {
+            const saved = localStorage.getItem('checkpoint-draft-lesson-3-6');
+            if (saved) {
+                const draft = JSON.parse(saved);
+                document.getElementById('description').value = draft.description || '';
+                document.getElementById('videoUrl').value = draft.videoUrl || '';
+                document.getElementById('charCount').textContent = (draft.description || '').length;
+            }
+        }
+
+        // Load previous submissions
+        async function loadPreviousSubmissions() {
+            try {
+                const response = await fetch('/api/course/submissions?lessonId=lesson-3-6');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.submissions && data.submissions.length > 0) {
+                        renderPreviousSubmissions(data.submissions);
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load submissions:', error);
+            }
+        }
+
+        // Render previous submissions
+        function renderPreviousSubmissions(submissions) {
+            const container = document.getElementById('previousSubmissions');
+            const list = document.getElementById('submissionsList');
+            
+            container.style.display = 'block';
+            list.innerHTML = submissions.map(sub => `
+                <div class="submission-card">
+                    <div class="submission-card-header">
+                        <span class="submission-date">Submitted ${formatDate(sub.submitted_at)}</span>
+                        <span class="submission-status ${sub.status}">${formatStatus(sub.status)}</span>
+                    </div>
+                    ${sub.admin_feedback ? `
+                        <div class="submission-feedback">
+                            <strong>Feedback:</strong> ${sub.admin_feedback}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Format date
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+        }
+
+        // Format status
+        function formatStatus(status) {
+            const statusMap = {
+                'pending': 'Pending Review',
+                'approved': 'Approved',
+                'needs_revision': 'Needs Revision',
+                'rejected': 'Rejected'
+            };
+            return statusMap[status] || status;
+        }
+
+        // Submit checkpoint
+        async function submitCheckpoint() {
+            const overlay = document.getElementById('uploadingOverlay');
+            overlay.classList.add('show');
+
+            try {
+                // Upload photos to R2
+                const photoUrls = [];
+                for (let i = 0; i < uploadedFiles.length; i++) {
+                    document.getElementById('uploadProgress').textContent = 
+                        `Uploading photos (${i + 1}/${uploadedFiles.length})`;
+                    
+                    const url = await uploadFile(uploadedFiles[i]);
+                    photoUrls.push(url);
+                }
+
+                // Submit checkpoint data
+                document.getElementById('uploadProgress').textContent = 'Saving submission...';
+                
+                const response = await fetch('/api/course/submission', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        lessonId: 'lesson-3-6',
+                        courseId: 'smartwatch-course',
+                        photoUrls: photoUrls,
+                        videoUrl: document.getElementById('videoUrl').value.trim() || null,
+                        description: document.getElementById('description').value.trim()
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Submission failed');
+                }
+
+                // Clear draft
+                localStorage.removeItem('checkpoint-draft-lesson-3-6');
+
+                // Show success
+                overlay.classList.remove('show');
+                document.getElementById('formContainer').style.display = 'none';
+                document.getElementById('successContainer').classList.add('show');
+
+            } catch (error) {
+                console.error('Submission error:', error);
+                overlay.classList.remove('show');
+                alert('Failed to submit. Please try again.');
+            }
+        }
+
+        // Upload file to R2
+        async function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Upload failed');
+            }
+
+            const data = await response.json();
+            return data.url;
+        }
+
+        // Submit another
+        function submitAnother() {
+            uploadedFiles = [];
+            document.getElementById('description').value = '';
+            document.getElementById('videoUrl').value = '';
+            document.getElementById('charCount').textContent = '0';
+            document.getElementById('previewGrid').innerHTML = '';
+            document.getElementById('uploadZone').classList.remove('has-files');
+            
+            document.getElementById('formContainer').style.display = 'block';
+            document.getElementById('successContainer').classList.remove('show');
+            
+            updateSubmitButton();
+            loadPreviousSubmissions();
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
