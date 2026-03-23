@@ -215,10 +215,27 @@ const LessonRenderer = {
         
         const sections = contentJson.sections.map(section => {
             const content = MarkdownRenderer.render(section.content || '');
+            
+            // Render images if present in section
+            let imagesHtml = '';
+            if (section.images && section.images.length > 0) {
+                imagesHtml = `
+                    <div class="section-images">
+                        ${section.images.map(img => `
+                            <figure class="lesson-image">
+                                <img src="${img.url}" alt="${img.alt || img.description || section.title}" loading="lazy" onclick="if(typeof openImageModal === 'function') openImageModal(this.src, this.alt)">
+                                ${img.caption ? `<figcaption>${img.caption}</figcaption>` : ''}
+                            </figure>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
             return `
                 <div class="lesson-section">
                     <h3>${section.title}</h3>
                     ${content}
+                    ${imagesHtml}
                 </div>
             `;
         }).join('');
@@ -284,12 +301,32 @@ const LessonRenderer = {
         // Add transcript or description
         let description = '';
         if (contentJson?.sections) {
-            description = contentJson.sections.map(section => `
-                <div class="lesson-section">
-                    <h3>${section.title}</h3>
-                    ${MarkdownRenderer.render(section.content || '')}
-                </div>
-            `).join('');
+            description = contentJson.sections.map(section => {
+                const content = MarkdownRenderer.render(section.content || '');
+                
+                // Render images if present in section
+                let imagesHtml = '';
+                if (section.images && section.images.length > 0) {
+                    imagesHtml = `
+                        <div class="section-images">
+                            ${section.images.map(img => `
+                                <figure class="lesson-image">
+                                    <img src="${img.url}" alt="${img.alt || img.description || section.title}" loading="lazy" onclick="if(typeof openImageModal === 'function') openImageModal(this.src, this.alt)">
+                                    ${img.caption ? `<figcaption>${img.caption}</figcaption>` : ''}
+                                </figure>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                return `
+                    <div class="lesson-section">
+                        <h3>${section.title}</h3>
+                        ${content}
+                        ${imagesHtml}
+                    </div>
+                `;
+            }).join('');
         } else if (lesson.description) {
             description = `<p>${lesson.description}</p>`;
         }

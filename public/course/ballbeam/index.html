@@ -1707,6 +1707,103 @@
             margin: 8px 0;
         }
 
+        /* Lesson Images */
+        .section-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .lesson-image {
+            flex: 1 1 calc(50% - 16px);
+            min-width: 280px;
+            max-width: 100%;
+            margin: 0;
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .lesson-image:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .lesson-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            cursor: zoom-in;
+        }
+
+        .lesson-image figcaption {
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--gray-600);
+            background: var(--gray-100);
+            border-top: 1px solid var(--gray-200);
+        }
+
+        /* Image Modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .image-modal.active {
+            display: flex;
+        }
+
+        .image-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 40px;
+            color: white;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .image-modal-close:hover {
+            opacity: 0.7;
+        }
+
+        .image-modal-caption {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .lesson-image {
+                flex: 1 1 100%;
+            }
+        }
+
         /* Code Blocks */
         .code-block {
             position: relative;
@@ -7663,12 +7760,41 @@
             return div.innerHTML;
         }
         
+        // Image modal functionality
+        function openImageModal(src, alt) {
+            let modal = document.getElementById('imageModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'imageModal';
+                modal.className = 'image-modal';
+                modal.innerHTML = `
+                    <span class="image-modal-close" onclick="closeImageModal()">&times;</span>
+                    <img src="" alt="">
+                    <div class="image-modal-caption"></div>
+                `;
+                document.body.appendChild(modal);
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeImageModal();
+                });
+            }
+            modal.querySelector('img').src = src;
+            modal.querySelector('img').alt = alt || '';
+            modal.querySelector('.image-modal-caption').textContent = alt || '';
+            modal.classList.add('active');
+        }
+        
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            if (modal) modal.classList.remove('active');
+        }
+        
         // Close modals on Escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeSupportModal();
                 closeFAQModal();
                 closeQABoard();
+                closeImageModal();
             }
         });
     </script>
