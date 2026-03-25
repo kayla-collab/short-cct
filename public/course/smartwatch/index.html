@@ -6211,6 +6211,78 @@
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-cpp.min.js"></script>
     <script src="/course/course-api.js"></script>
     <script src="/course/course-components.js"></script>
+    <!-- Embedded images from PDF - no external hosting -->
+    <script src="/static/embedded-images.js"></script>
+    <script>
+        // Image URL resolver - maps Genspark URLs to embedded Base64 images
+        // This ensures all images are self-contained in the code
+        const IMAGE_URL_MAP = {
+            // Overview
+            'https://www.genspark.ai/api/files/s/2D27gI2m': 'page2_img1',
+            // File Structure
+            'https://www.genspark.ai/api/files/s/GRlXsv6S': 'page5_img1',
+            'https://www.genspark.ai/api/files/s/OpYat2ou': 'page5_img2',
+            'https://www.genspark.ai/api/files/s/JV9pfb30': 'page6_img1',
+            // Pointers
+            'https://www.genspark.ai/api/files/s/YsKE1msu': 'page8_img1',
+            'https://www.genspark.ai/api/files/s/TYGHNi6D': 'page8_img2',
+            'https://www.genspark.ai/api/files/s/Bp3rosBj': 'page9_img1',
+            'https://www.genspark.ai/api/files/s/r35lc3EY': 'page9_img2',
+            'https://www.genspark.ai/api/files/s/DvkMDv39': 'page10_img1',
+            'https://www.genspark.ai/api/files/s/CYKOT8kp': 'page11_img1',
+            // Bit Manipulation
+            'https://www.genspark.ai/api/files/s/Z9xpiYDO': 'page13_img1',
+            'https://www.genspark.ai/api/files/s/wHbEXFla': 'page14_img1',
+            'https://www.genspark.ai/api/files/s/Zo4l8Wm5': 'page14_img2',
+            'https://www.genspark.ai/api/files/s/0XJzPdu7': 'page15_img1',
+            'https://www.genspark.ai/api/files/s/dYzN0ted': 'page15_img2',
+            'https://www.genspark.ai/api/files/s/qDuaF8PU': 'page15_img3',
+            'https://www.genspark.ai/api/files/s/acKfwwo2': 'page15_img4',
+            // I2C
+            'https://www.genspark.ai/api/files/s/8tNSM42D': 'page17_img1',
+            'https://www.genspark.ai/api/files/s/MYY042R8': 'page18_img1',
+            'https://www.genspark.ai/api/files/s/lG8RU3MP': 'page19_img1',
+            // OOP
+            'https://www.genspark.ai/api/files/s/33SvqwyJ': 'page21_img1',
+            'https://www.genspark.ai/api/files/s/tzy3mRia': 'page21_img2',
+            'https://www.genspark.ai/api/files/s/ISx1Ioau': 'page22_img1',
+            'https://www.genspark.ai/api/files/s/msglza9U': 'page23_img1',
+            'https://www.genspark.ai/api/files/s/hE3LKSea': 'page24_img1',
+            'https://www.genspark.ai/api/files/s/QYO4KoAH': 'page25_img1',
+            'https://www.genspark.ai/api/files/s/yrUGzVmm': 'page25_img2',
+            'https://www.genspark.ai/api/files/s/EJF9yowV': 'page26_img1',
+            // RTOS
+            'https://www.genspark.ai/api/files/s/8bBvUCH6': 'page27_img1',
+            'https://www.genspark.ai/api/files/s/gxNq2fg8': 'page27_img2',
+            'https://www.genspark.ai/api/files/s/ytq6UNqw': 'page28_img1',
+            'https://www.genspark.ai/api/files/s/g1V2EvTm': 'page29_img2',
+            // Static/Volatile
+            'https://www.genspark.ai/api/files/s/bZSd5ecR': 'page31_img1',
+            'https://www.genspark.ai/api/files/s/LtJn6Qoc': 'page31_img2',
+            'https://www.genspark.ai/api/files/s/WPGSr9km': 'page32_img1',
+            // Timing
+            'https://www.genspark.ai/api/files/s/sSz0ELmR': 'page33_img1',
+            'https://www.genspark.ai/api/files/s/v99hf3ba': 'page33_img2',
+            'https://www.genspark.ai/api/files/s/VA2HFoaq': 'page34_img1',
+            'https://www.genspark.ai/api/files/s/JLVou8yj': 'page34_img2',
+            'https://www.genspark.ai/api/files/s/ibDfOADR': 'page35_img1',
+            // FSM
+            'https://www.genspark.ai/api/files/s/3OL8Yt1d': 'page38_img1',
+            // Networking
+            'https://www.genspark.ai/api/files/s/52YAFb3q': 'page39_img1',
+            'https://www.genspark.ai/api/files/s/S6mWhW98': 'page40_img1'
+        };
+        
+        // Resolve image URL - returns embedded Base64 if available, otherwise original URL
+        function resolveImageUrl(url) {
+            if (!url) return url;
+            const imageId = IMAGE_URL_MAP[url];
+            if (imageId && typeof EMBEDDED_IMAGES !== 'undefined' && EMBEDDED_IMAGES[imageId]) {
+                return EMBEDDED_IMAGES[imageId].dataUri;
+            }
+            return url;
+        }
+    </script>
     <script>
         // Course configuration
         const COURSE_ID = 'smartwatch-course';
@@ -7125,12 +7197,12 @@
                             const renderedContent = MarkdownRenderer.render(section.content || '');
                             sectionHtml += `<h3>${section.title}</h3>${renderedContent}`;
                             
-                            // Render images if present in section
+                            // Render images if present in section (using embedded Base64 images)
                             if (section.images && section.images.length) {
                                 sectionHtml += '<div class="section-images">';
                                 sectionHtml += section.images.map(img => `
                                     <figure class="lesson-image">
-                                        <img src="${img.url}" alt="${img.alt || img.description || section.title}" loading="lazy" onclick="openImageModal(this.src, this.alt)">
+                                        <img src="${resolveImageUrl(img.url)}" alt="${img.alt || img.description || section.title}" loading="lazy" onclick="openImageModal(this.src, this.alt)">
                                         ${img.caption ? `<figcaption>${img.caption}</figcaption>` : ''}
                                     </figure>
                                 `).join('');
@@ -7153,14 +7225,14 @@
                         ).join('')}</ul></div>`;
                     }
                     
-                    // Render top-level images (diagrams, code screenshots, etc.)
+                    // Render top-level images (diagrams, code screenshots, etc.) - using embedded Base64
                     if (lessonContent.images && lessonContent.images.length) {
                         content += `<div class="lesson-section lesson-images-section">
                             <h3><i class="fas fa-images"></i> Diagrams and Code Examples</h3>
                             <div class="lesson-images-grid">
                                 ${lessonContent.images.map(img => `
                                     <figure class="lesson-image-card">
-                                        <img src="${img.url}" alt="${img.alt || 'Lesson image'}" loading="lazy" onclick="openImageModal(this.src, this.alt)">
+                                        <img src="${resolveImageUrl(img.url)}" alt="${img.alt || 'Lesson image'}" loading="lazy" onclick="openImageModal(this.src, this.alt)">
                                         ${img.caption ? `<figcaption>${img.caption}</figcaption>` : ''}
                                     </figure>
                                 `).join('')}
