@@ -10,6 +10,7 @@ dist/
 .idea/workspace.xml
 .idea/usage.statistics.xml
 .idea/shelf
+.dev.vars
 
 # deps
 node_modules/
@@ -33,3 +34,4 @@ lerna-debug.log*
 # misc
 .DS_Store
 CREDENTIALS.md
+plan.md
