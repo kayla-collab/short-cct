@@ -1,3 +1,5 @@
+/// <reference path="../node_modules/@cloudflare/workers-types/index.d.ts" />
+
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { serveStatic } from 'hono/cloudflare-pages'
