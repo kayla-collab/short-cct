@@ -30,6 +30,20 @@ type Bindings = {
   RESEND_API_KEY: string
 }
 
+type CheckoutSessionWithShippingDetails = Stripe.Checkout.Session & {
+  shipping_details?: {
+    name?: string | null
+    address?: {
+      line1?: string | null
+      line2?: string | null
+      city?: string | null
+      state?: string | null
+      postal_code?: string | null
+      country?: string | null
+    } | null
+  } | null
+}
+
 // ============================================
 // EMAIL SERVICE (Resend)
 // ============================================
@@ -764,13 +778,13 @@ async function checkModuleCompletion(
       const allModules = await db.prepare(
         'SELECT COUNT(*) as count FROM course_modules WHERE course_id = ?'
       ).bind(courseId).all()
-      const totalModules = allModules.results?.[0]?.count || 0
+      const totalModules = Number(allModules.results?.[0]?.count ?? 0)
       
       const completedModules = await db.prepare(`
         SELECT COUNT(*) as count FROM module_progress 
         WHERE user_id = ? AND course_id = ? AND status = 'completed'
       `).bind(userId, courseId).first<{ count: number }>()
-      const modulesCompleted = completedModules?.count || 0
+      const modulesCompleted = Number(completedModules?.count ?? 0)
       
       const allModulesCompleted = modulesCompleted >= totalModules && totalModules > 0
       
@@ -812,14 +826,15 @@ async function checkModuleCompletion(
     const allModules = await db.prepare(
       'SELECT COUNT(*) as count FROM course_modules WHERE course_id = ?'
     ).bind(courseId).all()
-    const totalModulesCount = allModules.results?.[0]?.count || 0
+    const totalModulesCount = Number(allModules.results?.[0]?.count ?? 0)
     
     const completedModulesCount = await db.prepare(`
       SELECT COUNT(*) as count FROM module_progress 
       WHERE user_id = ? AND course_id = ? AND status = 'completed'
     `).bind(userId, courseId).first<{ count: number }>()
     
-    const allModulesCompleted = (completedModulesCount?.count || 0) >= totalModulesCount && totalModulesCount > 0
+    const completedModulesTotal = Number(completedModulesCount?.count ?? 0)
+    const allModulesCompleted = completedModulesTotal >= totalModulesCount && totalModulesCount > 0
     
     return { moduleCompleted, allModulesCompleted }
   } catch (error) {
@@ -1147,12 +1162,14 @@ app.post('/api/public/send-test-emails', async (c) => {
         subject: '[TEST] Module 1 Complete - Great Progress!',
         html: emailTemplate(moduleCompleteEmailContent({
           userName: 'Kayla',
-          courseName: 'Smartwatch Development',
           moduleName: 'System Boot',
-          moduleNumber: 1,
+          courseName: 'Smartwatch Development',
+          progressPercentage: 20,
+          modulesCompleted: 1,
           totalModules: 5,
           nextModuleName: 'Timekeeping',
-          courseUrl: 'https://shortcircuit-2t9.pages.dev/course/smartwatch/'
+          nextModuleUrl: 'https://shortcircuit-2t9.pages.dev/course/smartwatch/',
+          isFinalModule: false,
         })),
       })
     })
@@ -1166,8 +1183,12 @@ app.post('/api/public/send-test-emails', async (c) => {
         html: emailTemplate(submissionReceivedEmailContent({
           userName: 'Kayla',
           courseName: 'Smartwatch Development',
-          lessonName: 'Module 1 Demo Submission',
-          submissionUrl: 'https://shortcircuit-2t9.pages.dev/course/smartwatch/'
+          submissionId: 'SUB-TEST-001',
+          submissionDate: new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }),
         })),
       })
     })
@@ -1181,9 +1202,7 @@ app.post('/api/public/send-test-emails', async (c) => {
         html: emailTemplate(submissionApprovedEmailContent({
           userName: 'Kayla',
           courseName: 'Smartwatch Development',
-          lessonName: 'Module 1 Demo Submission',
           feedback: 'Excellent work on initializing the power management system! Your code is clean and well-documented.',
-          courseUrl: 'https://shortcircuit-2t9.pages.dev/course/smartwatch/'
         })),
       })
     })
@@ -1197,9 +1216,8 @@ app.post('/api/public/send-test-emails', async (c) => {
         html: emailTemplate(submissionNeedsRevisionEmailContent({
           userName: 'Kayla',
           courseName: 'Smartwatch Development',
-          lessonName: 'Module 2 Demo Submission',
           feedback: 'Good progress! Please add error handling for the Wi-Fi connection timeout case.',
-          courseUrl: 'https://shortcircuit-2t9.pages.dev/course/smartwatch/'
+          submissionUrl: 'https://shortcircuit-2t9.pages.dev/course/smartwatch/submission.html',
         })),
       })
     })
@@ -1212,10 +1230,13 @@ app.post('/api/public/send-test-emails', async (c) => {
         subject: '[TEST] Congratulations! Your Certificate is Ready',
         html: emailTemplate(certificateIssuedEmailContent({
           userName: 'Kayla',
+          recipientName: 'Kayla Sierra',
           courseName: 'Smartwatch Development: LilyGo T-Watch 2020 V3',
           certificateNumber: 'SC-CERT-TEST-001',
-          verifyUrl: 'https://shortcircuit-2t9.pages.dev/verify/SC-CERT-TEST-001',
-          downloadUrl: 'https://shortcircuit-2t9.pages.dev/api/certificates/SC-CERT-TEST-001/download'
+          completionDate: 'March 23, 2026',
+          skills: ['Embedded C/C++', 'FreeRTOS', 'I2C Communication'],
+          verificationUrl: 'https://shortcircuit-2t9.pages.dev/verify/SC-CERT-TEST-001',
+          certificateUrl: 'https://shortcircuit-2t9.pages.dev/api/certificates/SC-CERT-TEST-001/download',
         })),
       })
     })
@@ -1227,11 +1248,12 @@ app.post('/api/public/send-test-emails', async (c) => {
         to: email,
         subject: '[TEST] New Submission Requires Review',
         html: emailTemplate(adminNewSubmissionEmailContent({
-          studentName: 'Test Student',
-          studentEmail: 'student@example.com',
+          userName: 'Test Student',
+          userEmail: 'student@example.com',
           courseName: 'Smartwatch Development',
-          lessonName: 'Module 1 Demo Submission',
-          adminUrl: 'https://shortcircuit-2t9.pages.dev/admin/'
+          submissionId: 'SUB-TEST-ADMIN-001',
+          submissionDate: new Date().toLocaleDateString('en-US'),
+          adminReviewUrl: 'https://shortcircuit-2t9.pages.dev/admin/',
         })),
       })
     })
@@ -1309,12 +1331,14 @@ app.get('/api/preview/email/course-access', (c) => {
 app.get('/api/preview/email/module-complete', (c) => {
   return c.html(emailTemplate(moduleCompleteEmailContent({
     userName: 'Kayla',
-    courseName: 'Smartwatch Development',
     moduleName: 'System Boot',
-    moduleNumber: 1,
+    courseName: 'Smartwatch Development',
+    progressPercentage: 20,
+    modulesCompleted: 1,
     totalModules: 5,
     nextModuleName: 'Timekeeping',
-    courseUrl: 'https://shortcircuit-2t9.pages.dev/course/smartwatch/'
+    nextModuleUrl: 'https://shortcircuit-2t9.pages.dev/course/smartwatch/',
+    isFinalModule: false,
   })))
 })
 
@@ -1322,8 +1346,8 @@ app.get('/api/preview/email/submission-received', (c) => {
   return c.html(emailTemplate(submissionReceivedEmailContent({
     userName: 'Kayla',
     courseName: 'Smartwatch Development',
-    lessonName: 'Module 1 Demo Submission',
-    submissionUrl: 'https://shortcircuit-2t9.pages.dev/course/smartwatch/'
+    submissionId: 'SUB-PREVIEW-001',
+    submissionDate: 'March 23, 2026',
   })))
 })
 
@@ -1331,9 +1355,7 @@ app.get('/api/preview/email/submission-approved', (c) => {
   return c.html(emailTemplate(submissionApprovedEmailContent({
     userName: 'Kayla',
     courseName: 'Smartwatch Development',
-    lessonName: 'Module 1 Demo Submission',
     feedback: 'Excellent work on your smartwatch project! Your implementation of the power management system shows great understanding of embedded systems concepts. The touch interface is responsive and well-designed. Keep up the great work!',
-    courseUrl: 'https://shortcircuit-2t9.pages.dev/course/smartwatch/'
   })))
 })
 
@@ -1341,29 +1363,32 @@ app.get('/api/preview/email/submission-revision', (c) => {
   return c.html(emailTemplate(submissionNeedsRevisionEmailContent({
     userName: 'Kayla',
     courseName: 'Smartwatch Development',
-    lessonName: 'Module 2 Demo Submission',
     feedback: 'Great progress on your project! There are just a few areas that need attention:\n\n1. The Wi-Fi connection seems to drop occasionally - please check the reconnection logic in your code.\n2. The battery percentage display could use some smoothing to avoid flickering values.\n\nOnce these are addressed, your project will be ready for approval!',
-    courseUrl: 'https://shortcircuit-2t9.pages.dev/course/smartwatch/'
+    submissionUrl: 'https://shortcircuit-2t9.pages.dev/course/smartwatch/submission.html',
   })))
 })
 
 app.get('/api/preview/email/certificate', (c) => {
   return c.html(emailTemplate(certificateIssuedEmailContent({
     userName: 'Kayla',
+    recipientName: 'Kayla Sierra',
     courseName: 'Smartwatch Development: LilyGo T-Watch 2020 V3',
     certificateNumber: 'SC-SW-2026-001234',
-    verifyUrl: 'https://shortcircuit-2t9.pages.dev/verify/SC-SW-2026-001234',
-    downloadUrl: 'https://shortcircuit-2t9.pages.dev/api/certificates/SC-SW-2026-001234/download'
+    completionDate: 'March 23, 2026',
+    skills: ['Embedded C/C++', 'FreeRTOS', 'I2C Communication'],
+    verificationUrl: 'https://shortcircuit-2t9.pages.dev/verify/SC-SW-2026-001234',
+    certificateUrl: 'https://shortcircuit-2t9.pages.dev/api/certificates/SC-SW-2026-001234/download',
   })))
 })
 
 app.get('/api/preview/email/admin-submission', (c) => {
   return c.html(emailTemplate(adminNewSubmissionEmailContent({
-    studentName: 'Kayla Sierra',
-    studentEmail: 'kayla@kaylasierra.com',
+    userName: 'Kayla Sierra',
+    userEmail: 'kayla@kaylasierra.com',
     courseName: 'Smartwatch Development',
-    lessonName: 'Module 1 Demo Submission',
-    adminUrl: 'https://shortcircuit-2t9.pages.dev/admin/'
+    submissionId: 'SUB-PREVIEW-001',
+    submissionDate: 'March 23, 2026',
+    adminReviewUrl: 'https://shortcircuit-2t9.pages.dev/admin/',
   })))
 })
 
@@ -2623,7 +2648,7 @@ app.post('/api/webhooks/stripe', async (c) => {
 
     switch (event.type) {
       case 'checkout.session.completed': {
-        const session = event.data.object as Stripe.Checkout.Session
+        const session = event.data.object as CheckoutSessionWithShippingDetails
         console.log('Payment successful for session:', session.id)
         
         // Get items from metadata
@@ -2800,7 +2825,7 @@ app.get('/api/checkout/session/:sessionId', async (c) => {
 
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ['line_items', 'customer'],
-    })
+    }) as CheckoutSessionWithShippingDetails
 
     return c.json({
       id: session.id,
@@ -5710,7 +5735,8 @@ app.post('/api/admin/test-emails', requireAdmin, async (c) => {
         html: emailTemplate(submissionNeedsRevisionEmailContent({
           userName: 'Kayla',
           courseName: 'Smartwatch Development',
-          feedback: 'Great progress on your project! There are just a few areas that need attention:\n\n1. The Wi-Fi connection seems to drop occasionally - please check the reconnection logic.\n2. The battery display could use some smoothing to avoid flickering.\n\nOnce these are addressed, your project will be ready for approval!'
+          feedback: 'Great progress on your project! There are just a few areas that need attention:\n\n1. The Wi-Fi connection seems to drop occasionally - please check the reconnection logic.\n2. The battery display could use some smoothing to avoid flickering.\n\nOnce these are addressed, your project will be ready for approval!',
+          submissionUrl: 'https://shortcircuit-2t9.pages.dev/course/smartwatch/submission.html',
         })),
       })
     })
@@ -5723,9 +5749,12 @@ app.post('/api/admin/test-emails', requireAdmin, async (c) => {
         subject: '[TEST] Your Short Circuit Certificate is Ready!',
         html: emailTemplate(certificateIssuedEmailContent({
           userName: 'Kayla',
+          recipientName: 'Kayla Sierra',
           courseName: 'Smartwatch Development: LilyGo T-Watch 2020 V3',
           certificateNumber: 'SC-SW-2026-TEST001',
+          completionDate: 'March 23, 2026',
           verificationUrl: 'https://shortcircuit-2t9.pages.dev/verify/SC-SW-2026-TEST001',
+          certificateUrl: 'https://shortcircuit-2t9.pages.dev/api/certificates/SC-SW-2026-TEST001/download',
           skills: ['Embedded C/C++', 'FreeRTOS', 'I2C Communication', 'Touch Interfaces', 'Power Management']
         })),
       })
@@ -5738,12 +5767,12 @@ app.post('/api/admin/test-emails', requireAdmin, async (c) => {
         to: email,
         subject: '[TEST] New Submission Requires Review',
         html: emailTemplate(adminNewSubmissionEmailContent({
-          studentName: 'Kayla Sierra',
-          studentEmail: email,
+          userName: 'Kayla Sierra',
+          userEmail: email,
           courseName: 'Smartwatch Development',
           submissionId: 'SUB-TEST-001',
           submissionDate: new Date().toLocaleDateString('en-US'),
-          adminUrl: 'https://shortcircuit-2t9.pages.dev/admin/'
+          adminReviewUrl: 'https://shortcircuit-2t9.pages.dev/admin/'
         })),
       })
     })
