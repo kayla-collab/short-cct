@@ -2501,7 +2501,7 @@ app.get('/api/admin/stats', requireAdmin, async (c) => {
 // API: Create Stripe Checkout Session
 app.post('/api/checkout/create-session', async (c) => {
   const stripe = new Stripe(c.env.STRIPE_SECRET_KEY, {
-    apiVersion: '2025-01-27.acacia',
+    apiVersion: '2026-01-28.clover',
   })
 
   try {
@@ -2622,7 +2622,7 @@ app.post('/api/checkout/create-session', async (c) => {
 // API: Stripe Webhook Handler
 app.post('/api/webhooks/stripe', async (c) => {
   const stripe = new Stripe(c.env.STRIPE_SECRET_KEY, {
-    apiVersion: '2025-01-27.acacia',
+    apiVersion: '2026-01-28.clover',
   })
 
   const webhookSecret = c.env.STRIPE_WEBHOOK_SECRET
@@ -2813,7 +2813,7 @@ app.post('/api/webhooks/stripe', async (c) => {
 // API: Get checkout session details
 app.get('/api/checkout/session/:sessionId', async (c) => {
   const stripe = new Stripe(c.env.STRIPE_SECRET_KEY, {
-    apiVersion: '2025-01-27.acacia',
+    apiVersion: '2026-01-28.clover',
   })
 
   try {
@@ -3258,11 +3258,13 @@ app.post('/api/upload', requireAuth, async (c) => {
 
   try {
     const formData = await c.req.formData()
-    const file = formData.get('file') as File
+    const fileEntry = formData.get('file')
 
-    if (!file) {
+    if (!fileEntry || typeof fileEntry === 'string') {
       return c.json({ error: 'No file provided' }, 400)
     }
+
+    const file = fileEntry as unknown as File
 
     // Validate file type
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
@@ -3881,7 +3883,9 @@ app.post('/api/courses/:courseId/modules/:moduleId/reviews', requireAuth, async 
       'SELECT COUNT(*) as total FROM lessons WHERE module_id = ? AND is_published = 1'
     ).bind(moduleId).first<{ total: number }>()
 
-    const isVerified = moduleProgress?.completed === totalLessons?.total && totalLessons?.total > 0
+    const completedLessonCount = Number(moduleProgress?.completed ?? 0)
+    const totalLessonCount = Number(totalLessons?.total ?? 0)
+    const isVerified = totalLessonCount > 0 && completedLessonCount === totalLessonCount
 
     // Create new review
     const reviewId = crypto.randomUUID()
@@ -4007,6 +4011,10 @@ app.get('/api/courses/:courseId/progress', requireAuth, async (c) => {
 app.post('/api/courses/:courseId/certificate', requireAuth, async (c) => {
   const user = c.get('user')!
   const courseId = c.req.param('courseId')
+
+  if (!courseId) {
+    return c.json({ error: 'Course ID is required' }, 400)
+  }
 
   try {
     // Check if course is completed
@@ -5290,13 +5298,13 @@ app.post('/api/admin/test-email', requireAdmin, async (c) => {
           customerName: 'Test User',
           items: [{ name: 'Smart Watch Kit', quantity: 1, price: 99 }],
           subtotal: 99,
-          shippingCost: 0,
+          shipping: 0,
           total: 99,
           shippingAddress: {
             line1: '123 Test Street',
             city: 'Test City',
             state: 'TS',
-            postal_code: '12345',
+            postalCode: '12345',
             country: 'US'
           }
         })
@@ -5798,10 +5806,10 @@ app.post('/api/admin/test-emails', requireAdmin, async (c) => {
 // ============================================
 
 // Serve certificate verification page for /verify/* routes
-app.get('/verify/*', serveStatic({ path: './verify.html' }))
-app.get('/verify', serveStatic({ path: './verify.html' }))
+app.get('/verify/*', (c) => c.redirect('/verify.html'))
+app.get('/verify', (c) => c.redirect('/verify.html'))
 
 app.use('/*', serveStatic())
-app.get('*', serveStatic({ path: './index.html' }))
+app.get('*', (c) => c.redirect('/index.html'))
 
 export default app
