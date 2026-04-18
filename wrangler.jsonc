@@ -15,7 +15,7 @@
     {
       "binding": "DB",
       "database_name": "shortcircuits-db",
-      "database_id": "9564b58f-4035-494a-8cfd-ed1dbcc96cbc"
+      "database_id": "1ffe3510-592d-4eb9-8359-a2757bab1270"
     }
   ]
   // NOTE: R2 bucket disabled - enable R2 in Cloudflare Dashboard before uncommenting
