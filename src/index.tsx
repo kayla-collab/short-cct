@@ -4,6 +4,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { serveStatic } from 'hono/cloudflare-pages'
 import Stripe from 'stripe'
+import { configureChatbot, getChatbotReply } from './chatbot/chatbotService'
 
 // Auth imports
 import { hashPassword, verifyPassword, isValidEmail, isValidPassword } from './auth/password'
@@ -28,6 +29,7 @@ type Bindings = {
   STRIPE_PUBLISHABLE_KEY: string
   ADMIN_EMAILS: string
   RESEND_API_KEY: string
+  HUGGINGFACE_API_KEY: string
 }
 
 type CheckoutSessionWithShippingDetails = Stripe.Checkout.Session & {
@@ -1019,6 +1021,26 @@ app.use('/api/*', csrfProtection)
 // ============================================
 // PUBLIC API ROUTES
 // ============================================
+
+// Chatbot endpoint - accepts user message and returns AI-generated reply
+app.post('/api/chat', async (c) => {
+  try {
+    const body = await c.req.json().catch(() => null)
+    const message = body?.message
+
+    if (typeof message !== 'string' || !message.trim()) {
+      return c.json({ error: 'Message is required' }, 400)
+    }
+
+    configureChatbot(c.env.HUGGINGFACE_API_KEY || '')
+    const reply = await getChatbotReply(message.trim())
+
+    return c.json({ reply })
+  } catch (error) {
+    console.error('Chatbot route error:', error)
+    return c.json({ error: 'Failed to generate chat response' }, 500)
+  }
+})
 
 // TEMPORARY: Public test email endpoint (remove after testing)
 app.post('/api/public/send-test-emails', async (c) => {
